@@ -4,11 +4,13 @@ export interface User {
   image?: string;
   age?: number;
   number?: string;
-  location?: string;
+  location?: {
+    type: 'Point';
+    coordinates: number[];
+  };
   email: string;
   password?: string;
   bio?: string;
-  mobile_number?: string;
   is_seller_verified?: boolean;
   is_admin_verified?: boolean;
   role?: string;
