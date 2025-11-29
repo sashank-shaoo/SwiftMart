@@ -14,6 +14,7 @@ const createUsersTable = async () => {
       password VARCHAR(255) NOT NULL,
       bio TEXT,
       mobile_number VARCHAR(255),
+      role VARCHAR(255) DEFAULT 'user',
       is_seller_verified BOOLEAN DEFAULT FALSE,
       is_admin_verified BOOLEAN DEFAULT FALSE,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
