@@ -1,13 +1,15 @@
 export interface Item {
-    id?: number;
-    name?: string;
-    image?: string;
-    price?: number;
-    description?: string;
-    rating?: number;
-    review?: string;
-    category?: string;
-    seller_id?: number;
-    created_at?: Date;
-    updated_at?: Date;
+  id?: string;
+  name: string;
+  image: string;
+  price: number;
+
+  description?: string;
+  category?: string;
+  season?: "summer" | "winter" | "spring" | "autumn" | "monsoon" | "rainy";
+
+  seller_id: string;
+
+  created_at?: Date;
+  updated_at?: Date;
 }

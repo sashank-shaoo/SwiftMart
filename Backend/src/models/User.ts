@@ -1,19 +1,19 @@
 export interface User {
-  id?: number;
+  id?: string;
   name?: string;
   image?: string;
   age?: number;
   number?: string;
   location?: {
-    type: 'Point';
-    coordinates: number[];
+    type: "Point";
+    coordinates: [number, number];
   };
   email: string;
-  password?: string;
+  password: string;
   bio?: string;
+  role?: "user" | "seller" | "admin";
   is_seller_verified?: boolean;
   is_admin_verified?: boolean;
-  role?: string;
   created_at?: Date;
   updated_at?: Date;
 }
