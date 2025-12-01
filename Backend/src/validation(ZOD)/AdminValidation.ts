@@ -1,6 +1,6 @@
-import { z } from "zod";
+import {z} from "zod";
 
-export const sellerSchema = z.object({
+export const adminSchema = z.object({
   id: z.uuid().optional(),
 
   name: z
@@ -9,8 +9,6 @@ export const sellerSchema = z.object({
     .min(2, "Name must be at least 2 characters")
     .max(50, "Name must be at most 50 characters")
     .optional(),
-
-  image: z.url({ message: "Image must be a valid URL" }).optional(),
 
   email: z.email({ message: "Invalid email format" }),
 
@@ -27,26 +25,10 @@ export const sellerSchema = z.object({
     .regex(/^[0-9]{10}$/, "Phone number must be 10 digits")
     .optional(),
 
-  location: z
-    .object({
-      type: z.literal("Point"),
-      coordinates: z
-        .array(
-          z.number().refine((val) => val >= -180 && val <= 180, {
-            message: "Coordinates must be valid longitude/latitude",
-          })
-        )
-        .length(2, "Coordinates must be [longitude, latitude]"),
-    })
-    .optional(),
-
-  role: z.enum(["seller", "admin"]).default("seller").optional(),
-
-  is_seller_verified: z.boolean().optional(),
-  is_admin_verified: z.boolean().optional(),
+  role: z.enum(["admin"]).default("admin").optional(),
 
   created_at: z.date().optional(),
   updated_at: z.date().optional(),
 });
 
-export type SellerInput = z.infer<typeof sellerSchema>;
+export type AdminInput = z.infer<typeof adminSchema>;
