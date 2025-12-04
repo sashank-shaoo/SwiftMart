@@ -2,7 +2,7 @@ import { query } from "../db/db";
 import { Cart } from "../models/Cart";
 
 export class CartDao {
-  async addToCart(cart: Cart): Promise<Cart> {
+  static async addToCart(cart: Cart): Promise<Cart> {
     const text = `
       INSERT INTO carts (user_id, item_id, seller_id, quantity, price_at_time)
       VALUES ($1, $2, $3, $4, $5)
@@ -19,20 +19,23 @@ export class CartDao {
     return res.rows[0];
   }
 
-  async findCartByUserId(userId: string): Promise<Cart[]> {
+  static async findCartByUserId(userId: string): Promise<Cart[]> {
     const text = "SELECT * FROM carts WHERE user_id = $1";
     const res = await query(text, [userId]);
     return res.rows;
   }
 
-  async updateCartQuantity(id: string, quantity: number): Promise<Cart | null> {
+  static async updateCartQuantity(
+    id: string,
+    quantity: number
+  ): Promise<Cart | null> {
     const text =
       "UPDATE carts SET quantity = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *";
     const res = await query(text, [quantity, id]);
     return res.rows[0] || null;
   }
 
-  async removeFromCart(id: string): Promise<void> {
+  static async removeFromCart(id: string): Promise<void> {
     const text = "DELETE FROM carts WHERE id = $1";
     await query(text, [id]);
   }

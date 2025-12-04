@@ -1,8 +1,8 @@
-import { query } from '../db/db';
-import { Seller } from '../models/Seller';
+import { query } from "../db/db";
+import { Seller } from "../models/Seller";
 
 export class SellerDao {
-  async createSeller(seller: Seller): Promise<Seller> {
+  static async createSeller(seller: Seller): Promise<Seller> {
     const text = `
       INSERT INTO sellers (name, image, number, location, email, password, role, is_seller_verified, is_admin_verified)
       VALUES ($1, $2, $3, ST_SetSRID(ST_GeomFromGeoJSON($4), 4326), $5, $6, $7, $8, $9)
@@ -10,12 +10,12 @@ export class SellerDao {
     `;
     const values = [
       seller.name,
-      seller.image,
-      seller.number,
+      seller.image || null,
+      seller.number || null,
       seller.location ? JSON.stringify(seller.location) : null,
       seller.email,
       seller.password,
-      seller.role || 'seller',
+      seller.role || "seller",
       seller.is_seller_verified || false,
       seller.is_admin_verified || false,
     ];
@@ -23,8 +23,9 @@ export class SellerDao {
     return res.rows[0];
   }
 
-  async findSellerByEmail(email: string): Promise<Seller | null> {
-    const text = 'SELECT *, ST_AsGeoJSON(location)::json as location FROM sellers WHERE email = $1';
+  static async findSellerByEmail(email: string): Promise<Seller | null> {
+    const text =
+      "SELECT *, ST_AsGeoJSON(location)::json as location FROM sellers WHERE email = $1";
     const res = await query(text, [email]);
     return res.rows[0] || null;
   }

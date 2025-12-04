@@ -2,7 +2,7 @@ import { query } from "../db/db";
 import { Review } from "../models/Review";
 
 export class ReviewDao {
-  async createReview(review: Review): Promise<Review> {
+  static async createReview(review: Review): Promise<Review> {
     const text = `
       INSERT INTO reviews (item_id, user_id, rating, comment)
       VALUES ($1, $2, $3, $4)
@@ -18,7 +18,7 @@ export class ReviewDao {
     return res.rows[0];
   }
 
-  async findReviewsByItemId(itemId: string): Promise<Review[]> {
+  static async findReviewsByItemId(itemId: string): Promise<Review[]> {
     const text = "SELECT * FROM reviews WHERE item_id = $1";
     const res = await query(text, [itemId]);
     return res.rows;
