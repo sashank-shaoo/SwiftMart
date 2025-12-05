@@ -12,6 +12,9 @@ export interface Seller {
   role?: "seller" | "admin";
   is_seller_verified?: boolean;
   is_admin_verified?: boolean;
+  is_verified_email?: boolean;
+  refresh_token_hash?: string;
+  refresh_token_expires_at?: Date;
   created_at?: Date;
   updated_at?: Date;
 }

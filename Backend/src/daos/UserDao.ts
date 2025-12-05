@@ -4,8 +4,8 @@ import { User } from "../models/User";
 export class UserDao {
   static async createUser(user: User): Promise<User> {
     const text = `
-      INSERT INTO users (name, age, number, location, email, password, bio, image, role)
-      VALUES ($1, $2, $3, ST_SetSRID(ST_GeomFromGeoJSON($4::text), 4326), $5, $6, $7, $8, $9)
+      INSERT INTO users (name, age, number, location, email, password, bio, image, role, is_seller_verified, is_admin_verified, is_verified_email)
+      VALUES ($1, $2, $3, ST_SetSRID(ST_GeomFromGeoJSON($4::text), 4326), $5, $6, $7, $8, $9, $10, $11, $12)
       RETURNING *, ST_AsGeoJSON(location)::json as location
     `;
     const values = [
@@ -18,6 +18,9 @@ export class UserDao {
       user.bio || null,
       user.image || null,
       user.role || "user",
+      user.is_seller_verified || false,
+      user.is_admin_verified || false,
+      user.is_verified_email || false,
     ];
     const res = await query(text, values);
     return res.rows[0];
