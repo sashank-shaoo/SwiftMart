@@ -1,4 +1,5 @@
 import * as authController from "../controllers/authController";
+import * as otpController from "../controllers/otpController";
 import express from "express";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { validate } from "../middlewares/validateMiddleware";
@@ -30,5 +31,11 @@ router.post(
 );
 router.post("/admin/login", authController.loginAdmin);
 router.post("/admin/logout", authMiddleware, authController.logOutAdmin);
+
+// OTP / Email Verification Routes
+router.post("/send-verification-otp", otpController.sendVerificationOtp);
+router.post("/verify-email", otpController.verifyEmailOtp);
+router.post("/request-password-reset", otpController.requestPasswordReset);
+router.post("/reset-password", otpController.resetPassword);
 
 export default router;

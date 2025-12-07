@@ -5,18 +5,27 @@ import { AdminDao } from "../daos/AdminDao";
 import { compare, hash } from "bcrypt";
 import { sign } from "jsonwebtoken";
 import { jwtCookieOptions } from "../utils/cookieParser";
+import { EmailOtpDao } from "../daos/EmailOtpDao";
+import { generateOtp } from "../utils/otpHelpers";
+import { sendOtpEmail } from "../services/EmailService";
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields",
+      });
     }
 
     const existing = await UserDao.findUserByEmail(email);
     if (existing) {
-      return res.status(400).json({ error: "User already exists" });
+      return res.status(400).json({
+        success: false,
+        message: "User already exists",
+      });
     }
 
     const hashedPassword = await hash(password, 10);
@@ -39,15 +48,38 @@ export const registerUser = async (req: Request, res: Response) => {
 
     const { password: pw, ...finalUser } = newUser;
 
-    return res.status(201).json({ user: finalUser });
+    // Auto-send verification OTP
+    try {
+      const otp = generateOtp();
+      await EmailOtpDao.createOtp(email, otp, "user", "email_verification");
+      await sendOtpEmail(email, otp, name, "verification");
+      console.log(`📧 Verification OTP sent to ${email}`);
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+      // Don't fail registration if email fails
+    }
+
+    return res.status(201).json({
+      success: true,
+      message:
+        "Registration successful! Please check your email to verify your account.",
+      user: finalUser,
+      verification_sent: true,
+    });
   } catch (error: any) {
     console.error(error);
 
     if (error.code === "23505") {
-      return res.status(400).json({ error: "Email already exists" });
+      return res.status(400).json({
+        success: false,
+        message: "Email already exists",
+      });
     }
 
-    return res.status(500).json({ error: "Failed to register user" });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to register user",
+    });
   }
 };
 
@@ -56,17 +88,26 @@ export const loginUser = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ error: "Missing email or password" });
+      return res.status(400).json({
+        success: false,
+        message: "Missing email or password",
+      });
     }
 
     const user = await UserDao.findUserByEmail(email);
     if (!user) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
     }
 
     const isMatch = await compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
     }
 
     // JWT token
@@ -79,16 +120,26 @@ export const loginUser = async (req: Request, res: Response) => {
     res.cookie("auth_token", token, jwtCookieOptions);
     const { password: pw, ...finalUser } = user;
 
-    return res.json({ user: finalUser });
+    return res.json({
+      success: true,
+      message: "Login successful",
+      user: finalUser,
+    });
   } catch (error: any) {
     console.error(error);
-    return res.status(500).json({ error: "Failed to login user" });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to login user",
+    });
   }
 };
 
 export const logOutUser = async (req: Request, res: Response) => {
   res.clearCookie("auth_token", jwtCookieOptions);
-  return res.json({ message: "User logged out successfully" });
+  return res.json({
+    success: true,
+    message: "User logged out successfully",
+  });
 };
 
 export const registerSeller = async (req: Request, res: Response) => {
@@ -96,12 +147,18 @@ export const registerSeller = async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields",
+      });
     }
 
     const existing = await SellerDao.findSellerByEmail(email);
     if (existing) {
-      return res.status(400).json({ error: "Seller already exists" });
+      return res.status(400).json({
+        success: false,
+        message: "Seller already exists",
+      });
     }
 
     const hashedPassword = await hash(password, 10);
@@ -117,21 +174,45 @@ export const registerSeller = async (req: Request, res: Response) => {
 
     const token = sign(
       { id: newSeller.id, role: newSeller.role },
-      process.env.JWT_SECRET as string,
-      {
-        expiresIn: "7d",
-      }
+      process.env.JWT_SECRET!,
+      { expiresIn: "7d" }
     );
     res.cookie("auth_token", token, jwtCookieOptions);
+
     const { password: pw, ...finalSeller } = newSeller;
-    
-    res.status(201).json({ seller: finalSeller });
+
+    // Auto-send verification OTP
+    try {
+      const otp = generateOtp();
+      await EmailOtpDao.createOtp(email, otp, "seller", "email_verification");
+      await sendOtpEmail(email, otp, name, "verification");
+      console.log(`📧 Verification OTP sent to ${email}`);
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+      // Don't fail registration if email fails
+    }
+
+    return res.status(201).json({
+      success: true,
+      message:
+        "Registration successful! Please check your email to verify your account.",
+      seller: finalSeller,
+      verification_sent: true,
+    });
   } catch (error: any) {
     console.error(error);
+
     if (error.code === "23505") {
-      return res.status(400).json({ error: "Seller already exists" });
+      return res.status(400).json({
+        success: false,
+        message: "Seller already exists",
+      });
     }
-    return res.status(500).json({ error: "Failed to register seller" });
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to register seller",
+    });
   }
 };
 
@@ -139,16 +220,25 @@ export const loginSeller = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(400).json({ error: "Missing email or password" });
+      return res.status(400).json({
+        success: false,
+        message: "Missing email or password",
+      });
     }
 
     const seller = await SellerDao.findSellerByEmail(email);
     if (!seller) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
     }
     const isMatch = await compare(password, seller.password);
     if (!isMatch) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
     }
 
     const token = sign(
@@ -161,28 +251,44 @@ export const loginSeller = async (req: Request, res: Response) => {
     res.cookie("auth_token", token, jwtCookieOptions);
     const { password: pw, ...finalSeller } = seller;
 
-    return res.json({ seller: finalSeller });
+    return res.json({
+      success: true,
+      message: "Login successful",
+      seller: finalSeller,
+    });
   } catch (error: any) {
     console.error(error);
-    return res.status(500).json({ error: "Seller login failed" });
+    return res.status(500).json({
+      success: false,
+      message: "Seller login failed",
+    });
   }
 };
 
 export const logOutSeller = async (req: Request, res: Response) => {
   res.clearCookie("auth_token", jwtCookieOptions);
-  return res.json({ message: "Seller logged out successfully" });
+  return res.json({
+    success: true,
+    message: "Seller logged out successfully",
+  });
 };
 
 export const registerAdmin = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
-      return res.status(400).json({ error: "Missing required fields" });
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields",
+      });
     }
 
     const existing = await AdminDao.findAdminByEmail(email);
     if (existing) {
-      return res.status(400).json({ error: "Admin already exists" });
+      return res.status(400).json({
+        success: false,
+        message: "Admin already exists",
+      });
     }
 
     const hashedPassword = await hash(password, 10);
@@ -202,28 +308,48 @@ export const registerAdmin = async (req: Request, res: Response) => {
     res.cookie("auth_token", token, jwtCookieOptions);
     const { password: pw, ...finalAdmin } = admin;
 
-    return res.status(201).json({ admin: finalAdmin });
+    return res.status(201).json({
+      success: true,
+      message: "Admin registered successfully",
+      admin: finalAdmin,
+    });
   } catch (error: any) {
     console.error(error);
     if (error.code === "23505") {
-      return res.status(400).json({ error: "Admin already exists" });
+      return res.status(400).json({
+        success: false,
+        message: "Admin already exists",
+      });
     }
-    res.status(500).json({ error: "Failed to register admin" });
+    res.status(500).json({
+      success: false,
+      message: "Failed to register admin",
+    });
   }
 };
+
 export const loginAdmin = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(400).json({ error: "Missing email or password" });
+      return res.status(400).json({
+        success: false,
+        message: "Missing email or password",
+      });
     }
     const admin = await AdminDao.findAdminByEmail(email);
     if (!admin) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
     }
     const isValid = await compare(password, admin.password);
     if (!isValid) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
     }
     const token = sign(
       { id: admin.id, role: admin.role },
@@ -234,15 +360,25 @@ export const loginAdmin = async (req: Request, res: Response) => {
     );
     res.cookie("auth_token", token, jwtCookieOptions);
     const { password: pw, ...finalAdmin } = admin;
-    
-    return res.json({ admin: finalAdmin });
+
+    return res.json({
+      success: true,
+      message: "Login successful",
+      admin: finalAdmin,
+    });
   } catch (error: any) {
     console.error(error);
-    res.status(500).json({ error: "Failed to login admin" });
+    res.status(500).json({
+      success: false,
+      message: "Failed to login admin",
+    });
   }
 };
 
 export const logOutAdmin = async (req: Request, res: Response) => {
   res.clearCookie("auth_token", jwtCookieOptions);
-  return res.json({ message: "Admin logged out successfully" });
+  return res.json({
+    success: true,
+    message: "Admin logged out successfully",
+  });
 };
