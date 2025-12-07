@@ -39,10 +39,14 @@
 - **Framework**: Express.js 5.1.0
 - **Database**: PostgreSQL with PostGIS extension (for geospatial data)
 - **Authentication**: JWT (JSON Web Tokens) with HTTP-only cookies
-- **Password Hashing**: bcrypt
+- **Password Hashing**: bcrypt (salt rounds: 10)
 - **Validation**: Zod schemas
 - **File Upload**: Multer + Cloudinary integration
-- **Email**: Nodemailer
+- **Email Service**: Nodemailer with Gmail SMTP
+  - OTP-based email verification
+  - Password reset functionality
+  - Automatic retry logic on send failures
+  - Beautiful HTML email templates
 
 ### **Frontend**
 
@@ -69,6 +73,20 @@
 - ✅ Password hashing with bcrypt (salt rounds: 10)
 - ✅ Role-based access control middleware
 
+### **Email Verification & Security**
+
+- ✅ **OTP-based email verification** for users and sellers
+- ✅ **Password reset** with secure OTP codes
+- ✅ **Email change confirmation** system
+- ✅ **Automatic retry logic** for failed email sends
+- ✅ **Rate limiting** (max 3 OTP requests per hour)
+- ✅ **Brute force protection** (max 5 verification attempts)
+- ✅ **Secure OTP storage** with bcrypt hashing
+- ✅ **Auto-cleanup service** (removes used/expired OTPs)
+  - Used OTPs: Deleted immediately
+  - Expired OTPs: Deleted 10 minutes after expiration
+- ✅ Beautiful HTML email templates with plain text fallback
+
 ### **User Management**
 
 - ✅ User registration and login
@@ -88,6 +106,7 @@
 - ✅ PostgreSQL with PostGIS for location data
 - ✅ DAOs (Data Access Objects) for clean data layer
 - ✅ Support for Users, Sellers, Admins, Items, Reviews, and Carts
+- ✅ Automatic OTP cleanup with 10-minute grace period
 
 ### **File Management**
 
@@ -103,7 +122,8 @@ ecommerce/
 ├── Backend/
 │   ├── src/
 │   │   ├── controllers/        # Request handlers
-│   │   │   └── authController.ts
+│   │   │   ├── authController.ts
+│   │   │   └── otpController.ts        # OTP verification endpoints
 │   │   ├── routes/             # API route definitions
 │   │   │   └── auth.Routes.ts
 │   │   ├── middlewares/        # Custom middleware
@@ -116,14 +136,22 @@ ecommerce/
 │   │   │   ├── Admin.ts
 │   │   │   ├── Item.ts
 │   │   │   ├── Review.ts
-│   │   │   └── Cart.ts
+│   │   │   ├── Cart.ts
+│   │   │   └── emailOtp.ts             # OTP model
 │   │   ├── daos/               # Database access layer
 │   │   │   ├── UserDao.ts
 │   │   │   ├── SellerDao.ts
 │   │   │   ├── AdminDao.ts
 │   │   │   ├── ItemDao.ts
 │   │   │   ├── ReviewDao.ts
-│   │   │   └── CartDao.ts
+│   │   │   ├── CartDao.ts
+│   │   │   └── EmailOtpDao.ts          # OTP database operations
+│   │   ├── services/           # Business logic
+│   │   │   ├── EmailService.ts         # Nodemailer email sending
+│   │   │   └── OtpCleanupService.ts    # Auto-cleanup service
+│   │   ├── utils/              # Utility functions
+│   │   │   ├── otpHelpers.ts           # OTP generation
+│   │   │   └── emailTemplates.ts       # HTML email templates
 │   │   ├── validation(ZOD)/    # Zod validation schemas
 │   │   │   ├── UserValidation.ts
 │   │   │   ├── SellerValidation.ts
@@ -137,7 +165,7 @@ ecommerce/
 │   │   ├── utils/              # Utility functions
 │   │   ├── scripts/            # Database scripts
 │   │   └── App.ts              # Application entry point
-│   ├── Server.ts
+│   ├── Server.ts               # Server with OTP cleanup service
 │   ├── package.json
 │   ├── tsconfig.json
 │   └── .env
@@ -191,6 +219,7 @@ Each DAO provides CRUD operations for its respective entity:
 - **ItemDao**: Product catalog operations
 - **CartDao**: Shopping cart management
 - **ReviewDao**: Product review operations
+- **EmailOtpDao**: OTP creation, verification, rate limiting, and cleanup
 
 #### **3. Validation Schemas (Zod)**
 
@@ -293,10 +322,34 @@ All API requests are validated using Zod schemas:
 - id (UUID, Primary Key)
 - user_id (UUID, Foreign Key → users.id)
 - item_id (UUID, Foreign Key → items.id)
+- seller_id (UUID, Foreign Key → sellers.id)
 - quantity (INTEGER)
+- price_at_time (DECIMAL)
 - created_at (TIMESTAMP)
 - updated_at (TIMESTAMP)
 ```
+
+### **Email OTPs Table**
+
+```sql
+- id (UUID, Primary Key)
+- email (VARCHAR)
+- account_type (ENUM: 'user', 'seller', 'admin')
+- otp_hash (VARCHAR, HASHED) -- Bcrypt hashed, never plain text
+- purpose (ENUM: 'email_verification', 'password_reset', 'email_change')
+- expires_at (TIMESTAMPTZ) -- 5 minutes from creation
+- attempts (INTEGER, default: 0) -- Max 5 attempts for brute force protection
+- is_used (BOOLEAN, default: false) -- Single-use OTPs
+- created_at (TIMESTAMPTZ)
+- updated_at (TIMESTAMPTZ)
+```
+
+**Security Features:**
+
+- OTPs are hashed with bcrypt before storage
+- Automatic cleanup: Used OTPs deleted immediately, expired OTPs after 10-minute grace period
+- Rate limiting: Max 3 OTP requests per hour per email
+- Brute force protection: Max 5 verification attempts
 
 ---
 
@@ -361,16 +414,18 @@ CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 
-# Email (Nodemailer)
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASSWORD=your_app_password
+# Email Service (Gmail SMTP - Nodemailer)
+MAIL_USER=your-email@gmail.com        # Gmail address
+MAIL_PASS=your-app-password           # Gmail App Password (NOT regular password!)
+FROM_EMAIL=noreply@swiftmart.com      # Optional: Custom sender address
 
 # Server
 PORT=5000
 NODE_ENV=development
 ```
+
+> **⚠️ Important**: For Gmail, you must use an **App Password**, not your regular Gmail password.  
+> Generate one at: [https://myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
 
 ---
 
@@ -420,15 +475,20 @@ POST /api/auth/register
 
 ```json
 {
+  "success": true,
+  "message": "Registration successful! Please check your email to verify your account.",
   "user": {
     "id": "uuid-here",
     "name": "John Doe",
     "email": "john@example.com",
     "role": "user",
     "created_at": "2025-12-04T19:25:34.000Z"
-  }
+  },
+  "verification_sent": true
 }
 ```
+
+> **Note**: A verification OTP is automatically sent to the user's email upon registration.
 
 ---
 
@@ -467,14 +527,81 @@ POST /api/auth/seller/register
 
 ---
 
+### **Email Verification & OTP**
+
+| Method | Endpoint                           | Description                  | Auth Required |
+| ------ | ---------------------------------- | ---------------------------- | ------------- |
+| POST   | `/api/auth/send-verification-otp`  | Send/resend verification OTP | ❌            |
+| POST   | `/api/auth/verify-email`           | Verify email with OTP        | ❌            |
+| POST   | `/api/auth/request-password-reset` | Request password reset OTP   | ❌            |
+| POST   | `/api/auth/reset-password`         | Reset password with OTP      | ❌            |
+
+**Example Request - Verify Email:**
+
+```json
+POST /api/auth/verify-email
+{
+  "email": "john@example.com",
+  "otp": "123456",
+  "account_type": "user"
+}
+```
+
+**Example Response:**
+
+```json
+{
+  "success": true,
+  "message": "Email verified successfully"
+}
+```
+
+**Example Request - Password Reset:**
+
+```json
+POST /api/auth/request-password-reset
+{
+  "email": "john@example.com",
+  "account_type": "user"
+}
+
+POST /api/auth/reset-password
+{
+  "email": "john@example.com",
+  "otp": "123456",
+  "new_password": "newSecurePassword123",
+  "account_type": "user"
+}
+```
+
+---
+
 ## 🔒 Security Features
+
+### **Authentication & Access Control**
 
 - **Password Security**: Passwords are hashed using bcrypt with 10 salt rounds
 - **JWT Authentication**: Secure token-based authentication with 7-day expiration
 - **HTTP-only Cookies**: Prevents XSS attacks by making tokens inaccessible to JavaScript
+- **Role-Based Access**: Middleware enforces role-based permissions
+
+### **Email & OTP Security**
+
+- **Secure OTP Storage**: All OTPs are hashed with bcrypt before database storage
+- **Single-Use OTPs**: OTPs are marked as used after successful verification
+- **Time-Limited OTPs**: OTPs expire after 5 minutes
+- **Rate Limiting**: Maximum 3 OTP requests per hour per email address
+- **Brute Force Protection**: Maximum 5 verification attempts per OTP
+- **Automatic Cleanup**: Node.js service removes used/expired OTPs
+  - Used OTPs: Deleted immediately
+  - Expired OTPs: Deleted 10 minutes after expiration (grace period)
+- **Email Retry Logic**: Automatic retry on email send failures
+
+### **Data Protection**
+
 - **Input Validation**: All requests validated using Zod schemas
 - **SQL Injection Protection**: Parameterized queries via PostgreSQL client
-- **Role-Based Access**: Middleware enforces role-based permissions
+- **CORS Protection**: Configured for secure cross-origin requests
 
 ---
 

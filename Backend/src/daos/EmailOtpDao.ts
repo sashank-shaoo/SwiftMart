@@ -107,12 +107,17 @@ export class EmailOtpDao {
 
   /**
    * Clean up expired or used OTPs
-   * Should be run periodically (e.g., via cron job)
+   * Rules:
+   * - Used OTPs: Deleted immediately (is_used = TRUE)
+   * - Expired OTPs: Deleted 10 minutes after expiration (grace period)
+   *
+   * Should be run periodically via OtpCleanupService
    */
   static async cleanupExpiredOtps(): Promise<number> {
     const text = `
       DELETE FROM email_otps 
-      WHERE expires_at < NOW() OR is_used = TRUE
+      WHERE is_used = TRUE 
+         OR expires_at < NOW() - INTERVAL '10 minutes'
       RETURNING id
     `;
 
