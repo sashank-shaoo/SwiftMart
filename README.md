@@ -531,10 +531,10 @@ POST /api/auth/seller/register
 
 | Method | Endpoint                           | Description                  | Auth Required |
 | ------ | ---------------------------------- | ---------------------------- | ------------- |
-| POST   | `/api/auth/send-verification-otp`  | Send/resend verification OTP | ❌            |
-| POST   | `/api/auth/verify-email`           | Verify email with OTP        | ❌            |
-| POST   | `/api/auth/request-password-reset` | Request password reset OTP   | ❌            |
-| POST   | `/api/auth/reset-password`         | Reset password with OTP      | ❌            |
+| POST   | `/api/auth/send-verification-otp`  | Send/resend verification OTP | ❌           |
+| POST   | `/api/auth/verify-email`           | Verify email with OTP        | ❌           |
+| POST   | `/api/auth/request-password-reset` | Request password reset OTP   | ❌           |
+| POST   | `/api/auth/reset-password`         | Reset password with OTP      | ❌           |
 
 **Example Request - Verify Email:**
 
