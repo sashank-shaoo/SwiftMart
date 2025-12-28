@@ -1,4 +1,22 @@
-//This Script file is user for only run script files ==== like (creating model, create index, etc);
-//It doesn't include any codeLogic or dependecies.
-//it is only meant for run scripts.
-//I think it is help full.
+/**
+ * Database Scripts Directory
+ *
+ * This directory contains utility scripts for database operations such as:
+ * - Schema creation and migrations
+ * - Index creation
+ * - Data seeding
+ * - Database maintenance tasks
+ *
+ * These scripts are standalone executables that should be run independently
+ * using ts-node. They do not contain application logic or
+ * API dependencies.
+ *
+ * Usage:
+ *   npx ts-node src/scripts/<script-name>.ts
+ *
+ * @example
+ *   npx ts-node src/scripts/createProductAndCategoryTables.ts
+ *   npx ts-node src/scripts/setupOtpCleanup.ts
+ */
+
+export {};
