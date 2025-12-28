@@ -4,13 +4,13 @@ import { Cart } from "../models/Cart";
 export class CartDao {
   static async addToCart(cart: Cart): Promise<Cart> {
     const text = `
-      INSERT INTO carts (user_id, item_id, seller_id, quantity, price_at_time)
+      INSERT INTO carts (user_id, product_id, seller_id, quantity, price_at_time)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *
     `;
     const values = [
       cart.user_id,
-      cart.item_id,
+      cart.product_id,
       cart.seller_id,
       cart.quantity,
       cart.price_at_time,
