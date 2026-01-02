@@ -1,93 +1,140 @@
-import nodemailer from "nodemailer";
 import {
   getOtpEmailTemplate,
   getOtpEmailPlainText,
 } from "../utils/emailTemplates";
 
-// Create Gmail SMTP transporter
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-});
+interface EmailOptions {
+  to: string;
+  subject: string;
+  html: string;
+  text?: string;
+}
 
 /**
- * Send OTP verification email with retry logic
+ * Brevo Email Service using HTTP API (Fetch)
+ * Integration based on user-provided logic.
  */
-export async function sendOtpEmail(
-  email: string,
-  otp: string,
-  name?: string,
-  purpose: "verification" | "password_reset" | "email_change" = "verification"
-): Promise<boolean> {
-  const subjects = {
-    verification: "Verify Your Email - SwiftMart",
-    password_reset: "Reset Your Password - SwiftMart",
-    email_change: "Confirm Email Change - SwiftMart",
-  };
+class BrevoEmailService {
+  private apiUrl = "https://api.brevo.com/v3/smtp/email";
 
-  const mailOptions = {
-    from: process.env.FROM_EMAIL || process.env.MAIL_USER,
-    to: email,
-    subject: subjects[purpose],
-    html: getOtpEmailTemplate(otp, name, purpose),
-    text: getOtpEmailPlainText(otp, name, purpose),
-  };
+  private get config() {
+    return {
+      apiKey: process.env.BREVO_API_KEY || "",
+      fromEmail: process.env.FROM_EMAIL || "sashanksahoo8@gmail.com",
+      fromName: process.env.EMAIL_FROM_NAME || "SwiftMart",
+    };
+  }
 
-  console.log(`📧 Attempting to send OTP email to ${email}...`);
-  console.log(`  Purpose: ${purpose}`);
-  console.log(`  OTP: ${otp}`);
+  /**
+   * Send email using Brevo HTTP API
+   */
+  async sendEmail(options: EmailOptions): Promise<boolean> {
+    const { apiKey, fromEmail, fromName } = this.config;
 
-  // First attempt
-  try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`✅ Email sent successfully (${purpose}):`, info.messageId);
-    return true;
-  } catch (error) {
-    console.error("❌ First attempt failed:", error);
-    console.log("🔄 Retrying...");
+    if (!apiKey) {
+      console.error("BREVO_API_KEY not configured");
+      return false;
+    }
 
-    // Second attempt (retry)
+    const payload = {
+      sender: {
+        name: fromName,
+        email: fromEmail,
+      },
+      to: [{ email: options.to }],
+      subject: options.subject,
+      htmlContent: options.html,
+      textContent: options.text || "",
+    };
+
     try {
-      const info = await transporter.sendMail(mailOptions);
-      console.log(`✅ Email sent on retry (${purpose}):`, info.messageId);
+      const response = await fetch(this.apiUrl, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          "api-key": apiKey,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = (await response.json()) as any;
+        console.error(
+          `❌ Brevo API Error (HTTP ${response.status}):`,
+          JSON.stringify(errorData, null, 2)
+        );
+        return false;
+      }
+
+      console.log(`✅ Email sent successfully to ${options.to} via Brevo API`);
       return true;
-    } catch (retryError) {
-      console.error("❌ Both attempts failed!");
-      console.error("Retry error:", retryError);
+    } catch (error: any) {
+      console.error(`❌ Brevo API Connection Error: ${error.message}`);
       return false;
     }
   }
+
+  /**
+   * Send OTP verification email (SwiftMart Implementation)
+   */
+  async sendOtpEmail(
+    email: string,
+    otp: string,
+    name?: string,
+    purpose: "verification" | "password_reset" | "email_change" = "verification"
+  ): Promise<boolean> {
+    const subjects = {
+      verification: "Verify Your Email - SwiftMart",
+      password_reset: "Reset Your Password - SwiftMart",
+      email_change: "Confirm Email Change - SwiftMart",
+    };
+
+    const html = getOtpEmailTemplate(otp, name, purpose);
+    const text = getOtpEmailPlainText(otp, name, purpose);
+
+    console.log(`📧 Sending ${purpose} email to ${email}...`);
+
+    return this.sendEmail({
+      to: email,
+      subject: subjects[purpose],
+      html,
+      text,
+    });
+  }
+
+  /**
+   * Send password reset email
+   */
+  async sendPasswordResetEmail(
+    email: string,
+    otp: string,
+    name?: string
+  ): Promise<boolean> {
+    return this.sendOtpEmail(email, otp, name, "password_reset");
+  }
+
+  /**
+   * Send email change confirmation email
+   */
+  async sendEmailChangeEmail(
+    email: string,
+    otp: string,
+    name?: string
+  ): Promise<boolean> {
+    return this.sendOtpEmail(email, otp, name, "email_change");
+  }
 }
 
-/**
- * Send password reset email (alias for sendOtpEmail with password_reset purpose)
- */
-export async function sendPasswordResetEmail(
-  email: string,
-  otp: string,
-  name?: string
-): Promise<boolean> {
-  return sendOtpEmail(email, otp, name, "password_reset");
-}
+const serviceInstance = new BrevoEmailService();
 
-/**
- * Send email change confirmation email
- */
-export async function sendEmailChangeEmail(
-  email: string,
-  otp: string,
-  name?: string
-): Promise<boolean> {
-  return sendOtpEmail(email, otp, name, "email_change");
-}
 
-/**
- * Generic email sending function (for other uses)
- */
-async function sendEmail({
+export const sendOtpEmail = serviceInstance.sendOtpEmail.bind(serviceInstance);
+export const sendPasswordResetEmail = serviceInstance.sendPasswordResetEmail.bind(serviceInstance);
+export const sendEmailChangeEmail = serviceInstance.sendEmailChangeEmail.bind(serviceInstance);
+
+// Default export for general uses
+const sendEmail = async ({
   to,
   subject,
   html,
@@ -95,20 +142,7 @@ async function sendEmail({
   to: string;
   subject: string;
   html: string;
-}): Promise<boolean> {
-  try {
-    const info = await transporter.sendMail({
-      from: process.env.FROM_EMAIL || process.env.MAIL_USER,
-      to,
-      subject,
-      html,
-    });
-    console.log("✅ Email sent:", info.messageId);
-    return true;
-  } catch (error) {
-    console.error("❌ Email sending failed:", error);
-    return false;
-  }
-}
-
+}) => {
+  return serviceInstance.sendEmail({ to, subject, html });
+};
 export default sendEmail;
