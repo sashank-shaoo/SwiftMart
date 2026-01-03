@@ -35,6 +35,13 @@ export class UserDao {
     return res.rows[0] || null;
   }
 
+  static async findUserById(id: string): Promise<User | null> {
+    const text =
+      "SELECT *, ST_AsGeoJSON(location)::json as location FROM users WHERE id = $1";
+    const res = await query(text, [id]);
+    return res.rows[0] || null;
+  }
+
   static async updateRefreshToken(
     userId: string,
     tokenHash: string,

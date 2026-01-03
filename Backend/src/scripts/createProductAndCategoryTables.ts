@@ -11,6 +11,7 @@ async function runMigrations() {
       "001_create_categories_table.sql",
       "002_create_products_table.sql",
       "003_update_dependent_tables.sql",
+      "004_create_orders_tables.sql",
     ];
 
     for (const migration of migrations) {

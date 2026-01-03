@@ -39,4 +39,9 @@ export class CartDao {
     const text = "DELETE FROM carts WHERE id = $1";
     await query(text, [id]);
   }
+
+  static async clearCartByUserId(userId: string): Promise<void> {
+    const text = "DELETE FROM carts WHERE user_id = $1";
+    await query(text, [userId]);
+  }
 }
