@@ -4,10 +4,14 @@ import { SellerDao } from "../daos/SellerDao";
 import { AdminDao } from "../daos/AdminDao";
 import { compare, hash } from "bcrypt";
 import { sign } from "jsonwebtoken";
+import { NotificationDao } from "../daos/NotificationDao";
 import { jwtCookieOptions } from "../utils/cookieParser";
 import { EmailOtpDao } from "../daos/EmailOtpDao";
 import { generateOtp } from "../utils/otpHelpers";
 import { sendOtpEmail } from "../services/EmailService";
+
+
+//--------User Credentials--------//
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
@@ -83,6 +87,86 @@ export const registerUser = async (req: Request, res: Response) => {
   }
 };
 
+export const becomeSeller = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized: User not found",
+      });
+    }
+
+    // 1. Get user details
+    const user = await UserDao.findUserById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User profile not found",
+      });
+    }
+
+    // 2. Check if already a seller
+    const existingSeller = await SellerDao.findSellerByEmail(user.email);
+    if (existingSeller) {
+      return res.status(400).json({
+        success: false,
+        message: "You are already registered as a seller",
+      });
+    }
+
+    // 3. Create Seller from User credentials
+    const newSeller = await SellerDao.createSeller({
+      name: user.name,
+      email: user.email,
+      password: user.password, // Existing hashed password
+      location: user.location,
+      number: user.number,
+      role: "seller",
+      is_seller_verified: false,
+      is_admin_verified: false,
+      is_verified_email: user.is_verified_email,
+    });
+
+    // 4. Create Admin Notification
+    try {
+      await NotificationDao.createNotification({
+        type: "SELLER_MIGRATION",
+        message: `User ${user.name} (${user.email}) applied to become a Seller`,
+        metadata: {
+          seller_id: newSeller.id,
+          user_id: user.id,
+          email: user.email,
+        },
+      });
+      console.log(
+        `🔔 Admin notification created for seller migration: ${user.email}`
+      );
+    } catch (notifError) {
+      console.error("Failed to create admin notification:", notifError);
+    }
+
+    return res.status(201).json({
+      success: true,
+      message:
+        "Application submitted! An admin will review your seller application shortly.",
+      seller: {
+        id: newSeller.id,
+        name: newSeller.name,
+        email: newSeller.email,
+      },
+    });
+  } catch (error: any) {
+    console.error("Seller Migration Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to process seller migration application",
+      error: error.message,
+    });
+  }
+};
+
 export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -142,6 +226,8 @@ export const logOutUser = async (req: Request, res: Response) => {
   });
 };
 
+
+//--------Seller Credentials--------//
 export const registerSeller = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
@@ -190,6 +276,18 @@ export const registerSeller = async (req: Request, res: Response) => {
     } catch (emailError) {
       console.error("Failed to send verification email:", emailError);
       // Don't fail registration if email fails
+    }
+
+    // Create Admin Notification
+    try {
+      await NotificationDao.createNotification({
+        type: "SELLER_REGISTRATION",
+        message: `New seller registered: ${name} (${email})`,
+        metadata: { seller_id: newSeller.id, email: email, name: name },
+      });
+      console.log(`🔔 Admin notification created for new seller: ${email}`);
+    } catch (notifError) {
+      console.error("Failed to create admin notification:", notifError);
     }
 
     return res.status(201).json({
@@ -273,6 +371,7 @@ export const logOutSeller = async (req: Request, res: Response) => {
   });
 };
 
+//--------Admin Credentials--------//
 export const registerAdmin = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
@@ -382,3 +481,5 @@ export const logOutAdmin = async (req: Request, res: Response) => {
     message: "Admin logged out successfully",
   });
 };
+
+

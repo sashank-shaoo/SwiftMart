@@ -13,6 +13,11 @@ const router = express.Router();
 router.post("/register", validate(userSchema), authController.registerUser);
 router.post("/login", authController.loginUser);
 router.post("/logout", authMiddleware, authController.logOutUser);
+router.post(
+  "/become-Seller",
+  authMiddleware,
+  authController.becomeSeller
+);
 
 // Seller Routes
 router.post(
