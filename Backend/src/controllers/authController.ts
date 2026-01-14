@@ -150,7 +150,7 @@ export const becomeSeller = async (req: Request, res: Response) => {
     return res.status(201).json({
       success: true,
       message:
-        "Application submitted! An admin will review your seller application shortly.",
+        "Application submitted! Wait for further instructions.",
       seller: {
         id: newSeller.id,
         name: newSeller.name,
