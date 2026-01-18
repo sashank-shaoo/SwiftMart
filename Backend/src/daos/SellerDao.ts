@@ -32,7 +32,12 @@ export class SellerDao {
     const res = await query(text, [email]);
     return res.rows[0] || null;
   }
-
+  static async findSellerById(id: string): Promise<Seller | null> {
+    const text =
+      "SELECT *, ST_AsGeoJSON(location)::json as location FROM sellers WHERE id = $1";
+    const res = await query(text, [id]);
+    return res.rows[0] || null;
+  }
   static async updateRefreshToken(
     sellerId: string,
     tokenHash: string,

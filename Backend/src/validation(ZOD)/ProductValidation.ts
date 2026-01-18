@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-export const productSchema = z.object({
+// Base schema with common fields
+const baseProductSchema = z.object({
   id: z.uuid().optional(),
 
   name: z
@@ -37,11 +38,6 @@ export const productSchema = z.object({
     .max(10000000, "Original price must not exceed 10,000,000")
     .optional(),
 
-  images: z
-    .array(z.string().url("Each image must be a valid URL"))
-    .min(1, "At least one image is required")
-    .max(10, "Maximum 10 images allowed"),
-
   attributes: z.record(z.string(), z.any()).optional(),
 
   seller_id: z.uuid("Seller ID must be a valid UUID"),
@@ -69,4 +65,40 @@ export const productSchema = z.object({
   updated_at: z.date().optional(),
 });
 
+// Full product schema with images (for general use)
+export const productSchema = baseProductSchema.extend({
+  images: z
+    .array(z.string().url("Each image must be a valid URL"))
+    .min(1, "At least one image is required")
+    .max(10, "Maximum 10 images allowed"),
+});
+
+// Product creation schema without images (images handled by Multer)
+export const createProductSchema = baseProductSchema
+  .extend({
+    initial_stock: z
+      .number()
+      .int("Initial stock must be an integer")
+      .nonnegative("Initial stock must be non-negative")
+      .optional(),
+
+    low_stock_threshold: z
+      .number()
+      .int("Low stock threshold must be an integer")
+      .positive("Low stock threshold must be positive")
+      .optional(),
+  })
+  .omit({
+    id: true,
+    rating: true,
+    review_count: true,
+    created_at: true,
+    updated_at: true,
+  });
+
+// Product update schema (all fields optional for partial updates)
+export const updateProductSchema = createProductSchema.partial();
+
 export type ProductInput = z.infer<typeof productSchema>;
+export type CreateProductInput = z.infer<typeof createProductSchema>;
+export type UpdateProductInput = z.infer<typeof updateProductSchema>;

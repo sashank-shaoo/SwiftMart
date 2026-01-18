@@ -2,9 +2,6 @@ import { query } from "../db/db";
 import { Order } from "../models/Order";
 
 export class OrderDao {
-  /**
-   * Create a new order
-   */
   static async createOrder(order: Order): Promise<Order> {
     const text = `
       INSERT INTO orders (
@@ -31,9 +28,6 @@ export class OrderDao {
     return res.rows[0];
   }
 
-  /**
-   * Get all orders for a specific user
-   */
   static async getOrdersByUserId(userId: string): Promise<Order[]> {
     const text =
       "SELECT * FROM orders WHERE user_id = $1 ORDER BY created_at DESC";
@@ -41,18 +35,12 @@ export class OrderDao {
     return res.rows;
   }
 
-  /**
-   * Get a single order by ID
-   */
   static async getOrderById(orderId: string): Promise<Order | null> {
     const text = "SELECT * FROM orders WHERE id = $1";
     const res = await query(text, [orderId]);
     return res.rows[0] || null;
   }
 
-  /**
-   * Update order status
-   */
   static async updateOrderStatus(
     orderId: string,
     status: string

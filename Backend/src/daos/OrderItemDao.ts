@@ -2,9 +2,6 @@ import { query } from "../db/db";
 import { OrderItem } from "../models/OrderItem";
 
 export class OrderItemDao {
-  /**
-   * Create a new order item
-   */
   static async createOrderItem(item: OrderItem): Promise<OrderItem> {
     const text = `
       INSERT INTO order_items (
@@ -24,9 +21,6 @@ export class OrderItemDao {
     return res.rows[0];
   }
 
-  /**
-   * Get all items for a specific order
-   */
   static async getItemsByOrderId(orderId: string): Promise<OrderItem[]> {
     const text = `
       SELECT oi.*, p.name as product_name, p.images as product_images

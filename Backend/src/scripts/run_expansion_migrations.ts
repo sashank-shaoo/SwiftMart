@@ -12,6 +12,7 @@ async function runExpansionMigrations() {
     const migrations = [
       "006_create_inventory_table.sql",
       "007_create_wishlist_table.sql",
+      "008_update_inventory_table.sql",
     ];
 
     for (const migration of migrations) {

@@ -2,9 +2,6 @@ import { query } from "../db/db";
 import { Notification } from "../models/Notification";
 
 export class NotificationDao {
-  /**
-   * Create a new notification (notice) for admins
-   */
   static async createNotification(
     notification: Notification
   ): Promise<Notification> {
@@ -23,9 +20,6 @@ export class NotificationDao {
     return res.rows[0];
   }
 
-  /**
-   * Get all unread notifications
-   */
   static async getUnreadNotifications(): Promise<Notification[]> {
     const text =
       "SELECT * FROM admin_notifications WHERE is_read = FALSE ORDER BY created_at DESC";
@@ -33,9 +27,6 @@ export class NotificationDao {
     return res.rows;
   }
 
-  /**
-   * Mark a notification as read
-   */
   static async markAsRead(id: string): Promise<void> {
     const text =
       "UPDATE admin_notifications SET is_read = TRUE, updated_at = CURRENT_TIMESTAMP WHERE id = $1";
