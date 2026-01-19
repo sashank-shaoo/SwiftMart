@@ -16,17 +16,13 @@ import {
 
 const router = Router();
 
-// ========== PUBLIC ROUTES (No authentication required) ==========
-
-// Get inventory for a specific product (public - anyone can view)
+//Public route to get inventory for a specific product
 router.get("/:product_id", getInventory);
 
-// Check stock availability (public - for customers checking before purchase)
+//Public route to check stock availability
 router.get("/:product_id/check", checkStockAvailability);
 
-// ========== SELLER OR ADMIN ROUTES ==========
-
-// Get all low stock products (sellers and admins need to monitor inventory)
+//Seller or Admin can get low stock products
 router.get(
   "/low-stock/all",
   authMiddleware,
@@ -34,9 +30,7 @@ router.get(
   getLowStockProducts
 );
 
-// ========== SELLER-ONLY ROUTES ==========
-
-// Update warehouse location (only seller manages their warehouse)
+//Seller can update warehouse location
 router.patch(
   "/:product_id/warehouse",
   authMiddleware,
@@ -44,7 +38,7 @@ router.patch(
   updateWarehouseLocation
 );
 
-// Restock (add stock) - only seller can add inventory
+//Seller can restock product
 router.post(
   "/:product_id/restock",
   authMiddleware,
@@ -52,7 +46,7 @@ router.post(
   restockProduct
 );
 
-// Set absolute stock quantity - only seller can set exact stock levels
+//Seller can set stock quantity
 router.put(
   "/:product_id/stock",
   authMiddleware,
@@ -60,7 +54,7 @@ router.put(
   setStockQuantity
 );
 
-// Update low stock threshold - only seller decides alert thresholds
+//Seller can update low stock threshold
 router.patch(
   "/:product_id/threshold",
   authMiddleware,
