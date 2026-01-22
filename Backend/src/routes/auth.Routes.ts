@@ -3,41 +3,72 @@ import * as otpController from "../controllers/otpController";
 import express from "express";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { validate } from "../middlewares/validateMiddleware";
-import { userSchema } from "../validation(ZOD)/UserValidation";
-import { sellerSchema } from "../validation(ZOD)/SellerValidation";
-import { adminSchema } from "../validation(ZOD)/AdminValidation";
+import {
+  userSchema,
+  UpdateUserSchema,
+  ChangePasswordSchema,
+} from "../validation(ZOD)/UserValidation";
+import {
+  CreateSellerProfileSchema,
+  RegisterSellerSchema,
+} from "../validation(ZOD)/SellerProfileValidation";
+import { CreateAdminProfileSchema } from "../validation(ZOD)/AdminProfileValidation";
 
 const router = express.Router();
 
-// User Routes
+router.post("/login", authController.login);
+router.post("/logout", authMiddleware, authController.logout);
+
 router.post("/register", validate(userSchema), authController.registerUser);
-router.post("/login", authController.loginUser);
-router.post("/logout", authMiddleware, authController.logOutUser);
 router.post(
-  "/become-Seller",
+  "/become-seller",
   authMiddleware,
-  authController.becomeSeller
+  validate(CreateSellerProfileSchema),
+  authController.becomeSeller,
+);
+router.put(
+  "/update",
+  authMiddleware,
+  validate(UpdateUserSchema),
+  authController.updateUser,
 );
 
-// Seller Routes
+// ===== Email Update Routes (separate from profile updates for security) =====
+router.post(
+  "/request-email-update",
+  authMiddleware,
+  authController.requestEmailUpdate,
+);
+router.post(
+  "/verify-email-update",
+  authMiddleware,
+  authController.verifyEmailUpdate,
+);
+
+// ===== Password & Token Management Routes =====
+router.post(
+  "/change-password",
+  authMiddleware,
+  validate(ChangePasswordSchema),
+  authController.changePassword,
+);
+router.post("/refresh-token", authController.refreshToken);
+
+// ===== Seller Routes =====
 router.post(
   "/seller/register",
-  validate(sellerSchema),
-  authController.registerSeller
+  validate(RegisterSellerSchema),
+  authController.registerSeller,
 );
-router.post("/seller/login", authController.loginSeller);
-router.post("/seller/logout", authMiddleware, authController.logOutSeller);
 
-// Admin Routes
-router.post(
-  "/admin/register",
-  validate(adminSchema),
-  authController.registerAdmin
-);
-router.post("/admin/login", authController.loginAdmin);
-router.post("/admin/logout", authMiddleware, authController.logOutAdmin);
+//Disabled for now
+// // ===== Admin Routes =====
+// router.post(
+//   "/admin/register",
+//   authController.registerAdmin, // Restricted endpoint, should require super-admin auth
+// );
 
-// OTP / Email Verification Routes
+// ===== OTP / Email Verification Routes =====
 router.post("/send-verification-otp", otpController.sendVerificationOtp);
 router.post("/verify-email", otpController.verifyEmailOtp);
 router.post("/request-password-reset", otpController.requestPasswordReset);

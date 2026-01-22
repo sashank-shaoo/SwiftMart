@@ -7,7 +7,7 @@ export class EmailOtpDao {
     email: string,
     otp: string,
     accountType: "user" | "seller" | "admin",
-    purpose: "email_verification" | "password_reset" | "email_change"
+    purpose: "email_verification" | "password_reset" | "email_change",
   ): Promise<EmailOtp> {
     const otpHash = await bcrypt.hash(otp, 10);
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
@@ -28,7 +28,7 @@ export class EmailOtpDao {
     email: string,
     otp: string,
     accountType: "user" | "seller" | "admin",
-    purpose: "email_verification" | "password_reset" | "email_change"
+    purpose: "email_verification" | "password_reset" | "email_change",
   ): Promise<boolean> {
     const text = `
       SELECT * FROM email_otps
@@ -50,7 +50,7 @@ export class EmailOtpDao {
 
     const otpRecord = res.rows[0];
     const isValid = await bcrypt.compare(otp, otpRecord.otp_hash);
-     //preventing brute force attack
+    //preventing brute force attack
     await query("UPDATE email_otps SET attempts = attempts + 1 WHERE id = $1", [
       otpRecord.id,
     ]);
@@ -67,7 +67,7 @@ export class EmailOtpDao {
 
   static async canRequestOtp(
     email: string,
-    accountType: "user" | "seller" | "admin"
+    accountType: "user" | "seller" | "admin",
   ): Promise<boolean> {
     const text = `
       SELECT COUNT(*) as count
@@ -94,10 +94,10 @@ export class EmailOtpDao {
     const res = await query(text);
     return res.rows.length;
   }
-  
+
   static async deleteOtpsByEmail(
     email: string,
-    accountType: "user" | "seller" | "admin"
+    accountType: "user" | "seller" | "admin",
   ): Promise<void> {
     const text = `
       DELETE FROM email_otps 
@@ -105,5 +105,43 @@ export class EmailOtpDao {
     `;
 
     await query(text, [email, accountType]);
+  }
+
+  static async findLatestOtp(
+    email: string,
+    purpose: "email_verification" | "password_reset" | "email_change",
+  ): Promise<EmailOtp | null> {
+    const text = `
+      SELECT * FROM email_otps
+      WHERE email = $1 
+        AND purpose = $2
+      ORDER BY created_at DESC
+      LIMIT 1
+    `;
+
+    const res = await query(text, [email, purpose]);
+    return res.rows[0] || null;
+  }
+
+  static async markOtpAsUsed(email: string, otp: string): Promise<void> {
+    // Find the OTP record and mark it as used
+    const text = `
+      SELECT id, otp_hash FROM email_otps
+      WHERE email = $1
+      ORDER BY created_at DESC
+      LIMIT 5
+    `;
+
+    const res = await query(text, [email]);
+
+    for (const record of res.rows) {
+      const isMatch = await bcrypt.compare(otp, record.otp_hash);
+      if (isMatch) {
+        await query("UPDATE email_otps SET is_used = TRUE WHERE id = $1", [
+          record.id,
+        ]);
+        return;
+      }
+    }
   }
 }

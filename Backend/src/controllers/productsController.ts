@@ -1,6 +1,6 @@
 import { ProductDao } from "../daos/ProductDao";
 import { Request, Response } from "express";
-import { SellerDao } from "../daos/SellerDao";
+import { UserDao } from "../daos/UserDao";
 import { CategoryDao } from "../daos/CategoryDao";
 import { InventoryDao } from "../daos/InventoryDao";
 import { UpdateProductInput } from "../validation(ZOD)/ProductValidation";
@@ -52,11 +52,19 @@ export const createProductWithImages = async (req: Request, res: Response) => {
       });
     }
 
-    const seller = await SellerDao.findSellerById(seller_id);
+    // Verify seller exists and has seller role
+    const seller = await UserDao.findUserById(seller_id);
     if (!seller) {
       return res.status(404).json({
         success: false,
-        message: "Seller not found ",
+        message: "Seller not found",
+      });
+    }
+
+    if (seller.role !== "seller") {
+      return res.status(403).json({
+        success: false,
+        message: "User is not registered as a seller",
       });
     }
 
@@ -124,12 +132,12 @@ export const createProductWithImages = async (req: Request, res: Response) => {
         product.id!,
         initial_stock ? parseInt(initial_stock) : 0,
         low_stock_threshold ? parseInt(low_stock_threshold) : 5,
-        warehouseLocation
+        warehouseLocation,
       );
     } catch (inventoryError) {
       console.error("Inventory creation error:", inventoryError);
       console.warn(
-        `Product ${product.id} created but inventory creation failed`
+        `Product ${product.id} created but inventory creation failed`,
       );
     }
 
@@ -288,6 +296,76 @@ export const updateProduct = async (req: Request, res: Response) => {
     return res.status(500).json({
       success: false,
       message: "Failed to update product",
+    });
+  }
+};
+
+export const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const { product_id } = req.params;
+    const existingProduct = await ProductDao.findProductById(product_id);
+    if (!existingProduct) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+    const user = req.user as any;
+    if (
+      user.id !== existingProduct.seller_id &&
+      user.seller_id !== existingProduct.seller_id
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only delete your own products",
+      });
+    }
+
+    try {
+      const inventoryDeleted = await InventoryDao.deleteInventory(product_id);
+      if (inventoryDeleted) {
+        console.log(`Inventory for product ${product_id} deleted successfully`);
+      }
+    } catch (inventoryError) {
+      console.warn(
+        `Failed to delete inventory for product ${product_id}:`,
+        inventoryError,
+      );
+    }
+
+    const deletedProduct = await ProductDao.deleteProduct(product_id);
+    if (!deletedProduct) {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to delete product",
+      });
+    }
+
+    // Clean up product images from Cloudinary
+    if (existingProduct.images && existingProduct.images.length > 0) {
+      try {
+        await deleteMultipleImages(existingProduct.images);
+        console.log(
+          `Deleted ${existingProduct.images.length} images for product ${product_id}`,
+        );
+      } catch (imageError) {
+        console.error(
+          `Failed to delete images for product ${product_id}:`,
+          imageError,
+        );
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Product deleted successfully",
+      data: deletedProduct,
+    });
+  } catch (error) {
+    console.error("Delete product error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to delete product",
     });
   }
 };

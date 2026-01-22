@@ -11,9 +11,7 @@ export interface User {
   email: string;
   password: string;
   bio?: string;
-  role?: "user" | "seller" | "admin";
-  is_seller_verified?: boolean;
-  is_admin_verified?: boolean;
+  role: "user" | "seller" | "admin"; // Now required, not optional
   is_verified_email?: boolean;
   refresh_token_hash?: string;
   refresh_token_expires_at?: Date;

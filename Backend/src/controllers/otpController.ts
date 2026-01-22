@@ -1,17 +1,12 @@
 import { Request, Response } from "express";
 import { EmailOtpDao } from "../daos/EmailOtpDao";
 import { UserDao } from "../daos/UserDao";
-import { SellerDao } from "../daos/SellerDao";
-import { AdminDao } from "../daos/AdminDao";
 import { generateOtp, isValidEmail, sanitizeEmail } from "../utils/otpHelpers";
 import { sendOtpEmail, sendPasswordResetEmail } from "../services/EmailService";
 import { query } from "../db/db";
 import bcrypt from "bcrypt";
 
-/**
- * Send OTP for email verification
- * POST /api/auth/send-verification-otp
- */
+
 export const sendVerificationOtp = async (req: Request, res: Response) => {
   try {
     const { email, account_type } = req.body;
@@ -38,13 +33,8 @@ export const sendVerificationOtp = async (req: Request, res: Response) => {
       });
     }
 
-    // Check if account exists
-    let account;
-    if (account_type === "user") {
-      account = await UserDao.findUserByEmail(email);
-    } else {
-      account = await SellerDao.findSellerByEmail(email);
-    }
+    // Check if account exists (all account types are users now)
+    const account = await UserDao.findUserByEmail(email);
 
     if (!account) {
       return res.status(404).json({
@@ -79,7 +69,7 @@ export const sendVerificationOtp = async (req: Request, res: Response) => {
       email,
       otp,
       account.name,
-      "verification"
+      "verification",
     );
 
     if (!emailSent) {
@@ -105,15 +95,10 @@ export const sendVerificationOtp = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * Verify email with OTP
- * POST /api/auth/verify-email
- */
 export const verifyEmailOtp = async (req: Request, res: Response) => {
   try {
     const { email, otp, account_type } = req.body;
 
-    // Validation
     if (!email || !otp || !account_type) {
       return res.status(400).json({
         success: false,
@@ -128,12 +113,11 @@ export const verifyEmailOtp = async (req: Request, res: Response) => {
       });
     }
 
-    // Verify OTP
     const isValid = await EmailOtpDao.verifyOtp(
       email,
       otp,
       account_type,
-      "email_verification"
+      "email_verification",
     );
 
     if (!isValid) {
@@ -144,17 +128,9 @@ export const verifyEmailOtp = async (req: Request, res: Response) => {
     }
 
     // Update email verification status
-    if (account_type === "user") {
-      await query(
-        "UPDATE users SET is_verified_email = TRUE WHERE email = $1",
-        [email]
-      );
-    } else {
-      await query(
-        "UPDATE sellers SET is_verified_email = TRUE WHERE email = $1",
-        [email]
-      );
-    }
+    await query("UPDATE users SET is_verified_email = TRUE WHERE email = $1", [
+      email,
+    ]);
 
     // Clean up used OTPs
     await EmailOtpDao.deleteOtpsByEmail(email, account_type);
@@ -174,15 +150,10 @@ export const verifyEmailOtp = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * Request password reset OTP
- * POST /api/auth/request-password-reset
- */
 export const requestPasswordReset = async (req: Request, res: Response) => {
   try {
     const { email, account_type } = req.body;
 
-    // Validation
     if (!email || !account_type) {
       return res.status(400).json({
         success: false,
@@ -197,7 +168,6 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
       });
     }
 
-    // Check rate limit
     const canRequest = await EmailOtpDao.canRequestOtp(email, account_type);
     if (!canRequest) {
       return res.status(429).json({
@@ -206,17 +176,8 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
       });
     }
 
-    // Find account (don't reveal  if it exists for security)
-    let account;
-    if (account_type === "user") {
-      account = await UserDao.findUserByEmail(email);
-    } else if (account_type === "seller") {
-      account = await SellerDao.findSellerByEmail(email);
-    } else {
-      account = await AdminDao.findAdminByEmail(email);
-    }
+    const account = await UserDao.findUserByEmail(email);
 
-    // Always return success message (security: don't reveal if email exists)
     if (!account) {
       return res.status(200).json({
         success: true,
@@ -224,7 +185,6 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
       });
     }
 
-    // Generate and store OTP
     const otp = generateOtp();
     await EmailOtpDao.createOtp(email, otp, account_type, "password_reset");
 
@@ -246,15 +206,11 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * Reset password with OTP
- * POST /api/auth/reset-password
- */
+
 export const resetPassword = async (req: Request, res: Response) => {
   try {
     const { email, otp, new_password, account_type } = req.body;
 
-    // Validation
     if (!email || !otp || !new_password || !account_type) {
       return res.status(400).json({
         success: false,
@@ -269,12 +225,11 @@ export const resetPassword = async (req: Request, res: Response) => {
       });
     }
 
-    // Verify OTP
     const isValid = await EmailOtpDao.verifyOtp(
       email,
       otp,
       account_type,
-      "password_reset"
+      "password_reset",
     );
 
     if (!isValid) {
@@ -284,34 +239,14 @@ export const resetPassword = async (req: Request, res: Response) => {
       });
     }
 
-    // Hash new password
     const hashedPassword = await bcrypt.hash(new_password, 10);
 
-    // Update password
-    if (account_type === "user") {
-      await query("UPDATE users SET password = $1 WHERE email = $2", [
-        hashedPassword,
-        email,
-      ]);
-    } else if (account_type === "seller") {
-      await query("UPDATE sellers SET password = $1 WHERE email = $2", [
-        hashedPassword,
-        email,
-      ]);
-    } else if (account_type === "admin") {
-      await query("UPDATE admins SET password = $1 WHERE email = $2", [
-        hashedPassword,
-        email,
-      ]);
-    }
+    await query("UPDATE users SET password = $1 WHERE email = $2", [
+      hashedPassword,
+      email,
+    ]);
 
-    // Clean up used OTPs
     await EmailOtpDao.deleteOtpsByEmail(email, account_type);
-
-    // Clear any refresh tokens for security
-    // Note: clearRefreshToken requires ID, not email
-    // This is optional cleanup, so we'll skip if we don't have ID
-    // In a real reset flow, user would need to login again anyway
 
     console.log(`✅ Password reset for ${sanitizeEmail(email)}`);
 
