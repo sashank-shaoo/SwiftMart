@@ -1,0 +1,1 @@
+{"level":"error","message":"Failed to create index: illegal_argument_exception\n\tRoot causes:\n\t\tillegal_argument_exception: Settings [index.number_of_shards,index.number_of_replicas] are not available when running in serverless mode","timestamp":"2026-01-23 11:08:15"}

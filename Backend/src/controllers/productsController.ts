@@ -4,6 +4,7 @@ import { UserDao } from "../daos/UserDao";
 import { CategoryDao } from "../daos/CategoryDao";
 import { InventoryDao } from "../daos/InventoryDao";
 import { UpdateProductInput } from "../validation(ZOD)/ProductValidation";
+import ElasticsearchService from "../services/ElasticsearchService";
 import {
   uploadMultipleImages,
   deleteMultipleImages,
@@ -367,5 +368,190 @@ export const deleteProduct = async (req: Request, res: Response) => {
       success: false,
       message: "Failed to delete product",
     });
+  }
+};
+
+/**
+ * GET /products - List all products with pagination
+ */
+export const getAllProducts = async (req: Request, res: Response) => {
+  try {
+    const {
+      page = "1",
+      limit = "20",
+      category_id,
+      min_price,
+      max_price,
+      sort = "newest",
+    } = req.query;
+
+    const pageNum = Math.max(1, parseInt(page as string, 10));
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10)));
+
+    const { products, total } = await ProductDao.findAllProductsWithPagination({
+      page: pageNum,
+      limit: limitNum,
+      category_id: category_id as string,
+      min_price: min_price ? parseFloat(min_price as string) : undefined,
+      max_price: max_price ? parseFloat(max_price as string) : undefined,
+      sort: sort as string,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Products retrieved successfully",
+      data: {
+        products,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages: Math.ceil(total / limitNum),
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Get all products error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve products",
+    });
+  }
+};
+
+/**
+ * GET /products/:product_id - Get single product with details
+ */
+export const getProductById = async (req: Request, res: Response) => {
+  try {
+    const { product_id } = req.params;
+
+    const product = await ProductDao.findProductWithDetails(product_id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Product found",
+      data: { product },
+    });
+  } catch (error) {
+    console.error("Get product by ID error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve product",
+    });
+  }
+};
+
+/**
+ * GET /products/search - Search products using Elasticsearch
+ */
+export const searchProducts = async (req: Request, res: Response) => {
+  try {
+    const {
+      q,
+      category,
+      min_price,
+      max_price,
+      in_stock,
+      page = "1",
+      limit = "20",
+      sort = "relevance",
+    } = req.query;
+
+    if (!q) {
+      return res.status(400).json({
+        success: false,
+        message: "Search query 'q' is required",
+      });
+    }
+
+    const result = await ElasticsearchService.searchProducts({
+      query: q as string,
+      category: category as string,
+      min_price: min_price ? parseFloat(min_price as string) : undefined,
+      max_price: max_price ? parseFloat(max_price as string) : undefined,
+      in_stock:
+        in_stock === "true" ? true : in_stock === "false" ? false : undefined,
+      page: parseInt(page as string, 10),
+      limit: parseInt(limit as string, 10),
+      sort: sort as "relevance" | "price_asc" | "price_desc" | "newest",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Found ${result.total} products`,
+      data: {
+        products: result.products,
+        total: result.total,
+        page: parseInt(page as string, 10),
+        limit: parseInt(limit as string, 10),
+      },
+    });
+  } catch (error) {
+    console.error("Search products error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Search failed",
+    });
+  }
+};
+
+/**
+ * GET /products/seller/:seller_id - Get all products from a seller
+ */
+export const getSellerProducts = async (req: Request, res: Response) => {
+  try {
+    const { seller_id } = req.params;
+
+    const products = await ProductDao.findProductsBySellerId(seller_id);
+
+    return res.status(200).json({
+      success: true,
+      message: `Found ${products.length} products`,
+      data: { products },
+    });
+  } catch (error) {
+    console.error("Get seller products error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve seller products",
+    });
+  }
+};
+
+// ===== ELASTICSEARCH SYNC HELPER =====
+/**
+ * Index a product to Elasticsearch (call after create/update)
+ */
+export const indexProductToElasticsearch = async (productId: string) => {
+  try {
+    const product = await ProductDao.findProductWithDetails(productId);
+    if (product) {
+      await ElasticsearchService.indexProduct({
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        category: product.category_name,
+        category_id: product.category_id,
+        seller_id: product.seller_id,
+        seller_name: product.seller_name,
+        store_name: product.store_name,
+        in_stock: product.in_stock,
+        stock_quantity: product.stock_quantity || 0,
+        images: product.images,
+        created_at: product.created_at,
+        updated_at: product.updated_at,
+      });
+    }
+  } catch (error) {
+    console.error(`Failed to index product ${productId}:`, error);
   }
 };

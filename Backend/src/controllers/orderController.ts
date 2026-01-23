@@ -55,7 +55,7 @@ export class OrderController {
       // 3. Calculate totals
       const totalAmount = cartItems.reduce(
         (acc, item) => acc + Number(item.price_at_time) * item.quantity,
-        0
+        0,
       );
 
       // 4. Create Order
@@ -123,13 +123,11 @@ export class OrderController {
       const orders = await OrderDao.getOrdersByUserId(userId);
       res.status(200).json({ success: true, orders });
     } catch (error: any) {
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Failed to fetch orders",
-          error: error.message,
-        });
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch orders",
+        error: error.message,
+      });
     }
   }
 
@@ -160,6 +158,136 @@ export class OrderController {
       res.status(500).json({
         success: false,
         message: "Failed to fetch order details",
+        error: error.message,
+      });
+    }
+  }
+
+  /**
+   * Cancel an order
+   * POST /api/orders/:id/cancel
+   */
+  static async cancelOrder(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const userId = (req as any).user?.id;
+
+      const order = await OrderDao.getOrderById(id);
+      if (!order) {
+        res.status(404).json({ success: false, message: "Order not found" });
+        return;
+      }
+
+      if (order.user_id !== userId) {
+        res.status(403).json({ success: false, message: "Access denied" });
+        return;
+      }
+
+      // Only allow cancellation of pending/processing orders
+      if (!["pending", "processing"].includes(order.order_status)) {
+        res.status(400).json({
+          success: false,
+          message: `Cannot cancel order with status: ${order.order_status}`,
+        });
+        return;
+      }
+
+      await OrderDao.updateOrderStatus(id, "cancelled");
+
+      res.status(200).json({
+        success: true,
+        message: "Order cancelled successfully",
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to cancel order",
+        error: error.message,
+      });
+    }
+  }
+
+  /**
+   * Get orders for seller's products
+   * GET /api/orders/seller/orders
+   */
+  static async getSellerOrders(req: Request, res: Response): Promise<void> {
+    try {
+      const sellerId = (req as any).user?.id;
+      if (!sellerId) {
+        res.status(401).json({ success: false, message: "Unauthorized" });
+        return;
+      }
+
+      const orders = await OrderDao.getOrdersBySellerId(sellerId);
+      res.status(200).json({ success: true, orders });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch seller orders",
+        error: error.message,
+      });
+    }
+  }
+
+  /**
+   * Update order status (seller/admin)
+   * PATCH /api/orders/:id/status
+   */
+  static async updateOrderStatus(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      const user = (req as any).user;
+
+      const validStatuses = [
+        "processing",
+        "confirmed",
+        "shipped",
+        "out_for_delivery",
+        "delivered",
+        "cancelled",
+      ];
+
+      if (!status || !validStatuses.includes(status)) {
+        res.status(400).json({
+          success: false,
+          message: `Invalid status. Valid values: ${validStatuses.join(", ")}`,
+        });
+        return;
+      }
+
+      const order = await OrderDao.getOrderById(id);
+      if (!order) {
+        res.status(404).json({ success: false, message: "Order not found" });
+        return;
+      }
+
+      // Admin can update any order, seller can only update orders with their products
+      if (user.role !== "admin") {
+        const orderItems = await OrderItemDao.getItemsByOrderId(id);
+        const hasSellerItems = orderItems.some(
+          (item) => item.seller_id === user.id,
+        );
+        if (!hasSellerItems) {
+          res.status(403).json({
+            success: false,
+            message: "You can only update orders containing your products",
+          });
+          return;
+        }
+      }
+
+      await OrderDao.updateOrderStatus(id, status);
+
+      res.status(200).json({
+        success: true,
+        message: `Order status updated to ${status}`,
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to update order status",
         error: error.message,
       });
     }

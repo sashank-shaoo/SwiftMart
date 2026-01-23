@@ -30,8 +30,8 @@ CREATE TABLE products (
   -- Foreign key to categories table
   FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE RESTRICT,
   
-  -- Foreign key to sellers table (if exists)
-  FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE CASCADE
+  -- Foreign key to users table (sellers are users with role='seller')
+  FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Create indexes for better query performance

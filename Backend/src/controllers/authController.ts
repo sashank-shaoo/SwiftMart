@@ -9,6 +9,7 @@ import { jwtCookieOptions } from "../utils/cookieParser";
 import { EmailOtpDao } from "../daos/EmailOtpDao";
 import { generateOtp } from "../utils/otpHelpers";
 import { sendOtpEmail } from "../services/EmailService";
+import MapboxService from "../services/MapboxService";
 
 //--------Unified Authentication--------//
 
@@ -45,7 +46,26 @@ export const registerUser = async (req: Request, res: Response) => {
       process.env.JWT_SECRET!,
       { expiresIn: "7d" },
     );
+
+    // Generate refresh token
+    const refreshToken = sign(
+      { id: newUser.id },
+      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET!,
+      { expiresIn: "30d" },
+    );
+    const refreshTokenHash = await hash(refreshToken, 10);
+    const refreshTokenExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    await UserDao.updateRefreshToken(
+      newUser.id!,
+      refreshTokenHash,
+      refreshTokenExpiry,
+    );
+
     res.cookie("auth_token", token, jwtCookieOptions);
+    res.cookie("refresh_token", refreshToken, {
+      ...jwtCookieOptions,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
 
     const { password: pw, ...finalUser } = newUser;
 
@@ -64,6 +84,7 @@ export const registerUser = async (req: Request, res: Response) => {
         "Registration successful! Please check your email to verify your account.",
       user: finalUser,
       verification_sent: true,
+      refresh_token: refreshToken,
     });
   } catch (error: any) {
     console.error(error);
@@ -133,7 +154,26 @@ export const registerSeller = async (req: Request, res: Response) => {
       process.env.JWT_SECRET!,
       { expiresIn: "7d" },
     );
+
+    // Generate refresh token
+    const refreshToken = sign(
+      { id: newUser.id },
+      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET!,
+      { expiresIn: "30d" },
+    );
+    const refreshTokenHash = await hash(refreshToken, 10);
+    const refreshTokenExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    await UserDao.updateRefreshToken(
+      newUser.id!,
+      refreshTokenHash,
+      refreshTokenExpiry,
+    );
+
     res.cookie("auth_token", token, jwtCookieOptions);
+    res.cookie("refresh_token", refreshToken, {
+      ...jwtCookieOptions,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
 
     const { password: pw, ...finalUser } = newUser;
 
@@ -172,6 +212,7 @@ export const registerSeller = async (req: Request, res: Response) => {
         seller_profile: sellerProfile,
       },
       verification_sent: true,
+      refresh_token: refreshToken,
     });
   } catch (error: any) {
     console.error(error);
@@ -352,13 +393,33 @@ export const login = async (req: Request, res: Response) => {
       expiresIn: "7d",
     });
 
+    // Generate refresh token
+    const refreshToken = sign(
+      { id: user.id },
+      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET!,
+      { expiresIn: "30d" },
+    );
+    const refreshTokenHash = await hash(refreshToken, 10);
+    const refreshTokenExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    await UserDao.updateRefreshToken(
+      user.id!,
+      refreshTokenHash,
+      refreshTokenExpiry,
+    );
+
     res.cookie("auth_token", token, jwtCookieOptions);
+    res.cookie("refresh_token", refreshToken, {
+      ...jwtCookieOptions,
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+
     const { password: pw, ...finalUser } = user;
 
     return res.json({
       success: true,
       message: "Login successful",
       user: finalUser,
+      refresh_token: refreshToken,
     });
   } catch (error: any) {
     console.error(error);
@@ -370,11 +431,32 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const logout = async (req: Request, res: Response) => {
-  res.clearCookie("auth_token", jwtCookieOptions);
-  return res.json({
-    success: true,
-    message: "Logged out successfully",
-  });
+  try {
+    const userId = (req as any).user?.id;
+
+    // Clear refresh token from database if user is authenticated
+    if (userId) {
+      await UserDao.clearRefreshToken(userId);
+    }
+
+    // Clear cookies
+    res.clearCookie("auth_token", jwtCookieOptions);
+    res.clearCookie("refresh_token", jwtCookieOptions);
+
+    return res.json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+    // Still clear cookies even if DB update fails
+    res.clearCookie("auth_token", jwtCookieOptions);
+    res.clearCookie("refresh_token", jwtCookieOptions);
+    return res.json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  }
 };
 
 export const registerAdmin = async (req: Request, res: Response) => {
@@ -727,7 +809,6 @@ export const verifyEmailUpdate = async (req: Request, res: Response) => {
     });
   }
 };
-
 
 export const changePassword = async (req: Request, res: Response) => {
   try {

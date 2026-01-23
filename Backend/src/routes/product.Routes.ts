@@ -9,45 +9,66 @@ import { uploadProductImages } from "../middlewares/uploadMiddleware";
 import {
   createProductWithImages,
   updateProduct,
+  deleteProduct,
+  getAllProducts,
+  getProductById,
+  searchProducts,
+  getSellerProducts,
 } from "../controllers/productsController";
+import {
+  getProductsBySeason,
+  getProductsByCategory,
+  getBestSellers,
+  getTopRated,
+  getNewArrivals,
+} from "../controllers/productFilterController";
 
 const router = express.Router();
 
-/**
- * POST /api/products
- * Create a new product with image uploads (Seller only)
- *
- * Requires:
- * - Authentication (JWT token)
- * - Seller role
- * - Form-data with images and product details
- */
+// ===== PUBLIC ROUTES (no auth required) =====
+
+// Get all products with pagination & filters
+router.get("/", getAllProducts);
+
+// Search products (Elasticsearch) - MUST be before /:product_id
+router.get("/search", searchProducts);
+
+// ===== PRODUCT DISCOVERY ROUTES (new filters) =====
+router.get("/bestsellers", getBestSellers);
+router.get("/top-rated", getTopRated);
+router.get("/new-arrivals", getNewArrivals);
+router.get("/season/:season", getProductsBySeason);
+router.get("/category/:category_id", getProductsByCategory);
+
+// Get seller's products - MUST be before /:product_id
+router.get("/seller/:seller_id", getSellerProducts);
+
+// Get single product details (MUST be last among GET routes)
+router.get("/:product_id", getProductById);
+
+// ===== SELLER ROUTES (auth required) =====
+
+// Create product with images
 router.post(
   "/",
-  authMiddleware, // Authenticate user
-  requireSeller, // Ensure user is a seller
-  uploadProductImages, // Handle file uploads (3-4 images)
-  validate(createProductSchema), // Validate product data
-  createProductWithImages // Create product
+  authMiddleware,
+  requireSeller,
+  uploadProductImages,
+  validate(createProductSchema),
+  createProductWithImages,
 );
 
-/**
- * PUT /api/products/:product_id
- * Update an existing product (Seller only - own products)
- *
- * Requires:
- * - Authentication (JWT token)
- * - Seller role
- * - Product ownership
- * - Optional: new images via form-data
- */
+// Update product
 router.put(
   "/:product_id",
-  authMiddleware, // Authenticate user
-  requireSeller, // Ensure user is a seller
-  uploadProductImages, // Handle optional file uploads (images)
-  validate(updateProductSchema), // Validate update data
-  updateProduct // Update product
+  authMiddleware,
+  requireSeller,
+  uploadProductImages,
+  validate(updateProductSchema),
+  updateProduct,
 );
+
+// Delete product
+router.delete("/:product_id", authMiddleware, requireSeller, deleteProduct);
 
 export default router;

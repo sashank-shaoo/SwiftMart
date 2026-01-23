@@ -43,10 +43,22 @@ export class OrderDao {
 
   static async updateOrderStatus(
     orderId: string,
-    status: string
+    status: string,
   ): Promise<void> {
     const text =
       "UPDATE orders SET order_status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2";
     await query(text, [status, orderId]);
+  }
+
+  static async getOrdersBySellerId(sellerId: string): Promise<Order[]> {
+    const text = `
+      SELECT DISTINCT o.*
+      FROM orders o
+      INNER JOIN order_items oi ON o.id = oi.order_id
+      WHERE oi.seller_id = $1
+      ORDER BY o.created_at DESC
+    `;
+    const res = await query(text, [sellerId]);
+    return res.rows;
   }
 }

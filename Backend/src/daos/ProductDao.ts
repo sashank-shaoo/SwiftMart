@@ -47,6 +47,85 @@ export class ProductDao {
     return res.rows;
   }
 
+  static async findAllProductsWithPagination(params: {
+    page?: number;
+    limit?: number;
+    category_id?: string;
+    min_price?: number;
+    max_price?: number;
+    sort?: string;
+  }): Promise<{ products: Product[]; total: number }> {
+    const {
+      page = 1,
+      limit = 20,
+      category_id,
+      min_price,
+      max_price,
+      sort = "newest",
+    } = params;
+    const offset = (page - 1) * limit;
+
+    let whereClause = "WHERE 1=1";
+    const values: any[] = [];
+    let paramIndex = 1;
+
+    if (category_id) {
+      whereClause += ` AND category_id = $${paramIndex++}`;
+      values.push(category_id);
+    }
+    if (min_price !== undefined) {
+      whereClause += ` AND price >= $${paramIndex++}`;
+      values.push(min_price);
+    }
+    if (max_price !== undefined) {
+      whereClause += ` AND price <= $${paramIndex++}`;
+      values.push(max_price);
+    }
+
+    let orderBy = "ORDER BY created_at DESC";
+    if (sort === "price_asc") orderBy = "ORDER BY price ASC";
+    else if (sort === "price_desc") orderBy = "ORDER BY price DESC";
+    else if (sort === "name") orderBy = "ORDER BY name ASC";
+
+    const countQuery = `SELECT COUNT(*) FROM products ${whereClause}`;
+    const countRes = await query(countQuery, values);
+    const total = parseInt(countRes.rows[0].count, 10);
+
+    const productsQuery = `
+      SELECT p.*, c.name as category_name, u.name as seller_name
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      LEFT JOIN users u ON p.seller_id = u.id
+      ${whereClause}
+      ${orderBy}
+      LIMIT $${paramIndex++} OFFSET $${paramIndex}
+    `;
+    values.push(limit, offset);
+
+    const res = await query(productsQuery, values);
+    return { products: res.rows, total };
+  }
+
+  static async findProductWithDetails(id: string): Promise<any | null> {
+    const text = `
+      SELECT 
+        p.*,
+        c.name as category_name,
+        u.name as seller_name,
+        sp.store_name,
+        i.stock_quantity,
+        CASE WHEN i.stock_quantity > 0 THEN true ELSE false END as in_stock
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      LEFT JOIN users u ON p.seller_id = u.id
+      LEFT JOIN seller_profiles sp ON u.id = sp.user_id
+      LEFT JOIN inventory i ON p.id = i.product_id
+      WHERE p.id = $1
+    `;
+    const res = await query(text, [id]);
+    return res.rows[0] || null;
+  }
+
   static async findProductsBySellerId(sellerId: string): Promise<Product[]> {
     const text =
       "SELECT * FROM products WHERE seller_id = $1 ORDER BY created_at DESC";
@@ -70,7 +149,7 @@ export class ProductDao {
 
   static async updateProduct(
     id: string,
-    product: Partial<Product>
+    product: Partial<Product>,
   ): Promise<Product | null> {
     const fields: string[] = [];
     const values: any[] = [];
@@ -147,5 +226,51 @@ export class ProductDao {
     const text = "DELETE FROM products WHERE id = $1";
     const res = await query(text, [id]);
     return (res.rowCount ?? 0) > 0;
+  }
+
+  /**
+   * Get best selling products (sorted by review_count)
+   */
+  static async getBestSellers(limit: number = 10): Promise<Product[]> {
+    const text = `
+      SELECT p.*, c.name as category_name
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      ORDER BY p.review_count DESC, p.rating DESC
+      LIMIT $1
+    `;
+    const res = await query(text, [limit]);
+    return res.rows;
+  }
+
+  /**
+   * Get top rated products (sorted by rating)
+   */
+  static async getTopRated(limit: number = 10): Promise<Product[]> {
+    const text = `
+      SELECT p.*, c.name as category_name
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      WHERE p.rating IS NOT NULL AND p.rating > 0
+      ORDER BY p.rating DESC, p.review_count DESC
+      LIMIT $1
+    `;
+    const res = await query(text, [limit]);
+    return res.rows;
+  }
+
+  /**
+   * Get new arrivals (recently added products)
+   */
+  static async getNewArrivals(limit: number = 10): Promise<Product[]> {
+    const text = `
+      SELECT p.*, c.name as category_name
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      ORDER BY p.created_at DESC
+      LIMIT $1
+    `;
+    const res = await query(text, [limit]);
+    return res.rows;
   }
 }

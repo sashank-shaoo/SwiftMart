@@ -40,7 +40,7 @@ CREATE TABLE carts (
   -- Foreign keys
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
-  FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE CASCADE
+  FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Prevent a user from adding the same product twice

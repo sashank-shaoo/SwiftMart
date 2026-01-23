@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS order_items (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT,
-  FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE RESTRICT
+  FOREIGN KEY (seller_id) REFERENCES users(id) ON DELETE RESTRICT
 );
 
 -- Create indexes for performance

@@ -1,15 +1,54 @@
 import express from "express";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+import { validateEnv } from "./config/validateEnv";
+import { sanitizeInput } from "./middlewares/sanitizeMiddleware";
+import { notFoundHandler, errorHandler } from "./middlewares/errorHandler";
+
+// Validate environment variables on startup
+validateEnv();
+
 const app = express();
 import authRoutes from "./routes/auth.Routes";
 import productRoutes from "./routes/product.Routes";
+import inventoryRoutes from "./routes/inventory.Routes";
+import orderRoutes from "./routes/order.Routes";
+import cartRoutes from "./routes/cart.Routes";
 
-app.use(express.json());
+// CORS configuration
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    credentials: true, // Allow cookies
+  }),
+);
+
+// Body parser with size limits
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
+
+// Security: Input sanitization
+app.use(sanitizeInput);
+
+// Request logging
+import { requestLogger } from "./middlewares/requestLogger";
+app.use(requestLogger);
 
 app.get("/", (req, res) => {
   res.send("Backend is running");
 });
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/inventory", inventoryRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/cart", cartRoutes);
+
+// 404 handler - must be after all routes
+
+app.use(notFoundHandler);
+
+// Global error handler - must be last
+app.use(errorHandler);
+
 export default app;
