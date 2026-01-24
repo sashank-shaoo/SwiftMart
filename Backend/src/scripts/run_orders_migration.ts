@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import { join } from "path";
-import { query, pool } from "../db/db";
+import pool, { query } from "../db/db";
 import * as dotenv from "dotenv";
 
 dotenv.config({ path: join(__dirname, "../../.env") });

@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import { join } from "path";
-import { query, pool } from "../db/db";
+import pool, { query } from "../db/db";
 
 async function runMigrations() {
   try {

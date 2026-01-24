@@ -7,7 +7,7 @@
  * Run this script with: npx ts-node src/scripts/run_auth_refactor_migration.ts
  */
 
-import { pool } from "../db/db";
+import pool from "../db/db";
 import * as fs from "fs";
 import * as path from "path";
 
