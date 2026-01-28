@@ -1,3 +1,4 @@
+import "dotenv/config";
 import {
   getOtpEmailTemplate,
   getOtpEmailPlainText,
@@ -19,9 +20,9 @@ class BrevoEmailService {
 
   private get config() {
     return {
-      apiKey: process.env.BREVO_API_KEY || "",
-      fromEmail: process.env.FROM_EMAIL || "sashanksahoo8@gmail.com",
-      fromName: process.env.EMAIL_FROM_NAME || "SwiftMart",
+      apiKey: process.env.BREVO_API_KEY,
+      fromEmail: process.env.FROM_EMAIL,
+      fromName: process.env.EMAIL_FROM_NAME,
     };
   }
 
@@ -62,7 +63,7 @@ class BrevoEmailService {
         const errorData = (await response.json()) as any;
         console.error(
           `❌ Brevo API Error (HTTP ${response.status}):`,
-          JSON.stringify(errorData, null, 2)
+          JSON.stringify(errorData, null, 2),
         );
         return false;
       }
@@ -82,7 +83,10 @@ class BrevoEmailService {
     email: string,
     otp: string,
     name?: string,
-    purpose: "verification" | "password_reset" | "email_change" = "verification"
+    purpose:
+      | "verification"
+      | "password_reset"
+      | "email_change" = "verification",
   ): Promise<boolean> {
     const subjects = {
       verification: "Verify Your Email - SwiftMart",
@@ -109,7 +113,7 @@ class BrevoEmailService {
   async sendPasswordResetEmail(
     email: string,
     otp: string,
-    name?: string
+    name?: string,
   ): Promise<boolean> {
     return this.sendOtpEmail(email, otp, name, "password_reset");
   }
@@ -120,7 +124,7 @@ class BrevoEmailService {
   async sendEmailChangeEmail(
     email: string,
     otp: string,
-    name?: string
+    name?: string,
   ): Promise<boolean> {
     return this.sendOtpEmail(email, otp, name, "email_change");
   }
@@ -128,10 +132,11 @@ class BrevoEmailService {
 
 const serviceInstance = new BrevoEmailService();
 
-
 export const sendOtpEmail = serviceInstance.sendOtpEmail.bind(serviceInstance);
-export const sendPasswordResetEmail = serviceInstance.sendPasswordResetEmail.bind(serviceInstance);
-export const sendEmailChangeEmail = serviceInstance.sendEmailChangeEmail.bind(serviceInstance);
+export const sendPasswordResetEmail =
+  serviceInstance.sendPasswordResetEmail.bind(serviceInstance);
+export const sendEmailChangeEmail =
+  serviceInstance.sendEmailChangeEmail.bind(serviceInstance);
 
 // Default export for general uses
 const sendEmail = async ({

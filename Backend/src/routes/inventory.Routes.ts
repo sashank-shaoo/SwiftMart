@@ -14,6 +14,7 @@ import {
   requireSellerOrAdmin,
 } from "../middlewares/authMiddleware";
 import { validate } from "../middlewares/validateMiddleware";
+import { asyncHandler } from "../middlewares/errorHandler";
 import {
   RestockProductSchema,
   SetStockQuantitySchema,
@@ -23,15 +24,15 @@ import {
 
 const router = Router();
 
-router.get("/:product_id", getInventory);
+router.get("/:product_id", asyncHandler(getInventory));
 
-router.get("/:product_id/check", checkStockAvailability);
+router.get("/:product_id/check", asyncHandler(checkStockAvailability));
 
 router.get(
   "/low-stock/all",
   authMiddleware,
   requireSellerOrAdmin,
-  getLowStockProducts,
+  asyncHandler(getLowStockProducts),
 );
 
 router.patch(
@@ -39,7 +40,7 @@ router.patch(
   authMiddleware,
   requireSeller,
   validate(UpdateWarehouseLocationSchema),
-  updateWarehouseLocation,
+  asyncHandler(updateWarehouseLocation),
 );
 
 router.post(
@@ -47,7 +48,7 @@ router.post(
   authMiddleware,
   requireSeller,
   validate(RestockProductSchema),
-  restockProduct,
+  asyncHandler(restockProduct),
 );
 
 router.put(
@@ -55,7 +56,7 @@ router.put(
   authMiddleware,
   requireSeller,
   validate(SetStockQuantitySchema),
-  setStockQuantity,
+  asyncHandler(setStockQuantity),
 );
 
 router.patch(
@@ -63,7 +64,7 @@ router.patch(
   authMiddleware,
   requireSeller,
   validate(UpdateLowStockThresholdSchema),
-  updateLowStockThreshold,
+  asyncHandler(updateLowStockThreshold),
 );
 
 export default router;

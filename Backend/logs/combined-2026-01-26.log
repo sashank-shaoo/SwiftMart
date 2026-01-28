@@ -1,0 +1,152 @@
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 08:47:28"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 08:47:30"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 10:52:41"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 10:52:43"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 11:03:48"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 11:03:49"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 11:03:56"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 11:03:57"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 11:04:13"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 11:04:14"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 11:04:43"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 11:04:44"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 11:06:12"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 11:06:14"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 11:29:09"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 11:29:10"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 12:02:51"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 12:02:52"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 12:03:11"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 12:03:12"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 12:03:39"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 12:03:41"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 12:54:32"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 12:54:34"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 12:56:16"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 12:56:17"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 13:12:36"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 13:12:38"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 13:12:47"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 13:12:48"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 13:13:04"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 13:13:05"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 13:21:54"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 13:21:57"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 13:22:03"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 13:22:04"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 13:22:14"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 13:22:15"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 13:22:59"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 13:23:01"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 13:24:49"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 13:24:50"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 16:33:17"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 16:33:21"}
+{"error":"Cannot set property query of #<IncomingMessage> which has only a getter","level":"error","message":"500 - Internal Server Error - POST /api/auth/register","stack":"TypeError: Cannot set property query of #<IncomingMessage> which has only a getter\n    at sanitizeInput (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:19:14)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)\n    at D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:291:5)\n    at cookieParser (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\cookie-parser\\index.js:57:14)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)\n    at D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:297:9","timestamp":"2026-01-26 16:33:36"}
+{"error":"Cannot set property query of #<IncomingMessage> which has only a getter","level":"error","message":"500 - Internal Server Error - POST /api/auth/register","stack":"TypeError: Cannot set property query of #<IncomingMessage> which has only a getter\n    at sanitizeInput (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:19:14)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)\n    at D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:291:5)\n    at cookieParser (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\cookie-parser\\index.js:57:14)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)\n    at D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:297:9","timestamp":"2026-01-26 16:34:07"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 16:36:48"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 16:36:49"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 16:37:26"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 16:37:27"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 16:37:44"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 16:37:46"}
+{"level":"warn","message":"POST /api/auth/register 400 - 35ms","timestamp":"2026-01-26 16:39:23"}
+{"level":"http","message":"POST /api/auth/register 201 - 2471ms","timestamp":"2026-01-26 16:40:03"}
+{"level":"warn","message":"POST /api/auth/register 409 - 1198ms","timestamp":"2026-01-26 16:40:28"}
+{"level":"warn","message":"POST /api/auth/register 429 - 3ms","timestamp":"2026-01-26 16:42:36"}
+{"level":"warn","message":"POST /api/auth/register 429 - 2ms","timestamp":"2026-01-26 16:43:13"}
+{"level":"warn","message":"POST /api/auth/register 429 - 2ms","timestamp":"2026-01-26 16:43:57"}
+{"level":"warn","message":"POST /api/auth/register 429 - 1ms","timestamp":"2026-01-26 16:44:24"}
+{"level":"warn","message":"GET /api/auth/login 404 - 4ms","timestamp":"2026-01-26 16:45:07"}
+{"level":"warn","message":"POST /api/auth/login 401 - 1425ms","timestamp":"2026-01-26 16:46:51"}
+{"level":"http","message":"POST /api/auth/login 200 - 1490ms","timestamp":"2026-01-26 16:47:30"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 16:50:20"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 16:50:22"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 16:51:25"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 16:51:26"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 16:51:33"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 16:51:35"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 16:51:41"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 16:51:43"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 16:51:51"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 16:51:52"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 16:51:59"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 16:52:01"}
+{"level":"http","message":"POST /api/auth/register 201 - 2308ms","timestamp":"2026-01-26 16:53:57"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 17:04:13"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 17:04:15"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 17:05:17"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 17:05:18"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 17:11:50"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 17:11:51"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 17:50:05"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 17:50:07"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 18:07:33"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 18:07:35"}
+{"level":"http","message":"POST /api/auth/register 201 - 2004ms","timestamp":"2026-01-26 18:10:22"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 18:29:26"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 18:29:27"}
+{"level":"http","message":"POST /api/auth/register 201 - 3842ms","timestamp":"2026-01-26 18:32:59"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 18:36:32"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 18:36:34"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 18:37:12"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 18:37:13"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 18:38:08"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 18:38:09"}
+{"level":"http","message":"POST /api/auth/register 201 - 4101ms","timestamp":"2026-01-26 18:39:45"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 19:05:28"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 19:05:30"}
+{"level":"http","message":"POST /api/auth/register 201 - 14884ms","timestamp":"2026-01-26 19:06:11"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 19:09:18"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 19:09:19"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 19:09:51"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 19:09:53"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 19:10:01"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 19:10:04"}
+{"level":"http","message":"POST /api/auth/register 201 - 3143ms","timestamp":"2026-01-26 19:10:35"}
+{"error":"Expected double-quoted property name in JSON at position 76 (line 4 column 1)","level":"error","message":"500 - Internal Server Error - POST /api/auth/login","stack":"SyntaxError: Expected double-quoted property name in JSON at position 76 (line 4 column 1)\n    at JSON.parse (<anonymous>)\n    at parse (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\body-parser\\lib\\types\\json.js:74:19)\n    at D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\body-parser\\lib\\read.js:163:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:214:14)\n    at invokeCallback (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:519:28)\n    at IncomingMessage.emit (node:domain:489:12)\n    at endReadableNT (node:internal/streams/readable:1698:12)","timestamp":"2026-01-26 19:35:19"}
+{"level":"http","message":"POST /api/auth/login 200 - 2312ms","timestamp":"2026-01-26 19:35:27"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:17:33"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:17:34"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:20:16"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:20:16"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:20:36"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:20:37"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:25:39"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:25:40"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:25:56"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:25:57"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:26:06"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:26:07"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:26:12"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:26:13"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:39:25"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:39:26"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:40:14"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:40:15"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:40:35"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:40:36"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:40:53"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:40:54"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:41:15"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:41:16"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:42:16"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:42:16"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:42:35"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:42:36"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:42:55"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:42:56"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:43:29"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:43:30"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:48:16"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:48:17"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:48:40"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:48:41"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:48:44"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:48:45"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:48:55"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:48:56"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:49:02"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:49:03"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-26 20:49:25"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-26 20:49:26"}

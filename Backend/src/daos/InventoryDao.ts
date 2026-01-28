@@ -6,7 +6,7 @@ export class InventoryDao {
     productId: string,
     initialStock: number,
     lowStockThreshold: number = 5,
-    warehouseLocation?: string
+    warehouseLocation?: string,
   ): Promise<Inventory> {
     const text = `
       INSERT INTO inventory (product_id, stock_quantity, low_stock_threshold, warehouse_location, last_restocked_at)
@@ -31,7 +31,7 @@ export class InventoryDao {
 
   static async addStock(
     productId: string,
-    quantity: number
+    quantity: number,
   ): Promise<Inventory | null> {
     const text = `
       UPDATE inventory
@@ -47,7 +47,7 @@ export class InventoryDao {
 
   static async setStock(
     productId: string,
-    quantity: number
+    quantity: number,
   ): Promise<Inventory | null> {
     const text = `
       UPDATE inventory
@@ -63,7 +63,7 @@ export class InventoryDao {
 
   static async reserveStock(
     productId: string,
-    quantity: number
+    quantity: number,
   ): Promise<boolean> {
     const text = `
       UPDATE inventory
@@ -78,7 +78,7 @@ export class InventoryDao {
 
   static async releaseReservedStock(
     productId: string,
-    quantity: number
+    quantity: number,
   ): Promise<Inventory | null> {
     const text = `
       UPDATE inventory
@@ -93,7 +93,7 @@ export class InventoryDao {
 
   static async confirmSale(
     productId: string,
-    quantity: number
+    quantity: number,
   ): Promise<Inventory | null> {
     const text = `
       UPDATE inventory
@@ -114,7 +114,7 @@ export class InventoryDao {
 
   static async checkStockAvailability(
     productId: string,
-    requestedQuantity: number
+    requestedQuantity: number,
   ): Promise<boolean> {
     const availableStock = await this.getAvailableStock(productId);
     return availableStock >= requestedQuantity;
@@ -132,7 +132,7 @@ export class InventoryDao {
 
   static async updateLowStockThreshold(
     productId: string,
-    threshold: number
+    threshold: number,
   ): Promise<Inventory | null> {
     const text = `
       UPDATE inventory
@@ -142,6 +142,21 @@ export class InventoryDao {
       RETURNING *
     `;
     const res = await query(text, [productId, threshold]);
+    return res.rows[0] || null;
+  }
+
+  static async updateWarehouseLocation(
+    productId: string,
+    warehouseLocation: string,
+  ): Promise<Inventory | null> {
+    const text = `
+      UPDATE inventory
+      SET warehouse_location = $2,
+      updated_at = CURRENT_TIMESTAMP
+      WHERE product_id = $1
+      RETURNING *
+    `;
+    const res = await query(text, [productId, warehouseLocation]);
     return res.rows[0] || null;
   }
 

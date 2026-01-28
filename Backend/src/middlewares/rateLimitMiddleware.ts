@@ -2,8 +2,8 @@ import rateLimit from "express-rate-limit";
 
 // General auth rate limiter - 10 requests per 15 minutes
 export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // 10 requests per window
+  windowMs: 15 * 60 * 1000, 
+  max: 10, 
   message: "Too many attempts, please try again later",
   standardHeaders: true,
   legacyHeaders: false,
@@ -11,8 +11,8 @@ export const authLimiter = rateLimit({
 
 // Login rate limiter - stricter for brute force protection
 export const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 login attempts
+  windowMs: 15 * 60 * 1000, 
+  max: 5, 
   message: "Too many login attempts, please try again after 15 minutes",
   standardHeaders: true,
   legacyHeaders: false,
@@ -20,8 +20,8 @@ export const loginLimiter = rateLimit({
 
 // OTP request limiter - prevent OTP spam
 export const otpLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 3, // 3 OTP requests per hour
+  windowMs: 60 * 60 * 1000, 
+  max: 3, 
   message: "Too many OTP requests, please try again later",
   standardHeaders: true,
   legacyHeaders: false,
@@ -29,8 +29,8 @@ export const otpLimiter = rateLimit({
 
 // Registration limiter -  prevent spam registrations
 export const registerLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 3, // 3 registrations per hour per IP
+  windowMs: 60 * 60 * 1000, 
+  max: 3, 
   message: "Too many registration attempts, please try again later",
   standardHeaders: true,
   legacyHeaders: false,

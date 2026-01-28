@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { query } from "../db/db";
 
 /**
@@ -29,23 +30,8 @@ export async function deleteUnverifiedUsers() {
       console.log("ℹ️ No unverified users found.");
     }
 
-    // 2. Delete unverified sellers
-    const deleteSellersRes = await query(`
-      DELETE FROM sellers 
-      WHERE is_verified_email = false
-      RETURNING email;
-    `);
-
-    const deletedSellersCount = deleteSellersRes.rowCount ?? 0;
-    if (deletedSellersCount > 0) {
-      console.log(`✅ Deleted ${deletedSellersCount} unverified sellers:`);
-      deleteSellersRes.rows.forEach((row) => console.log(`   - ${row.email}`));
-    } else {
-      console.log("ℹ️ No unverified sellers found.");
-    }
-
     console.log("\n✨ Cleanup completed successfully.");
-    return { deletedUsersCount, deletedSellersCount };
+    return { deletedUsersCount };
   } catch (error) {
     console.error("❌ Error during unverified user deletion:", error);
     throw error;

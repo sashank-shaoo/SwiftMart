@@ -9,521 +9,393 @@ import {
   uploadMultipleImages,
   deleteMultipleImages,
 } from "../services/ImageService";
+import {
+  BadRequestError,
+  NotFoundError,
+  ForbiddenError,
+  ConflictError,
+  InternalServerError,
+} from "../utils/errors";
 
 export const createProductWithImages = async (req: Request, res: Response) => {
   let uploadedImageUrls: string[] = [];
+  const files = req.files as Express.Multer.File[];
 
+  if (!files || files.length === 0) {
+    throw new BadRequestError(
+      "At least one product image is required (3-4 images recommended)",
+    );
+  }
+
+  if (files.length < 3) {
+    throw new BadRequestError(
+      "Please upload at least 3 images for better product showcase",
+    );
+  }
+
+  const {
+    name,
+    description,
+    price,
+    original_price,
+    sku,
+    category_id,
+    seller_id,
+    season,
+    attributes,
+    initial_stock,
+    low_stock_threshold,
+  } = req.body;
+
+  if (!name || !category_id || !seller_id) {
+    throw new BadRequestError(
+      "Missing required fields: name, category_id, and seller_id are required",
+    );
+  }
+
+  // Verify seller exists and has seller role
+  const seller = await UserDao.findUserById(seller_id);
+  if (!seller) {
+    throw new NotFoundError("Seller not found");
+  }
+
+  if (seller.role !== "seller") {
+    throw new ForbiddenError("User is not registered as a seller");
+  }
+
+  const category = await CategoryDao.findCategoryById(category_id);
+  if (!category) {
+    throw new NotFoundError("Category not found");
+  }
+
+  if (sku) {
+    const existingProduct = await ProductDao.findProductBySku(sku);
+    if (existingProduct) {
+      throw new ConflictError("Product with this SKU already exists");
+    }
+  }
+
+  // Upload images
   try {
-    const files = req.files as Express.Multer.File[];
+    uploadedImageUrls = await uploadMultipleImages(files, "products");
+  } catch (uploadError) {
+    console.error("Image upload error:", uploadError);
+    throw new InternalServerError("Failed to upload images to cloud storage");
+  }
 
-    if (!files || files.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "At least one product image is required (3-4 images recommended)",
-      });
-    }
-
-    if (files.length < 3) {
-      return res.status(400).json({
-        success: false,
-        message: "Please upload at least 3 images for better product showcase",
-      });
-    }
-
-    const {
+  let product;
+  try {
+    product = await ProductDao.createProduct({
       name,
       description,
-      price,
-      original_price,
+      images: uploadedImageUrls,
+      price: parseFloat(price),
+      original_price: original_price ? parseFloat(original_price) : undefined,
       sku,
       category_id,
       seller_id,
       season,
-      attributes,
-      initial_stock,
-      low_stock_threshold,
-    } = req.body;
-
-    if (!name || !category_id || !seller_id) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Missing required fields: name, category_id, and seller_id are required",
-      });
-    }
-
-    // Verify seller exists and has seller role
-    const seller = await UserDao.findUserById(seller_id);
-    if (!seller) {
-      return res.status(404).json({
-        success: false,
-        message: "Seller not found",
-      });
-    }
-
-    if (seller.role !== "seller") {
-      return res.status(403).json({
-        success: false,
-        message: "User is not registered as a seller",
-      });
-    }
-
-    const category = await CategoryDao.findCategoryById(category_id);
-    if (!category) {
-      return res.status(404).json({
-        success: false,
-        message: "Category not found",
-      });
-    }
-
-    if (sku) {
-      const existingProduct = await ProductDao.findProductBySku(sku);
-      if (existingProduct) {
-        return res.status(409).json({
-          success: false,
-          message: "Product with this SKU already exists",
-        });
-      }
-    }
-
-    try {
-      uploadedImageUrls = await uploadMultipleImages(files, "products");
-    } catch (uploadError) {
-      console.error("Image upload error:", uploadError);
-      return res.status(500).json({
-        success: false,
-        message: "Failed to upload images to cloud storage",
-      });
-    }
-
-    let product;
-    try {
-      product = await ProductDao.createProduct({
-        name,
-        description,
-        images: uploadedImageUrls,
-        price: parseFloat(price),
-        original_price: original_price ? parseFloat(original_price) : undefined,
-        sku,
-        category_id,
-        seller_id,
-        season,
-        attributes: attributes ? JSON.parse(attributes) : undefined,
-      });
-    } catch (dbError) {
-      // Rollback: Delete uploaded images from Cloudinary if error occurs
-      console.error("Product creation error:", dbError);
-      await deleteMultipleImages(uploadedImageUrls);
-
-      return res.status(500).json({
-        success: false,
-        message: "Failed to create product. Images have been cleaned up.",
-      });
-    }
-
-    try {
-      let warehouseLocation: string | undefined;
-      if (seller.location?.coordinates) {
-        const [lng, lat] = seller.location.coordinates;
-        warehouseLocation = `${lng},${lat}`;
-      }
-
-      await InventoryDao.createInventory(
-        product.id!,
-        initial_stock ? parseInt(initial_stock) : 0,
-        low_stock_threshold ? parseInt(low_stock_threshold) : 5,
-        warehouseLocation,
-      );
-    } catch (inventoryError) {
-      console.error("Inventory creation error:", inventoryError);
-      console.warn(
-        `Product ${product.id} created but inventory creation failed`,
-      );
-    }
-
-    return res.status(201).json({
-      success: true,
-      message: `Product created successfully with ${uploadedImageUrls.length} images`,
-      data: {
-        ...product,
-        image_count: uploadedImageUrls.length,
-      },
+      attributes: attributes
+        ? typeof attributes === "string"
+          ? JSON.parse(attributes)
+          : attributes
+        : undefined,
     });
-  } catch (error) {
-    console.error("Create product with images error:", error);
-
-    if (uploadedImageUrls.length > 0) {
-      await deleteMultipleImages(uploadedImageUrls);
-    }
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to create product",
-    });
+  } catch (dbError) {
+    // Rollback: Delete uploaded images from Cloudinary if error occurs
+    console.error("Product creation error:", dbError);
+    await deleteMultipleImages(uploadedImageUrls);
+    throw new InternalServerError(
+      "Failed to create product. Images have been cleaned up.",
+    );
   }
+
+  // Inventory creation (partial failure handled)
+  try {
+    let warehouseLocation: string | undefined;
+    if (seller.location?.coordinates) {
+      const [lng, lat] = seller.location.coordinates;
+      warehouseLocation = `${lng},${lat}`;
+    }
+
+    await InventoryDao.createInventory(
+      product.id!,
+      initial_stock ? parseInt(initial_stock) : 0,
+      low_stock_threshold ? parseInt(low_stock_threshold) : 5,
+      warehouseLocation,
+    );
+  } catch (inventoryError) {
+    console.error("Inventory creation error:", inventoryError);
+    // We don't throw here as the product is already created
+  }
+
+  return res.success(
+    {
+      ...product,
+      image_count: uploadedImageUrls.length,
+    },
+    `Product created successfully with ${uploadedImageUrls.length} images`,
+    201,
+  );
 };
 
 export const updateProduct = async (req: Request, res: Response) => {
   let uploadedImageUrls: string[] = [];
   let oldImageUrls: string[] = [];
 
-  try {
-    const { product_id } = req.params;
-    const files = req.files as Express.Multer.File[] | undefined;
+  const { product_id } = req.params;
+  const files = req.files as Express.Multer.File[] | undefined;
 
-    const existingProduct = await ProductDao.findProductById(product_id);
-    if (!existingProduct) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
+  const existingProduct = await ProductDao.findProductById(product_id);
+  if (!existingProduct) {
+    throw new NotFoundError("Product not found");
+  }
+
+  const user = req.user as any;
+  if (
+    user.id !== existingProduct.seller_id &&
+    user.seller_id !== existingProduct.seller_id
+  ) {
+    throw new ForbiddenError("You can only update your own products");
+  }
+
+  const {
+    name,
+    description,
+    price,
+    original_price,
+    sku,
+    category_id,
+    season,
+    attributes,
+  } = req.body;
+
+  if (sku && sku !== existingProduct.sku) {
+    const existingProductWithSku = await ProductDao.findProductBySku(sku);
+    if (existingProductWithSku) {
+      throw new ConflictError("Product with this SKU already exists");
     }
+  }
 
-    const user = req.user as any;
-    if (
-      user.id !== existingProduct.seller_id &&
-      user.seller_id !== existingProduct.seller_id
-    ) {
-      return res.status(403).json({
-        success: false,
-        message: "You can only update your own products",
-      });
+  if (category_id && category_id !== existingProduct.category_id) {
+    const category = await CategoryDao.findCategoryById(category_id);
+    if (!category) {
+      throw new NotFoundError("Category not found");
     }
+  }
 
-    const {
-      name,
-      description,
-      price,
-      original_price,
-      sku,
-      category_id,
-      season,
-      attributes,
-    } = req.body;
-
-    if (sku && sku !== existingProduct.sku) {
-      const existingProductWithSku = await ProductDao.findProductBySku(sku);
-      if (existingProductWithSku) {
-        return res.status(409).json({
-          success: false,
-          message: "Product with this SKU already exists",
-        });
-      }
-    }
-
-    if (category_id && category_id !== existingProduct.category_id) {
-      const category = await CategoryDao.findCategoryById(category_id);
-      if (!category) {
-        return res.status(404).json({
-          success: false,
-          message: "Category not found",
-        });
-      }
-    }
-
-    if (files && files.length > 0) {
-      try {
-        uploadedImageUrls = await uploadMultipleImages(files, "products");
-        oldImageUrls = existingProduct.images || [];
-      } catch (uploadError) {
-        console.error("Image upload error:", uploadError);
-        return res.status(500).json({
-          success: false,
-          message: "Failed to upload new images to cloud storage",
-        });
-      }
-    }
-
-    const updateData: UpdateProductInput = {};
-
-    if (name !== undefined) updateData.name = name;
-    if (description !== undefined) updateData.description = description;
-    if (price !== undefined) updateData.price = parseFloat(price);
-    if (original_price !== undefined)
-      updateData.original_price = parseFloat(original_price);
-    if (sku !== undefined) updateData.sku = sku;
-    if (category_id !== undefined) updateData.category_id = category_id;
-    if (season !== undefined) updateData.season = season;
-    if (attributes !== undefined) {
-      updateData.attributes =
-        typeof attributes === "string" ? JSON.parse(attributes) : attributes;
-    }
-
-    if (uploadedImageUrls.length > 0) {
-      (updateData as any).images = uploadedImageUrls;
-    }
-
-    let updatedProduct;
+  if (files && files.length > 0) {
     try {
-      updatedProduct = await ProductDao.updateProduct(product_id, updateData);
+      uploadedImageUrls = await uploadMultipleImages(files, "products");
+      oldImageUrls = existingProduct.images || [];
+    } catch (uploadError) {
+      console.error("Image upload error:", uploadError);
+      throw new InternalServerError(
+        "Failed to upload new images to cloud storage",
+      );
+    }
+  }
 
-      if (!updatedProduct) {
-        if (uploadedImageUrls.length > 0) {
-          await deleteMultipleImages(uploadedImageUrls);
-        }
-        return res.status(500).json({
-          success: false,
-          message: "Failed to update product",
-        });
-      }
+  const updateData: UpdateProductInput = {};
 
-      if (uploadedImageUrls.length > 0 && oldImageUrls.length > 0) {
-        await deleteMultipleImages(oldImageUrls);
-      }
-    } catch (dbError) {
-      console.error("Product update error:", dbError);
+  if (name !== undefined) updateData.name = name;
+  if (description !== undefined) updateData.description = description;
+  if (price !== undefined) updateData.price = parseFloat(price);
+  if (original_price !== undefined)
+    updateData.original_price = parseFloat(original_price);
+  if (sku !== undefined) updateData.sku = sku;
+  if (category_id !== undefined) updateData.category_id = category_id;
+  if (season !== undefined) updateData.season = season;
+  if (attributes !== undefined) {
+    updateData.attributes =
+      typeof attributes === "string" ? JSON.parse(attributes) : attributes;
+  }
+
+  if (uploadedImageUrls.length > 0) {
+    (updateData as any).images = uploadedImageUrls;
+  }
+
+  let updatedProduct;
+  try {
+    updatedProduct = await ProductDao.updateProduct(product_id, updateData);
+
+    if (!updatedProduct) {
       if (uploadedImageUrls.length > 0) {
         await deleteMultipleImages(uploadedImageUrls);
       }
-      return res.status(500).json({
-        success: false,
-        message: "Failed to update product",
-      });
+      throw new InternalServerError("Failed to update product");
     }
 
-    return res.status(200).json({
-      success: true,
-      message: "Product updated successfully",
-      data: updatedProduct,
-    });
-  } catch (error) {
-    console.error("Update product error:", error);
-
+    if (uploadedImageUrls.length > 0 && oldImageUrls.length > 0) {
+      await deleteMultipleImages(oldImageUrls);
+    }
+  } catch (dbError) {
+    console.error("Product update error:", dbError);
     if (uploadedImageUrls.length > 0) {
       await deleteMultipleImages(uploadedImageUrls);
     }
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to update product",
-    });
+    throw new InternalServerError("Failed to update product");
   }
+
+  return res.success(updatedProduct, "Product updated successfully");
 };
 
 export const deleteProduct = async (req: Request, res: Response) => {
-  try {
-    const { product_id } = req.params;
-    const existingProduct = await ProductDao.findProductById(product_id);
-    if (!existingProduct) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
-    }
-    const user = req.user as any;
-    if (
-      user.id !== existingProduct.seller_id &&
-      user.seller_id !== existingProduct.seller_id
-    ) {
-      return res.status(403).json({
-        success: false,
-        message: "You can only delete your own products",
-      });
-    }
+  const { product_id } = req.params;
+  const existingProduct = await ProductDao.findProductById(product_id);
 
+  if (!existingProduct) {
+    throw new NotFoundError("Product not found");
+  }
+
+  const user = req.user as any;
+  if (
+    user.id !== existingProduct.seller_id &&
+    user.seller_id !== existingProduct.seller_id
+  ) {
+    throw new ForbiddenError("You can only delete your own products");
+  }
+
+  try {
+    const inventoryDeleted = await InventoryDao.deleteInventory(product_id);
+    if (inventoryDeleted) {
+      console.log(`Inventory for product ${product_id} deleted successfully`);
+    }
+  } catch (inventoryError) {
+    console.warn(
+      `Failed to delete inventory for product ${product_id}:`,
+      inventoryError,
+    );
+  }
+
+  const deletedProduct = await ProductDao.deleteProduct(product_id);
+  if (!deletedProduct) {
+    throw new InternalServerError("Failed to delete product");
+  }
+
+  // Clean up product images from Cloudinary
+  if (existingProduct.images && existingProduct.images.length > 0) {
     try {
-      const inventoryDeleted = await InventoryDao.deleteInventory(product_id);
-      if (inventoryDeleted) {
-        console.log(`Inventory for product ${product_id} deleted successfully`);
-      }
-    } catch (inventoryError) {
-      console.warn(
-        `Failed to delete inventory for product ${product_id}:`,
-        inventoryError,
+      await deleteMultipleImages(existingProduct.images);
+      console.log(
+        `Deleted ${existingProduct.images.length} images for product ${product_id}`,
+      );
+    } catch (imageError) {
+      console.error(
+        `Failed to delete images for product ${product_id}:`,
+        imageError,
       );
     }
-
-    const deletedProduct = await ProductDao.deleteProduct(product_id);
-    if (!deletedProduct) {
-      return res.status(500).json({
-        success: false,
-        message: "Failed to delete product",
-      });
-    }
-
-    // Clean up product images from Cloudinary
-    if (existingProduct.images && existingProduct.images.length > 0) {
-      try {
-        await deleteMultipleImages(existingProduct.images);
-        console.log(
-          `Deleted ${existingProduct.images.length} images for product ${product_id}`,
-        );
-      } catch (imageError) {
-        console.error(
-          `Failed to delete images for product ${product_id}:`,
-          imageError,
-        );
-      }
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Product deleted successfully",
-      data: deletedProduct,
-    });
-  } catch (error) {
-    console.error("Delete product error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to delete product",
-    });
   }
+
+  return res.success(deletedProduct, "Product deleted successfully");
 };
 
 /**
  * GET /products - List all products with pagination
  */
 export const getAllProducts = async (req: Request, res: Response) => {
-  try {
-    const {
-      page = "1",
-      limit = "20",
-      category_id,
-      min_price,
-      max_price,
-      sort = "newest",
-    } = req.query;
+  const {
+    page = "1",
+    limit = "20",
+    category_id,
+    min_price,
+    max_price,
+    sort = "newest",
+  } = req.query;
 
-    const pageNum = Math.max(1, parseInt(page as string, 10));
-    const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10)));
+  const pageNum = Math.max(1, parseInt(page as string, 10));
+  const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10)));
 
-    const { products, total } = await ProductDao.findAllProductsWithPagination({
-      page: pageNum,
-      limit: limitNum,
-      category_id: category_id as string,
-      min_price: min_price ? parseFloat(min_price as string) : undefined,
-      max_price: max_price ? parseFloat(max_price as string) : undefined,
-      sort: sort as string,
-    });
+  const { products, total } = await ProductDao.findAllProductsWithPagination({
+    page: pageNum,
+    limit: limitNum,
+    category_id: category_id as string,
+    min_price: min_price ? parseFloat(min_price as string) : undefined,
+    max_price: max_price ? parseFloat(max_price as string) : undefined,
+    sort: sort as string,
+  });
 
-    return res.status(200).json({
-      success: true,
-      message: "Products retrieved successfully",
-      data: {
-        products,
-        pagination: {
-          page: pageNum,
-          limit: limitNum,
-          total,
-          totalPages: Math.ceil(total / limitNum),
-        },
+  return res.success(
+    {
+      products,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum),
       },
-    });
-  } catch (error) {
-    console.error("Get all products error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to retrieve products",
-    });
-  }
+    },
+    "Products retrieved successfully",
+  );
 };
 
 /**
  * GET /products/:product_id - Get single product with details
  */
 export const getProductById = async (req: Request, res: Response) => {
-  try {
-    const { product_id } = req.params;
+  const { product_id } = req.params;
 
-    const product = await ProductDao.findProductWithDetails(product_id);
+  const product = await ProductDao.findProductWithDetails(product_id);
 
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Product found",
-      data: { product },
-    });
-  } catch (error) {
-    console.error("Get product by ID error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to retrieve product",
-    });
+  if (!product) {
+    throw new NotFoundError("Product not found");
   }
+
+  return res.success({ product }, "Product found");
 };
 
 /**
  * GET /products/search - Search products using Elasticsearch
  */
 export const searchProducts = async (req: Request, res: Response) => {
-  try {
-    const {
-      q,
-      category,
-      min_price,
-      max_price,
-      in_stock,
-      page = "1",
-      limit = "20",
-      sort = "relevance",
-    } = req.query;
+  const {
+    q,
+    category,
+    min_price,
+    max_price,
+    in_stock,
+    page = "1",
+    limit = "20",
+    sort = "relevance",
+  } = req.query;
 
-    if (!q) {
-      return res.status(400).json({
-        success: false,
-        message: "Search query 'q' is required",
-      });
-    }
+  if (!q) {
+    throw new BadRequestError("Search query 'q' is required");
+  }
 
-    const result = await ElasticsearchService.searchProducts({
-      query: q as string,
-      category: category as string,
-      min_price: min_price ? parseFloat(min_price as string) : undefined,
-      max_price: max_price ? parseFloat(max_price as string) : undefined,
-      in_stock:
-        in_stock === "true" ? true : in_stock === "false" ? false : undefined,
+  const result = await ElasticsearchService.searchProducts({
+    query: q as string,
+    category: category as string,
+    min_price: min_price ? parseFloat(min_price as string) : undefined,
+    max_price: max_price ? parseFloat(max_price as string) : undefined,
+    in_stock:
+      in_stock === "true" ? true : in_stock === "false" ? false : undefined,
+    page: parseInt(page as string, 10),
+    limit: parseInt(limit as string, 10),
+    sort: sort as "relevance" | "price_asc" | "price_desc" | "newest",
+  });
+
+  return res.success(
+    {
+      products: result.products,
+      total: result.total,
       page: parseInt(page as string, 10),
       limit: parseInt(limit as string, 10),
-      sort: sort as "relevance" | "price_asc" | "price_desc" | "newest",
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: `Found ${result.total} products`,
-      data: {
-        products: result.products,
-        total: result.total,
-        page: parseInt(page as string, 10),
-        limit: parseInt(limit as string, 10),
-      },
-    });
-  } catch (error) {
-    console.error("Search products error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Search failed",
-    });
-  }
+    },
+    `Found ${result.total} products`,
+  );
 };
 
 /**
  * GET /products/seller/:seller_id - Get all products from a seller
  */
 export const getSellerProducts = async (req: Request, res: Response) => {
-  try {
-    const { seller_id } = req.params;
+  const { seller_id } = req.params;
 
-    const products = await ProductDao.findProductsBySellerId(seller_id);
+  const products = await ProductDao.findProductsBySellerId(seller_id);
 
-    return res.status(200).json({
-      success: true,
-      message: `Found ${products.length} products`,
-      data: { products },
-    });
-  } catch (error) {
-    console.error("Get seller products error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to retrieve seller products",
-    });
-  }
+  return res.success({ products }, `Found ${products.length} products`);
 };
 
 // ===== ELASTICSEARCH SYNC HELPER =====

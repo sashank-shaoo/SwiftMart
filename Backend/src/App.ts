@@ -4,6 +4,7 @@ import cors from "cors";
 import { validateEnv } from "./config/validateEnv";
 import { sanitizeInput } from "./middlewares/sanitizeMiddleware";
 import { notFoundHandler, errorHandler } from "./middlewares/errorHandler";
+import { responseHandler } from "./middlewares/responseHandler";
 
 // Validate environment variables on startup
 validateEnv();
@@ -30,6 +31,9 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // Security: Input sanitization
 app.use(sanitizeInput);
+
+// Global Response Handler
+app.use(responseHandler);
 
 // Request logging
 import { requestLogger } from "./middlewares/requestLogger";

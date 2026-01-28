@@ -16,12 +16,20 @@ export const sanitizeInput = (
 
   // Sanitize query parameters
   if (req.query) {
-    req.query = sanitizeObject(req.query);
+    const sanitizedQuery = sanitizeObject(req.query);
+    for (const key in req.query) {
+      delete (req.query as any)[key];
+    }
+    Object.assign(req.query, sanitizedQuery);
   }
 
   // Sanitize URL parameters
   if (req.params) {
-    req.params = sanitizeObject(req.params);
+    const sanitizedParams = sanitizeObject(req.params);
+    for (const key in req.params) {
+      delete (req.params as any)[key];
+    }
+    Object.assign(req.params, sanitizedParams);
   }
 
   next();

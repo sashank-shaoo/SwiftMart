@@ -4,6 +4,7 @@ import * as locationController from "../controllers/locationController";
 import express from "express";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { validate } from "../middlewares/validateMiddleware";
+import { asyncHandler } from "../middlewares/errorHandler";
 import {
   userSchema,
   UpdateUserSchema,
@@ -13,7 +14,6 @@ import {
   CreateSellerProfileSchema,
   RegisterSellerSchema,
 } from "../validation(ZOD)/SellerProfileValidation";
-import { CreateAdminProfileSchema } from "../validation(ZOD)/AdminProfileValidation";
 import {
   loginLimiter,
   registerLimiter,
@@ -22,38 +22,38 @@ import {
 
 const router = express.Router();
 
-router.post("/login", loginLimiter, authController.login);
-router.post("/logout", authMiddleware, authController.logout);
+router.post("/login", loginLimiter, asyncHandler(authController.login));
+router.post("/logout", authMiddleware, asyncHandler(authController.logout));
 
 router.post(
   "/register",
   registerLimiter,
   validate(userSchema),
-  authController.registerUser,
+  asyncHandler(authController.registerUser),
 );
 router.post(
   "/become-seller",
   authMiddleware,
   validate(CreateSellerProfileSchema),
-  authController.becomeSeller,
+  asyncHandler(authController.becomeSeller),
 );
 router.put(
   "/update",
   authMiddleware,
   validate(UpdateUserSchema),
-  authController.updateUser,
+  asyncHandler(authController.updateUser),
 );
 
 // ===== Email Update Routes (separate from profile updates for security) =====
 router.post(
   "/request-email-update",
   authMiddleware,
-  authController.requestEmailUpdate,
+  asyncHandler(authController.requestEmailUpdate),
 );
 router.post(
   "/verify-email-update",
   authMiddleware,
-  authController.verifyEmailUpdate,
+  asyncHandler(authController.verifyEmailUpdate),
 );
 
 // ===== Password & Token Management Routes =====
@@ -61,16 +61,16 @@ router.post(
   "/change-password",
   authMiddleware,
   validate(ChangePasswordSchema),
-  authController.changePassword,
+  asyncHandler(authController.changePassword),
 );
-router.post("/refresh-token", authController.refreshToken);
+router.post("/refresh-token", asyncHandler(authController.refreshToken));
 
 // ===== Seller Routes =====
 router.post(
   "/seller/register",
   registerLimiter,
   validate(RegisterSellerSchema),
-  authController.registerSeller,
+  asyncHandler(authController.registerSeller),
 );
 
 //Disabled for now
@@ -84,27 +84,31 @@ router.post(
 router.post(
   "/send-verification-otp",
   otpLimiter,
-  otpController.sendVerificationOtp,
+  asyncHandler(otpController.sendVerificationOtp),
 );
-router.post("/verify-email", otpController.verifyEmailOtp);
+router.post("/verify-email", asyncHandler(otpController.verifyEmailOtp));
 router.post(
   "/request-password-reset",
   otpLimiter,
-  otpController.requestPasswordReset,
+  asyncHandler(otpController.requestPasswordReset),
 );
-router.post("/reset-password", otpController.resetPassword);
+router.post("/reset-password", asyncHandler(otpController.resetPassword));
 
 // ===== Location Routes (Mapbox Integration) =====
 router.post(
   "/update-location",
   authMiddleware,
-  locationController.updateUserLocation,
+  asyncHandler(locationController.updateUserLocation),
 );
-router.get("/location", authMiddleware, locationController.getUserLocation);
+router.get(
+  "/location",
+  authMiddleware,
+  asyncHandler(locationController.getUserLocation),
+);
 router.post(
   "/calculate-distance",
   authMiddleware,
-  locationController.calculateDeliveryDistance,
+  asyncHandler(locationController.calculateDeliveryDistance),
 );
 
 export default router;

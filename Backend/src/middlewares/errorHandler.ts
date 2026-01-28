@@ -22,16 +22,13 @@ export const errorHandler = (
     message = err.message;
     isOperational = err.isOperational;
   }
-
-  // Handle specific error types
+  // PostgreSQL unique violation
   if ((err as any).code === "23505") {
-    // PostgreSQL unique violation
     statusCode = 409;
     message = "Resource already exists";
   }
-
+  // PostgreSQL foreign key violation
   if ((err as any).code === "23503") {
-    // PostgreSQL foreign key violation
     statusCode = 400;
     message = "Invalid reference";
   }
@@ -62,6 +59,9 @@ export const errorHandler = (
   res.status(statusCode).json({
     success: false,
     message,
+    ...(err instanceof AppError &&
+      err.errorCode && { errorCode: err.errorCode }),
+    ...(err instanceof AppError && err.details && { details: err.details }),
     ...(process.env.NODE_ENV === "development" && {
       error: err.message,
       stack: err.stack,
@@ -69,9 +69,7 @@ export const errorHandler = (
   });
 };
 
-/**
- * Catch 404 errors
- */
+// No Route found helper
 export const notFoundHandler = (
   req: Request,
   res: Response,
@@ -83,10 +81,7 @@ export const notFoundHandler = (
   });
 };
 
-/**
- * Async error wrapper
- * Wraps async route handlers to catch errors
- */
+// Async error wrapper
 export const asyncHandler = (
   fn: (req: Request, res: Response, next: NextFunction) => Promise<any>,
 ) => {

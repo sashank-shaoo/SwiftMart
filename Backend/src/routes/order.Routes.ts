@@ -1,26 +1,43 @@
 import express from "express";
-import { OrderController } from "../controllers/orderController";
+import * as OrderController from "../controllers/orderController";
 import {
   authMiddleware,
   requireSeller,
   requireSellerOrAdmin,
 } from "../middlewares/authMiddleware";
+import { asyncHandler } from "../middlewares/errorHandler";
 
 const router = express.Router();
 
 // ===== USER ROUTES =====
 
 // Checkout (create order from cart)
-router.post("/checkout", authMiddleware, OrderController.checkout);
+router.post(
+  "/checkout",
+  authMiddleware,
+  asyncHandler(OrderController.checkout),
+);
 
 // Get user's orders
-router.get("/my-orders", authMiddleware, OrderController.getMyOrders);
+router.get(
+  "/my-orders",
+  authMiddleware,
+  asyncHandler(OrderController.getMyOrders),
+);
 
 // Get order details
-router.get("/:id", authMiddleware, OrderController.getOrderDetails);
+router.get(
+  "/:id",
+  authMiddleware,
+  asyncHandler(OrderController.getOrderDetails),
+);
 
 // Cancel order (user can cancel own order)
-router.post("/:id/cancel", authMiddleware, OrderController.cancelOrder);
+router.post(
+  "/:id/cancel",
+  authMiddleware,
+  asyncHandler(OrderController.cancelOrder),
+);
 
 // ===== SELLER ROUTES =====
 
@@ -29,7 +46,7 @@ router.get(
   "/seller/orders",
   authMiddleware,
   requireSeller,
-  OrderController.getSellerOrders,
+  asyncHandler(OrderController.getSellerOrders),
 );
 
 // Update order status (seller updates their items)
@@ -37,7 +54,7 @@ router.patch(
   "/:id/status",
   authMiddleware,
   requireSellerOrAdmin,
-  OrderController.updateOrderStatus,
+  asyncHandler(OrderController.updateOrderStatus),
 );
 
 export default router;

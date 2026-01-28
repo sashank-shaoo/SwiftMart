@@ -6,6 +6,7 @@ import {
   updateProductSchema,
 } from "../validation(ZOD)/ProductValidation";
 import { uploadProductImages } from "../middlewares/uploadMiddleware";
+import { asyncHandler } from "../middlewares/errorHandler";
 import {
   createProductWithImages,
   updateProduct,
@@ -28,23 +29,23 @@ const router = express.Router();
 // ===== PUBLIC ROUTES (no auth required) =====
 
 // Get all products with pagination & filters
-router.get("/", getAllProducts);
+router.get("/", asyncHandler(getAllProducts));
 
 // Search products (Elasticsearch) - MUST be before /:product_id
-router.get("/search", searchProducts);
+router.get("/search", asyncHandler(searchProducts));
 
 // ===== PRODUCT DISCOVERY ROUTES (new filters) =====
-router.get("/bestsellers", getBestSellers);
-router.get("/top-rated", getTopRated);
-router.get("/new-arrivals", getNewArrivals);
-router.get("/season/:season", getProductsBySeason);
-router.get("/category/:category_id", getProductsByCategory);
+router.get("/bestsellers", asyncHandler(getBestSellers));
+router.get("/top-rated", asyncHandler(getTopRated));
+router.get("/new-arrivals", asyncHandler(getNewArrivals));
+router.get("/season/:season", asyncHandler(getProductsBySeason));
+router.get("/category/:category_id", asyncHandler(getProductsByCategory));
 
 // Get seller's products - MUST be before /:product_id
-router.get("/seller/:seller_id", getSellerProducts);
+router.get("/seller/:seller_id", asyncHandler(getSellerProducts));
 
 // Get single product details (MUST be last among GET routes)
-router.get("/:product_id", getProductById);
+router.get("/:product_id", asyncHandler(getProductById));
 
 // ===== SELLER ROUTES (auth required) =====
 
@@ -55,7 +56,7 @@ router.post(
   requireSeller,
   uploadProductImages,
   validate(createProductSchema),
-  createProductWithImages,
+  asyncHandler(createProductWithImages),
 );
 
 // Update product
@@ -65,10 +66,15 @@ router.put(
   requireSeller,
   uploadProductImages,
   validate(updateProductSchema),
-  updateProduct,
+  asyncHandler(updateProduct),
 );
 
 // Delete product
-router.delete("/:product_id", authMiddleware, requireSeller, deleteProduct);
+router.delete(
+  "/:product_id",
+  authMiddleware,
+  requireSeller,
+  asyncHandler(deleteProduct),
+);
 
 export default router;
