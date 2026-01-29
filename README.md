@@ -2,10 +2,12 @@
 
 > A full-stack e-commerce platform with robust authentication, role-based access control, and PostgreSQL + PostGIS integration
 
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue.svg)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-LTS-green.svg)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/Express-5.1.0-lightgrey.svg)](https://expressjs.com/)
+[![Express](https://img.shields.io/badge/Express-5.x-lightgrey.svg)](https://expressjs.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16+-blue.svg)](https://www.postgresql.org/)
+[![Elasticsearch](https://img.shields.io/badge/Elasticsearch-8.x-005571.svg)](https://www.elastic.co/)
+[![Redis](https://img.shields.io/badge/Redis-Latest-red.svg)](https://redis.io/)
 [![Next.js](https://img.shields.io/badge/Next.js-Latest-black.svg)](https://nextjs.org/)
 
 ---
@@ -38,9 +40,12 @@
 - **Runtime**: Node.js with TypeScript
 - **Framework**: Express.js 5.1.0
 - **Database**: PostgreSQL with PostGIS extension (for geospatial data)
-- **Authentication**: JWT (JSON Web Tokens) with HTTP-only cookies
+- **Authentication**: JWT with HTTP-only cookies & Refresh Token rotation
 - **Password Hashing**: bcrypt (salt rounds: 10)
 - **Validation**: Zod schemas
+- **Search Engine**: **Elasticsearch 8.x** (Fuzzy & full-text search)
+- **Caching**: **Redis** (Cart and product listing optimization)
+- **Maps/Location**: **Mapbox SDK** (Geocoding and maps)
 - **File Upload**: Multer + Cloudinary integration
 - **Email Service**: Nodemailer with Gmail SMTP
   - OTP-based email verification
@@ -108,10 +113,23 @@
 - ✅ Support for Users, Sellers, Admins, Items, Reviews, and Carts
 - ✅ Automatic OTP cleanup with 10-minute grace period
 
+### **🚀 Search & Performance**
+
+- ✅ **Elasticsearch Search**: High-performance full-text search with fuzzy matching
+- ✅ **Redis Caching**: Optimized cart retrieval and product listing
+- ✅ **Mapbox Integration**: Geocoding addresses to coordinates for precise location
+
+### **📦 Inventory Management**
+
+- ✅ **Real-time Stock Tracking**: Automatic inventory management on checkout
+- ✅ **Low Stock Alerts**: Configurable thresholds for inventory warnings
+- ✅ **Warehouse Locations**: Support for multi-warehouse proximity calculations
+
 ### **File Management**
 
-- ✅ Image upload middleware
-- ✅ Cloudinary integration for asset storage
+- ✅ Multi-image upload support for products
+- ✅ Cloudinary integration for secure asset storage
+- ✅ Rollback mechanisms for failed uploads
 
 ---
 
@@ -132,40 +150,56 @@ ecommerce/
 │   │   │   └── UploadImageMidddleware.ts
 │   │   ├── models/             # TypeScript interfaces
 │   │   │   ├── User.ts
-│   │   │   ├── Seller.ts
-│   │   │   ├── Admin.ts
-│   │   │   ├── Item.ts
+│   │   │   ├── SellerProfile.ts
+│   │   │   ├── AdminProfile.ts
+│   │   │   ├── Category.ts
+│   │   │   ├── Product.ts
+│   │   │   ├── Inventory.ts
+│   │   │   ├── Order.ts
+│   │   │   ├── OrderItem.ts
 │   │   │   ├── Review.ts
 │   │   │   ├── Cart.ts
+│   │   │   ├── Notification.ts
+│   │   │   ├── Wishlist.ts
 │   │   │   └── emailOtp.ts             # OTP model
 │   │   ├── daos/               # Database access layer
 │   │   │   ├── UserDao.ts
-│   │   │   ├── SellerDao.ts
-│   │   │   ├── AdminDao.ts
-│   │   │   ├── ItemDao.ts
+│   │   │   ├── SellerProfileDao.ts
+│   │   │   ├── AdminProfileDao.ts
+│   │   │   ├── CategoryDao.ts
+│   │   │   ├── ProductDao.ts
+│   │   │   ├── InventoryDao.ts
+│   │   │   ├── OrderDao.ts
+│   │   │   ├── OrderItemDao.ts
 │   │   │   ├── ReviewDao.ts
 │   │   │   ├── CartDao.ts
+│   │   │   ├── NotificationDao.ts
+│   │   │   ├── WishlistDao.ts
 │   │   │   └── EmailOtpDao.ts          # OTP database operations
 │   │   ├── services/           # Business logic
 │   │   │   ├── EmailService.ts         # Nodemailer email sending
-│   │   │   └── OtpCleanupService.ts    # Auto-cleanup service
-│   │   ├── utils/              # Utility functions
-│   │   │   ├── otpHelpers.ts           # OTP generation
-│   │   │   └── emailTemplates.ts       # HTML email templates
+│   │   │   ├── OtpCleanupService.ts    # Auto-cleanup service
+│   │   │   ├── ElasticsearchService.ts # Search engine logic
+│   │   │   ├── RedisService.ts         # Redis connection management
+│   │   │   ├── ProductCacheService.ts  # Product listing caching
+│   │   │   ├── CartCacheService.ts     # Shopping cart caching
+│   │   │   ├── MapboxService.ts        # Geocoding and location logic
+│   │   │   ├── ImageService.ts         # Cloudinary asset management
+│   │   │   └── SessionService.ts       # Auth session/token logic
 │   │   ├── validation(ZOD)/    # Zod validation schemas
 │   │   │   ├── UserValidation.ts
 │   │   │   ├── SellerValidation.ts
 │   │   │   ├── AdminValidation.ts
-│   │   │   ├── ItemValidation.ts
+│   │   │   ├── ProductValidation.ts
+│   │   │   ├── CategoryValidation.ts
 │   │   │   ├── ReviewValidation.ts
 │   │   │   └── CartValidation.ts
-│   │   ├── db/                 # Database connection
-│   │   ├── services/           # Business logic
-│   │   ├── types/              # Custom TypeScript types
-│   │   ├── utils/              # Utility functions
-│   │   ├── scripts/            # Database scripts
-│   │   └── App.ts              # Application entry point
-│   ├── Server.ts               # Server with OTP cleanup service
+│   │   ├── db/                 # Database connection pooling
+│   │   ├── types/              # Internal type definitions
+│   │   ├── utils/              # Helper functions (OTPs, Templates, etc.)
+│   │   ├── scripts/            # Database migrations & seeds
+│   │   └── App.ts              # Express application setup
+│   ├── Server.ts               # Server entry point & service initialization
 │   ├── package.json
 │   ├── tsconfig.json
 │   └── .env
@@ -213,13 +247,13 @@ Handles all authentication-related operations with the following functions:
 
 Each DAO provides CRUD operations for its respective entity:
 
-- **UserDao**: User database operations
-- **SellerDao**: Seller database operations
-- **AdminDao**: Admin database operations
-- **ItemDao**: Product catalog operations
-- **CartDao**: Shopping cart management
+- **UserDao**: Core user and profile extension data
+- **ProductDao**: Product catalog with Elasticsearch sync
+- **CategoryDao**: Hierarchical category management
+- **InventoryDao**: Stock tracking and warehouse management
+- **CartDao**: Shopping cart with Redis caching
 - **ReviewDao**: Product review operations
-- **EmailOtpDao**: OTP creation, verification, rate limiting, and cleanup
+- **EmailOtpDao**: OTP creation, verification, and cleanup
 
 #### **3. Validation Schemas (Zod)**
 
@@ -247,61 +281,88 @@ All API requests are validated using Zod schemas:
 ```sql
 - id (UUID, Primary Key)
 - name (VARCHAR)
-- email (VARCHAR, UNIQUE)
-- password (VARCHAR, HASHED)
-- image (VARCHAR, nullable)
 - age (INTEGER, nullable)
 - number (VARCHAR, nullable)
-- location (GEOMETRY Point, nullable) -- PostGIS
+- email (VARCHAR, UNIQUE)
+- password (VARCHAR, HASHED)
 - bio (TEXT, nullable)
-- role (ENUM: 'user', 'seller', 'admin')
-- is_seller_verified (BOOLEAN)
-- is_admin_verified (BOOLEAN)
-- created_at (TIMESTAMP)
-- updated_at (TIMESTAMP)
-```
-
-### **Sellers Table**
-
-```sql
-- id (UUID, Primary Key)
-- name (VARCHAR)
-- email (VARCHAR, UNIQUE)
-- password (VARCHAR, HASHED)
 - image (VARCHAR, nullable)
-- number (VARCHAR, nullable)
+- role (ENUM: 'user', 'seller', 'admin')
 - location (GEOMETRY Point, nullable) -- PostGIS
-- role (ENUM: 'seller', 'admin')
-- is_seller_verified (BOOLEAN)
-- is_admin_verified (BOOLEAN)
+- is_verified_email (BOOLEAN, default: false)
+- refresh_token_hash (TEXT, nullable)
+- refresh_token_expires_at (TIMESTAMPTZ, nullable)
 - created_at (TIMESTAMP)
 - updated_at (TIMESTAMP)
 ```
 
-### **Admins Table**
+### **Seller Profiles Table**
 
 ```sql
 - id (UUID, Primary Key)
-- name (VARCHAR)
-- email (VARCHAR, UNIQUE)
-- password (VARCHAR, HASHED)
-- role (VARCHAR: 'admin')
+- user_id (UUID, Foreign Key → users.id)
+- store_name (VARCHAR)
+- gst_number (VARCHAR, nullable)
+- verification_status (ENUM: 'pending', 'verified', 'rejected')
+- payout_details (JSONB, bank info)
+- commission_rate (DECIMAL, default: 10.0)
 - created_at (TIMESTAMP)
 - updated_at (TIMESTAMP)
 ```
 
-### **Items Table**
+### **Admin Profiles Table**
+
+```sql
+- id (UUID, Primary Key)
+- user_id (UUID, Foreign Key → users.id)
+- permissions (JSONB, access controls)
+- department (VARCHAR, nullable)
+- created_at (TIMESTAMP)
+- updated_at (TIMESTAMP)
+```
+
+### **Products Table**
 
 ```sql
 - id (UUID, Primary Key)
 - name (VARCHAR)
-- image (VARCHAR)
-- price (DECIMAL)
 - description (TEXT, nullable)
-- category (VARCHAR, nullable)
-- season (ENUM, nullable)
-- seller_id (UUID, Foreign Key → sellers.id)
+- sku (VARCHAR, UNIQUE, nullable)
+- category_id (UUID, Foreign Key → categories.id)
+- price (DECIMAL)
+- original_price (DECIMAL, nullable)
+- images (JSONB, array of URLs)
+- attributes (JSONB, dynamic product specs)
+- seller_id (UUID, Foreign Key → users.id)
+- season (ENUM: 'summer', 'winter', 'spring', 'autumn', 'monsoon', 'rainy')
+- rating (DECIMAL, default: 0)
+- review_count (INTEGER, default: 0)
 - created_at (TIMESTAMP)
+- updated_at (TIMESTAMP)
+```
+
+### **Categories Table**
+
+```sql
+- id (UUID, Primary Key)
+- name (VARCHAR)
+- slug (VARCHAR, UNIQUE)
+- parent_id (UUID, Foreign Key → categories.id, nullable)
+- created_at (TIMESTAMP)
+- updated_at (TIMESTAMP)
+```
+
+### **Inventory Table**
+
+```sql
+- id (UUID, Primary Key)
+- product_id (UUID, Foreign Key → products.id)
+- stock_quantity (INTEGER, default: 0)
+- reserved_quantity (INTEGER, default: 0)
+- available_quantity (INTEGER, computed: stock - reserved)
+- low_stock_threshold (INTEGER, default: 5)
+- warehouse_location (VARCHAR, nullable)
+- last_restocked_at (TIMESTAMP)
 - updated_at (TIMESTAMP)
 ```
 
@@ -310,7 +371,7 @@ All API requests are validated using Zod schemas:
 ```sql
 - id (UUID, Primary Key)
 - user_id (UUID, Foreign Key → users.id)
-- item_id (UUID, Foreign Key → items.id)
+- product_id (UUID, Foreign Key → products.id)
 - rating (INTEGER)
 - comment (TEXT, nullable)
 - created_at (TIMESTAMP)
@@ -321,9 +382,9 @@ All API requests are validated using Zod schemas:
 ```sql
 - id (UUID, Primary Key)
 - user_id (UUID, Foreign Key → users.id)
-- item_id (UUID, Foreign Key → items.id)
-- seller_id (UUID, Foreign Key → sellers.id)
-- quantity (INTEGER)
+- product_id (UUID, Foreign Key → products.id)
+- seller_id (UUID, Foreign Key → users.id)
+- quantity (INTEGER, default: 1)
 - price_at_time (DECIMAL)
 - created_at (TIMESTAMP)
 - updated_at (TIMESTAMP)
@@ -378,7 +439,6 @@ All API requests are validated using Zod schemas:
    ```
 
 3. **Database Setup**
-
    - Create a PostgreSQL database
    - Enable PostGIS extension:
      ```sql
@@ -413,6 +473,17 @@ JWT_EXPIRES_IN=7d
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
+
+# Elasticsearch (Search)
+ELASTICSEARCH_URL=http://localhost:9200
+ELASTICSEARCH_USERNAME=elastic
+ELASTICSEARCH_PASSWORD=your_password
+
+# Redis (Caching)
+REDIS_URL=redis://localhost:6379
+
+# Mapbox (Geocoding)
+MAPBOX_ACCESS_TOKEN=your_mapbox_token
 
 # Email Service (Gmail SMTP - Nodemailer)
 MAIL_USER=your-email@gmail.com        # Gmail address
@@ -454,11 +525,11 @@ npm start            # Start production server
 
 ### **Authentication - Users**
 
-| Method | Endpoint             | Description         | Auth Required |
-| ------ | -------------------- | ------------------- | ------------- |
-| POST   | `/api/auth/register` | Register a new user | ❌            |
-| POST   | `/api/auth/login`    | Login user          | ❌            |
-| POST   | `/api/auth/logout`   | Logout user         | ✅            |
+| Method | Endpoint             | Description         | Status Code |
+| ------ | -------------------- | ------------------- | ----------- |
+| POST   | `/api/auth/register` | Register a new user | `201`       |
+| POST   | `/api/auth/login`    | Login user          | `200`       |
+| POST   | `/api/auth/logout`   | Logout user         | `200`       |
 
 **Example Request - User Registration:**
 
@@ -494,11 +565,11 @@ POST /api/auth/register
 
 ### **Authentication - Sellers**
 
-| Method | Endpoint                    | Description           | Auth Required |
-| ------ | --------------------------- | --------------------- | ------------- |
-| POST   | `/api/auth/seller/register` | Register a new seller | ❌            |
-| POST   | `/api/auth/seller/login`    | Login seller          | ❌            |
-| POST   | `/api/auth/seller/logout`   | Logout seller         | ✅            |
+| Method | Endpoint                    | Description           | Status Code |
+| ------ | --------------------------- | --------------------- | ----------- |
+| POST   | `/api/auth/seller/register` | Register a new seller | `201`       |
+| POST   | `/api/auth/seller/login`    | Login seller          | `200`       |
+| POST   | `/api/auth/seller/logout`   | Logout seller         | `200`       |
 
 **Example Request - Seller Registration:**
 
@@ -519,22 +590,22 @@ POST /api/auth/seller/register
 
 ### **Authentication - Admins**
 
-| Method | Endpoint                   | Description          | Auth Required |
-| ------ | -------------------------- | -------------------- | ------------- |
-| POST   | `/api/auth/admin/register` | Register a new admin | ❌            |
-| POST   | `/api/auth/admin/login`    | Login admin          | ❌            |
-| POST   | `/api/auth/admin/logout`   | Logout admin         | ✅            |
+| Method | Endpoint                   | Description          | Status Code |
+| ------ | -------------------------- | -------------------- | ----------- |
+| POST   | `/api/auth/admin/register` | Register a new admin | `201`       |
+| POST   | `/api/auth/admin/login`    | Login admin          | `200`       |
+| POST   | `/api/auth/admin/logout`   | Logout admin         | `200`       |
 
 ---
 
 ### **Email Verification & OTP**
 
-| Method | Endpoint                           | Description                  | Auth Required |
-| ------ | ---------------------------------- | ---------------------------- | ------------- |
-| POST   | `/api/auth/send-verification-otp`  | Send/resend verification OTP | ❌           |
-| POST   | `/api/auth/verify-email`           | Verify email with OTP        | ❌           |
-| POST   | `/api/auth/request-password-reset` | Request password reset OTP   | ❌           |
-| POST   | `/api/auth/reset-password`         | Reset password with OTP      | ❌           |
+| Method | Endpoint                           | Description                  | Status Code |
+| ------ | ---------------------------------- | ---------------------------- | ----------- |
+| POST   | `/api/auth/send-verification-otp`  | Send/resend verification OTP | `201`       |
+| POST   | `/api/auth/verify-email`           | Verify email with OTP        | `200`       |
+| POST   | `/api/auth/request-password-reset` | Request password reset OTP   | `201`       |
+| POST   | `/api/auth/reset-password`         | Reset password with OTP      | `200`       |
 
 **Example Request - Verify Email:**
 
