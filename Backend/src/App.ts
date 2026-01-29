@@ -1,6 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import helmet from "helmet";
 import { validateEnv } from "./config/validateEnv";
 import { sanitizeInput } from "./middlewares/sanitizeMiddleware";
 import { notFoundHandler, errorHandler } from "./middlewares/errorHandler";
@@ -15,7 +16,10 @@ import productRoutes from "./routes/product.Routes";
 import inventoryRoutes from "./routes/inventory.Routes";
 import orderRoutes from "./routes/order.Routes";
 import cartRoutes from "./routes/cart.Routes";
+import paymentRoutes from "./routes/payment.Routes";
 
+// Helmet configuration
+app.use(helmet());
 // CORS configuration
 app.use(
   cors({
@@ -47,6 +51,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/payments", paymentRoutes);
 
 // 404 handler - must be after all routes
 

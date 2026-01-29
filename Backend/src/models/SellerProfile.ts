@@ -12,6 +12,8 @@ export interface SellerProfile {
     upi_id?: string;
   };
   commission_rate?: number;
+  total_earnings?: number;
+  current_balance?: number;
   created_at?: Date;
   updated_at?: Date;
 }
