@@ -108,10 +108,14 @@ export const authService = {
     });
   },
 
-  updateLocation: async (coordinates: [number, number]): Promise<void> => {
+  updateLocation: async (locationData: {
+    address?: string;
+    latitude?: number;
+    longitude?: number;
+  }): Promise<any> => {
     return apiFetch("/auth/update-location", {
       method: "POST",
-      body: JSON.stringify({ coordinates }),
+      body: JSON.stringify(locationData),
     });
   },
 
@@ -120,11 +124,12 @@ export const authService = {
   },
 
   calculateDistance: async (
-    targetLocation: [number, number],
-  ): Promise<{ distance: number }> => {
+    targetLatitude: number,
+    targetLongitude: number,
+  ): Promise<{ distance: { kilometers: number; miles: number } }> => {
     return apiFetch("/auth/calculate-distance", {
       method: "POST",
-      body: JSON.stringify({ target_location: targetLocation }),
+      body: JSON.stringify({ targetLatitude, targetLongitude }),
     });
   },
 };

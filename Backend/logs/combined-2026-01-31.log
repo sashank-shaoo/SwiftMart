@@ -2,3 +2,6 @@
 {"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-31 12:19:11"}
 {"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-31 13:09:25"}
 {"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-31 13:09:31"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-01-31 17:24:36"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-01-31 17:24:39"}
+{"level":"http","message":"HEAD /api/products 200 - 6265ms","timestamp":"2026-01-31 18:04:25"}

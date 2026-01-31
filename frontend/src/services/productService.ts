@@ -13,39 +13,56 @@ export const productService = {
     params: GetProductsParams = {},
   ): Promise<{ products: Product[]; total: number }> => {
     const query = new URLSearchParams(params as any).toString();
-    return apiFetch(`/products?${query}`);
+    const data = await apiFetch(`/products?${query}`);
+    return {
+      products: data.products,
+      total: data.pagination.total,
+    };
   },
 
   getProductById: async (id: string): Promise<Product> => {
-    return apiFetch(`/products/${id}`);
+    const data = await apiFetch(`/products/${id}`);
+    return data.product;
   },
 
-  searchProducts: async (q: string): Promise<Product[]> => {
-    return apiFetch(`/products/search?q=${q}`);
+  searchProducts: async (
+    q: string,
+  ): Promise<{ products: Product[]; total: number }> => {
+    const data = await apiFetch(`/products/search?q=${q}`);
+    return {
+      products: data.products,
+      total: data.total,
+    };
   },
 
   getBestSellers: async (): Promise<Product[]> => {
-    return apiFetch("/products/bestsellers");
+    const data = await apiFetch("/products/bestsellers");
+    return data.products;
   },
 
   getTopRated: async (): Promise<Product[]> => {
-    return apiFetch("/products/top-rated");
+    const data = await apiFetch("/products/top-rated");
+    return data.products;
   },
 
   getNewArrivals: async (): Promise<Product[]> => {
-    return apiFetch("/products/new-arrivals");
+    const data = await apiFetch("/products/new-arrivals");
+    return data.products;
   },
 
   getProductsByCategory: async (categoryId: string): Promise<Product[]> => {
-    return apiFetch(`/products/category/${categoryId}`);
+    const data = await apiFetch(`/products/category/${categoryId}`);
+    return data.products;
   },
 
   getProductsBySeason: async (season: string): Promise<Product[]> => {
-    return apiFetch(`/products/season/${season}`);
+    const data = await apiFetch(`/products/season/${season}`);
+    return data.products;
   },
 
   getSellerProducts: async (sellerId: string): Promise<Product[]> => {
-    return apiFetch(`/products/seller/${sellerId}`);
+    const data = await apiFetch(`/products/seller/${sellerId}`);
+    return data.products;
   },
 
   createProduct: async (formData: FormData): Promise<Product> => {

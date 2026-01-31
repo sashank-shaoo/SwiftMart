@@ -25,6 +25,19 @@ export function useProducts(initialParams: GetProductsParams = {}) {
     }
   }, [params]);
 
+  const search = useCallback(async (q: string) => {
+    setLoading(true);
+    try {
+      const { products, total } = await productService.searchProducts(q);
+      setProducts(products);
+      setTotal(total);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const fetchProduct = useCallback(async (id: string) => {
     setLoading(true);
     try {
@@ -86,6 +99,7 @@ export function useProducts(initialParams: GetProductsParams = {}) {
     total,
     params,
     fetchProduct,
+    search,
     createProduct,
     updateProduct,
     deleteProduct,

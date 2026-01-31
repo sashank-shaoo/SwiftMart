@@ -17,7 +17,11 @@ interface AuthContextType {
   logout: () => Promise<void>;
   register: (userData: Partial<User>) => Promise<void>;
   updateUser: (userData: Partial<User>) => Promise<void>;
-  updateLocation: (coordinates: [number, number]) => Promise<void>;
+  updateLocation: (locationData: {
+    address?: string;
+    latitude?: number;
+    longitude?: number;
+  }) => Promise<void>;
   changePassword: (passwordData: {
     old_password: string;
     new_password: string;
@@ -73,12 +77,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("sfm_user", JSON.stringify(updatedUser));
   };
 
-  const updateLocation = async (coordinates: [number, number]) => {
-    await authService.updateLocation(coordinates);
-    if (user) {
+  const updateLocation = async (locationData: {
+    address?: string;
+    latitude?: number;
+    longitude?: number;
+  }) => {
+    const response = await authService.updateLocation(locationData);
+    if (user && response.latitude && response.longitude) {
       const updatedUser = {
         ...user,
-        location: { type: "Point" as const, coordinates },
+        location: {
+          type: "Point" as const,
+          coordinates: [response.longitude, response.latitude] as [
+            number,
+            number,
+          ],
+        },
       };
       setUser(updatedUser);
       localStorage.setItem("sfm_user", JSON.stringify(updatedUser));

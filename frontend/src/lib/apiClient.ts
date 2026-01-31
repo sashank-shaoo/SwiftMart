@@ -32,7 +32,8 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
       throw new Error(errorMessage);
     }
 
-    return response.json();
+    const result = await response.json();
+    return result.success ? result.data : result;
   } catch (err: any) {
     if (err.message === "Failed to fetch") {
       globalNotify("error", "Network error: Backend unreachable");
