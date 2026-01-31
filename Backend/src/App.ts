@@ -6,6 +6,7 @@ import { validateEnv } from "./config/validateEnv";
 import { sanitizeInput } from "./middlewares/sanitizeMiddleware";
 import { notFoundHandler, errorHandler } from "./middlewares/errorHandler";
 import { responseHandler } from "./middlewares/responseHandler";
+import { requestLogger } from "./middlewares/requestLogger";
 
 // Validate environment variables on startup
 validateEnv();
@@ -40,7 +41,7 @@ app.use(sanitizeInput);
 app.use(responseHandler);
 
 // Request logging
-import { requestLogger } from "./middlewares/requestLogger";
+
 app.use(requestLogger);
 
 app.get("/", (req, res) => {

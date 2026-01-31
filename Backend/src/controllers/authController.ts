@@ -9,7 +9,6 @@ import { jwtCookieOptions } from "../utils/cookieParser";
 import { EmailOtpDao } from "../daos/EmailOtpDao";
 import { generateOtp } from "../utils/otpHelpers";
 import { sendOtpEmail } from "../services/EmailService";
-import MapboxService from "../services/MapboxService";
 
 import {
   BadRequestError,

@@ -119,7 +119,7 @@ export function getOtpEmailPlainText(
   purpose: "verification" | "password_reset" | "email_change" = "verification"
 ): string {
   const messages = {
-    verification: "Welcome to SwiftMart! Please verify your email address.",
+    verification: "Use the verification code below to verify your email address.",
     password_reset: "You requested to reset your password.",
     email_change: "You requested to change your email address.",
   };
