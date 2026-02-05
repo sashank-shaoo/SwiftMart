@@ -1,0 +1,98 @@
+.pageWrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f0f0db 0%, #e1d9bc 100%);
+  padding: 2rem;
+}
+
+.registerCard {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 20px 40px rgba(12, 44, 85, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.header {
+  text-align: center;
+}
+
+.title {
+  font-size: 2.5rem;
+  color: var(--color-primary-dark);
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: var(--color-primary);
+  font-size: 1rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.footer {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-primary);
+}
+
+.link {
+  color: var(--color-primary-dark);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.roleToggle {
+  display: flex;
+  background: rgba(204, 214, 224, 0.3);
+  padding: 4px;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.roleBtn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  color: var(--color-primary);
+}
+
+.roleBtnActive {
+  background: white;
+  color: var(--color-primary-dark);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+@media (max-width: 768px) {
+  .pageWrapper {
+    padding: 1.5rem;
+  }
+
+  .registerCard {
+    padding: 2rem 1.5rem;
+    border-radius: 20px;
+    gap: 1.5rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+}

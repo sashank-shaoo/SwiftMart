@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { User, SellerProfile } from "@/types";
 import { authService, LoginResponse } from "@/services/authService";
+import OtpModal from "@/components/auth/OtpModal";
 
 interface AuthContextType {
   user: User | null;
@@ -16,7 +17,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   register: (userData: Partial<User>) => Promise<void>;
-  updateUser: (userData: Partial<User>) => Promise<void>;
+  updateUser: (userData: Partial<User> | FormData) => Promise<void>;
   updateLocation: (locationData: {
     address?: string;
     latitude?: number;
@@ -29,6 +30,9 @@ interface AuthContextType {
   becomeSeller: (sellerData: Partial<SellerProfile>) => Promise<void>;
   sendOtp: (email: string) => Promise<{ message: string }>;
   verifyOtp: (email: string, otp: string) => Promise<{ message: string }>;
+  verificationEmail: string | null;
+  showOtpModal: boolean;
+  setShowOtpModal: (show: boolean) => void;
   requestPasswordReset: (email: string) => Promise<{ message: string }>;
   resetPassword: (
     token: string,
@@ -41,21 +45,66 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [verificationEmail, setVerificationEmail] = useState<string | null>(
+    null,
+  );
+  const [showOtpModal, setShowOtpModal] = useState(false);
 
   useEffect(() => {
-    // Initial user check (could be from local storage or a "me" endpoint)
-    const storedUser = localStorage.getItem("sfm_user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    // Immediate hydration from localStorage to prevent flash
+    const saved = localStorage.getItem("sfm_user");
+    if (saved) {
+      try {
+        setUser(JSON.parse(saved));
+      } catch (e) {
+        console.warn("Auth hydration failed:", e);
+      }
     }
-    setLoading(false);
+
+    const syncSession = async () => {
+      try {
+        const data = await authService.getMe();
+        setUser(data.user);
+        localStorage.setItem("sfm_user", JSON.stringify(data.user));
+
+        // If user is loaded but NOT verified, trigger the modal automatically
+        if (data.user && !data.user.is_verified_email) {
+          setVerificationEmail(data.user.email);
+          setShowOtpModal(true);
+        }
+      } catch (err: any) {
+        // If getting profile fails (e.g. 401), clear local state
+        setUser(null);
+        localStorage.removeItem("sfm_user");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    syncSession();
   }, []);
 
+  // Persistent check: If user becomes unverified or shifts, trigger modal
+  useEffect(() => {
+    if (user && !user.is_verified_email && !showOtpModal) {
+      setVerificationEmail(user.email);
+      setShowOtpModal(true);
+    }
+  }, [user, showOtpModal]);
+
   const login = async (email: string, password: string) => {
-    const response = await authService.login(email, password);
-    setUser(response.user);
-    localStorage.setItem("sfm_user", JSON.stringify(response.user));
-    localStorage.setItem("sfm_token", response.token);
+    try {
+      const data = await authService.login(email, password);
+      setUser(data.user);
+      localStorage.setItem("sfm_user", JSON.stringify(data.user));
+    } catch (err: any) {
+      // Handle the case where login fails due to unverified email
+      if (err.message.includes("verify your account first")) {
+        setVerificationEmail(email);
+        setShowOtpModal(true);
+      }
+      throw err;
+    }
   };
 
   const logout = async () => {
@@ -66,12 +115,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (userData: Partial<User>) => {
-    const newUser = await authService.register(userData);
-    setUser(newUser);
-    localStorage.setItem("sfm_user", JSON.stringify(newUser));
+    const data = await authService.register(userData);
+    if (data.verification_sent) {
+      setVerificationEmail(userData.email!);
+      setShowOtpModal(true);
+    } else {
+      setUser(data.user);
+      localStorage.setItem("sfm_user", JSON.stringify(data.user));
+    }
   };
 
-  const updateUser = async (userData: Partial<User>) => {
+  const verifyOtp = async (email: string, otp: string) => {
+    const response = await authService.verifyOtp(email, otp);
+
+    // Update local user state to 'verified' so the modal doesn't re-trigger
+    if (user && user.email === email) {
+      const updatedUser = { ...user, is_verified_email: true };
+      setUser(updatedUser);
+      localStorage.setItem("sfm_user", JSON.stringify(updatedUser));
+    }
+
+    setVerificationEmail(null);
+    setShowOtpModal(false);
+    return response;
+  };
+
+  const updateUser = async (userData: Partial<User> | FormData) => {
     const updatedUser = await authService.updateUser(userData);
     setUser(updatedUser);
     localStorage.setItem("sfm_user", JSON.stringify(updatedUser));
@@ -108,19 +177,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const becomeSeller = async (sellerData: Partial<SellerProfile>) => {
     await authService.becomeSeller(sellerData);
-    // Role might change after becoming a seller, would usually require a re-fetch or token refresh
     if (user) {
       const updatedUser = { ...user, role: "seller" as const };
       setUser(updatedUser);
       localStorage.setItem("sfm_user", JSON.stringify(updatedUser));
     }
   };
-
   return (
     <AuthContext.Provider
       value={{
         user,
         loading,
+        verificationEmail,
+        showOtpModal,
+        setShowOtpModal,
         login,
         logout,
         register,
@@ -129,11 +199,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         changePassword,
         becomeSeller,
         sendOtp: authService.sendOtp,
-        verifyOtp: authService.verifyOtp,
+        verifyOtp: verifyOtp,
         requestPasswordReset: authService.requestPasswordReset,
         resetPassword: authService.resetPassword,
       }}>
       {children}
+      {showOtpModal && verificationEmail && (
+        <OtpModal
+          email={verificationEmail}
+          isOpen={showOtpModal}
+          onSuccess={() => {
+            setShowOtpModal(false);
+          }}
+        />
+      )}
     </AuthContext.Provider>
   );
 }

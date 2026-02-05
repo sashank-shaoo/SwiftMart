@@ -1,0 +1,136 @@
+.main {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #fbfbfb;
+  padding-bottom: 8rem;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.header {
+  padding: 6rem 2rem 4rem;
+  background: white;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 4rem;
+}
+
+.headerContent {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.pageTitle {
+  font-size: 3rem;
+  color: var(--color-primary-dark);
+  margin-bottom: 1rem;
+}
+
+.pageTitle span {
+  font-weight: 300;
+  color: var(--color-primary);
+}
+
+.pageSubtitle {
+  font-size: 1.25rem;
+  color: var(--color-secondary);
+  max-width: 600px;
+}
+
+/* Section Styling */
+.section {
+  margin-bottom: 6rem;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2.5rem;
+}
+
+.titleGroup {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.iconBox {
+  width: 48px;
+  height: 48px;
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sectionTitle {
+  font-size: 1.75rem;
+  color: var(--color-primary-dark);
+  margin-bottom: 0.25rem;
+}
+
+.sectionSubtitle {
+  color: var(--color-secondary);
+  font-size: 0.95rem;
+}
+
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.emptyState {
+  grid-column: 1 / -1;
+  padding: 4rem;
+  text-align: center;
+  background: white;
+  border-radius: 20px;
+  border: 2px dashed #eee;
+  color: var(--color-secondary);
+}
+
+.loadingContainer {
+  height: 100vh;
+  padding: 10rem 2rem;
+}
+
+.skeletonPulse {
+  width: 100%;
+  height: 400px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: pulse 1.5s infinite;
+  border-radius: 30px;
+}
+
+@keyframes pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 4rem 1.5rem 2rem;
+  }
+  
+  .pageTitle {
+    font-size: 2.25rem;
+  }
+  
+  .sectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  
+  .container {
+    padding: 0 1.5rem;
+  }
+}

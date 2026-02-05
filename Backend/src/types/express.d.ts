@@ -7,6 +7,7 @@ declare global {
     }
     interface Response {
       success(data?: any, message?: string, statusCode?: number): this;
+      error(message?: string, statusCode?: number, details?: any): this;
     }
   }
 }

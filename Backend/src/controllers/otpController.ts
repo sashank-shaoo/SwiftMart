@@ -16,25 +16,28 @@ export const sendVerificationOtp = async (req: Request, res: Response) => {
   const { email, account_type } = req.body;
 
   // Validation
-  if (!email || !account_type) {
-    throw new BadRequestError("Email and account_type are required");
+  if (!email) {
+    throw new BadRequestError("Email is required");
   }
 
   if (!isValidEmail(email)) {
     throw new BadRequestError("Invalid email format");
   }
 
-  if (!["user", "seller"].includes(account_type)) {
-    throw new BadRequestError(
-      "Invalid account_type. Must be 'user' or 'seller'",
-    );
-  }
-
-  // Check if account exists (all account types are users now)
+  // Find account to get its role/account_type
   const account = await UserDao.findUserByEmail(email);
 
   if (!account) {
     throw new NotFoundError("Account not found");
+  }
+
+  // Use provided account_type or infer from user role
+  const finalAccountType = account_type || account.role;
+
+  if (!["user", "seller", "admin"].includes(finalAccountType)) {
+    throw new BadRequestError(
+      "Invalid account_type. Must be 'user', 'seller' or 'admin'",
+    );
   }
 
   // Check if already verified
@@ -43,7 +46,7 @@ export const sendVerificationOtp = async (req: Request, res: Response) => {
   }
 
   // Check rate limit
-  const canRequest = await EmailOtpDao.canRequestOtp(email, account_type);
+  const canRequest = await EmailOtpDao.canRequestOtp(email, finalAccountType);
   if (!canRequest) {
     throw new TooManyRequestsError(
       "Too many requests. Please try again in an hour",
@@ -52,7 +55,12 @@ export const sendVerificationOtp = async (req: Request, res: Response) => {
 
   // Generate and store OTP
   const otp = generateOtp();
-  await EmailOtpDao.createOtp(email, otp, account_type, "email_verification");
+  await EmailOtpDao.createOtp(
+    email,
+    otp,
+    finalAccountType,
+    "email_verification",
+  );
 
   // Send email
   const emailSent = await sendOtpEmail(
@@ -76,18 +84,29 @@ export const sendVerificationOtp = async (req: Request, res: Response) => {
 export const verifyEmailOtp = async (req: Request, res: Response) => {
   const { email, otp, account_type } = req.body;
 
-  if (!email || !otp || !account_type) {
-    throw new BadRequestError("Email, OTP, and account_type are required");
+  if (!email || !otp) {
+    throw new BadRequestError("Email and OTP are required");
   }
 
-  if (!["user", "seller"].includes(account_type)) {
+  // Attempt to infer account_type if missing
+  let finalAccountType = account_type;
+  if (!finalAccountType) {
+    const user = await UserDao.findUserByEmail(email);
+    if (user) {
+      finalAccountType = user.role;
+    } else {
+      throw new NotFoundError("User not found");
+    }
+  }
+
+  if (!["user", "seller", "admin"].includes(finalAccountType)) {
     throw new BadRequestError("Invalid account_type");
   }
 
   const isValid = await EmailOtpDao.verifyOtp(
     email,
     otp,
-    account_type,
+    finalAccountType,
     "email_verification",
   );
 
@@ -101,7 +120,7 @@ export const verifyEmailOtp = async (req: Request, res: Response) => {
   ]);
 
   // Clean up used OTPs
-  await EmailOtpDao.deleteOtpsByEmail(email, account_type);
+  await EmailOtpDao.deleteOtpsByEmail(email, finalAccountType);
 
   console.log(`✅ Email verified for ${sanitizeEmail(email)}`);
 

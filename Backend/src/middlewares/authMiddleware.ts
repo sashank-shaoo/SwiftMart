@@ -5,7 +5,7 @@ import { verify } from "jsonwebtoken";
 export const authMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   let token;
 
@@ -18,7 +18,7 @@ export const authMiddleware = (
   }
 
   if (!token) {
-    return res.status(401).json({ error: "Not authenticated" });
+    return res.error("Not authenticated", 401);
   }
 
   try {
@@ -26,30 +26,42 @@ export const authMiddleware = (
     req.user = decoded;
     next();
   } catch (err) {
-    return res.status(403).json({ error: "Invalid or expired token" });
+    return res.error("Invalid or expired token", 403);
   }
 };
 
 // Seller authentication middleware
-export const requireSeller = (
+export const requireSeller = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   if (!req.user) {
-    return res.status(401).json({
-      success: false,
-      error: "Authentication required",
-    });
+    return res.error("Authentication required", 401);
   }
 
   const user = req.user as any;
 
-  if (user.account_type !== "seller" && user.role !== "seller") {
-    return res.status(403).json({
-      success: false,
-      error: "Access denied. Seller account required to perform this action.",
-    });
+  if (user.role !== "seller") {
+    return res.error(
+      "Access denied. Seller account required to perform this action.",
+      403,
+    );
+  }
+
+  // Check verification_status in database (Security: prevent bypass via old tokens)
+  const { SellerProfileDao } = await import("../daos/SellerProfileDao");
+  const profile = await SellerProfileDao.findSellerProfileByUserId(user.id);
+
+  if (!profile) {
+    return res.error("Seller profile not found.", 404);
+  }
+
+  if (profile.verification_status !== "verified") {
+    return res.error(
+      "Your seller account is pending approval. You will be able to perform this action once an admin verifies your profile.",
+      403,
+    );
   }
 
   next();
@@ -59,49 +71,42 @@ export const requireSeller = (
 export const requireAdmin = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   if (!req.user) {
-    return res.status(401).json({
-      success: false,
-      error: "Authentication required",
-    });
+    return res.error("Authentication required", 401);
   }
 
   const user = req.user as any;
 
   if (user.account_type !== "admin" && user.role !== "admin") {
-    return res.status(403).json({
-      success: false,
-      error: "Access denied. Admin account required to perform this action.",
-    });
+    return res.error(
+      "Access denied. Admin account required to perform this action.",
+      403,
+    );
   }
 
   next();
 };
 
-// Seller or Admin authentication middleware 
+// Seller or Admin authentication middleware
 export const requireSellerOrAdmin = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   if (!req.user) {
-    return res.status(401).json({
-      success: false,
-      error: "Authentication required",
-    });
+    return res.error("Authentication required", 401);
   }
 
   const user = req.user as any;
   const accountType = user.account_type || user.role;
 
   if (accountType !== "seller" && accountType !== "admin") {
-    return res.status(403).json({
-      success: false,
-      error:
-        "Access denied. Seller or Admin account required to perform this action.",
-    });
+    return res.error(
+      "Access denied. Seller or Admin account required to perform this action.",
+      403,
+    );
   }
 
   next();

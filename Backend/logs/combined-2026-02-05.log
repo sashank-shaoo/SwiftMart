@@ -1,0 +1,109 @@
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 08:46:32"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 08:46:34"}
+{"level":"debug","message":"[Cache MISS] Cart for user 7d8aff18-b8ba-4be2-8a27-87704f965146","timestamp":"2026-02-05 08:46:51"}
+{"level":"http","message":"GET /api/auth/me 304 - 1972ms","timestamp":"2026-02-05 08:46:51"}
+{"level":"http","message":"GET /api/cart 304 - 2441ms","timestamp":"2026-02-05 08:46:52"}
+{"level":"http","message":"GET /api/products/season/winter 304 - 270ms","timestamp":"2026-02-05 08:46:52"}
+{"level":"http","message":"GET /api/products/season/winter 304 - 269ms","timestamp":"2026-02-05 08:46:52"}
+{"level":"debug","message":"[Cache SET] Product list: newarrivals:10","timestamp":"2026-02-05 08:46:53"}
+{"level":"http","message":"GET /api/products/new-arrivals 200 - 601ms","timestamp":"2026-02-05 08:46:53"}
+{"level":"debug","message":"[Cache MISS] Cart for user 7d8aff18-b8ba-4be2-8a27-87704f965146","timestamp":"2026-02-05 08:46:53"}
+{"level":"http","message":"GET /api/products/new-arrivals 200 - 168ms","timestamp":"2026-02-05 08:46:53"}
+{"level":"debug","message":"[Cache SET] Product list: bestsellers:10","timestamp":"2026-02-05 08:46:53"}
+{"level":"http","message":"GET /api/products/bestsellers 200 - 931ms","timestamp":"2026-02-05 08:46:53"}
+{"level":"debug","message":"[Cache SET] Product list: toprated:10","timestamp":"2026-02-05 08:46:53"}
+{"level":"http","message":"GET /api/products/top-rated 200 - 1027ms","timestamp":"2026-02-05 08:46:53"}
+{"level":"http","message":"GET /api/products/bestsellers 200 - 142ms","timestamp":"2026-02-05 08:46:53"}
+{"level":"http","message":"GET /api/products/top-rated 200 - 141ms","timestamp":"2026-02-05 08:46:53"}
+{"level":"http","message":"GET /api/cart 304 - 2572ms","timestamp":"2026-02-05 08:46:55"}
+{"level":"warn","message":"POST /api/auth/become-seller 400 - 200ms","timestamp":"2026-02-05 08:58:41"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 09:00:44"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 09:00:46"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 09:00:53"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 09:00:57"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 09:02:39"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 09:02:40"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 09:04:54"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 09:04:56"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 09:12:39"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 09:12:41"}
+{"level":"debug","message":"[Cache MISS] Cart for user 7d8aff18-b8ba-4be2-8a27-87704f965146","timestamp":"2026-02-05 09:16:59"}
+{"level":"http","message":"GET /api/auth/me 304 - 6766ms","timestamp":"2026-02-05 09:17:01"}
+{"level":"http","message":"GET /api/cart 304 - 6795ms","timestamp":"2026-02-05 09:17:01"}
+{"level":"debug","message":"[Cache MISS] Cart for user 7d8aff18-b8ba-4be2-8a27-87704f965146","timestamp":"2026-02-05 09:17:01"}
+{"level":"http","message":"GET /api/cart 304 - 361ms","timestamp":"2026-02-05 09:17:01"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 09:18:03"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 09:18:05"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 09:21:22"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 09:21:23"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 09:22:56"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 09:22:59"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 09:23:17"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 09:23:19"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 09:24:50"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 09:24:54"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 09:26:14"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 09:26:17"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 09:34:03"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 09:34:05"}
+{"level":"http","message":"POST /api/auth/login 200 - 767ms","timestamp":"2026-02-05 09:34:15"}
+{"level":"debug","message":"[Cache MISS] Cart for user 7d8aff18-b8ba-4be2-8a27-87704f965146","timestamp":"2026-02-05 09:34:16"}
+{"level":"http","message":"GET /api/cart 304 - 981ms","timestamp":"2026-02-05 09:34:16"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 171ms","timestamp":"2026-02-05 09:34:18"}
+{"level":"http","message":"GET /api/products/season/winter 304 - 182ms","timestamp":"2026-02-05 09:34:18"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 160ms","timestamp":"2026-02-05 09:34:18"}
+{"level":"http","message":"GET /api/products/season/winter 304 - 140ms","timestamp":"2026-02-05 09:34:18"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 419ms","timestamp":"2026-02-05 09:34:19"}
+{"level":"http","message":"GET /api/products/top-rated 304 - 414ms","timestamp":"2026-02-05 09:34:19"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 251ms","timestamp":"2026-02-05 09:34:19"}
+{"level":"http","message":"GET /api/products/top-rated 304 - 311ms","timestamp":"2026-02-05 09:34:19"}
+{"level":"http","message":"POST /api/auth/become-seller 201 - 2378ms","timestamp":"2026-02-05 09:35:24"}
+{"level":"debug","message":"[Cache MISS] Cart for user 7d8aff18-b8ba-4be2-8a27-87704f965146","timestamp":"2026-02-05 09:35:25"}
+{"level":"http","message":"GET /api/cart 304 - 944ms","timestamp":"2026-02-05 09:35:25"}
+{"level":"http","message":"POST /api/auth/logout 200 - 1628ms","timestamp":"2026-02-05 09:37:14"}
+{"level":"warn","message":"POST /api/auth/login 401 - 10899ms","timestamp":"2026-02-05 09:37:59"}
+{"level":"http","message":"POST /api/auth/login 200 - 1636ms","timestamp":"2026-02-05 09:38:23"}
+{"level":"http","message":"GET /api/products/season/winter 304 - 151ms","timestamp":"2026-02-05 09:38:24"}
+{"level":"http","message":"GET /api/products/season/winter 304 - 137ms","timestamp":"2026-02-05 09:38:24"}
+{"level":"debug","message":"[Cache MISS] Cart for user ef1fb24b-87fa-475c-a92c-e8e4ec87381a","timestamp":"2026-02-05 09:38:25"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 1505ms","timestamp":"2026-02-05 09:38:25"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 1511ms","timestamp":"2026-02-05 09:38:25"}
+{"level":"http","message":"GET /api/products/top-rated 304 - 1515ms","timestamp":"2026-02-05 09:38:25"}
+{"level":"http","message":"GET /api/cart 304 - 2020ms","timestamp":"2026-02-05 09:38:25"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 108ms","timestamp":"2026-02-05 09:38:25"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 115ms","timestamp":"2026-02-05 09:38:25"}
+{"level":"http","message":"GET /api/products/top-rated 304 - 144ms","timestamp":"2026-02-05 09:38:25"}
+{"level":"http","message":"GET /api/admin/alerts 200 - 1424ms","timestamp":"2026-02-05 09:38:31"}
+{"level":"http","message":"GET /api/admin/overview 200 - 1484ms","timestamp":"2026-02-05 09:38:31"}
+{"level":"http","message":"GET /api/admin/alerts 304 - 165ms","timestamp":"2026-02-05 09:38:31"}
+{"level":"http","message":"GET /api/admin/overview 304 - 208ms","timestamp":"2026-02-05 09:38:31"}
+{"level":"http","message":"PATCH /api/admin/alerts/a7fc4d6a-06f7-4e9e-8f65-e247f13bccc3/read 200 - 1558ms","timestamp":"2026-02-05 09:39:32"}
+{"level":"http","message":"POST /api/auth/logout 200 - 28225ms","timestamp":"2026-02-05 09:43:36"}
+{"level":"http","message":"GET /api/admin/alerts 200 - 4850ms","timestamp":"2026-02-05 09:43:36"}
+{"level":"http","message":"POST /api/auth/logout 200 - 37078ms","timestamp":"2026-02-05 09:43:36"}
+{"level":"http","message":"GET /api/admin/overview 304 - 4970ms","timestamp":"2026-02-05 09:43:36"}
+{"level":"warn","message":"POST /api/auth/register 400 - 93ms","timestamp":"2026-02-05 09:44:58"}
+{"level":"http","message":"POST /api/auth/register 201 - 4068ms","timestamp":"2026-02-05 09:45:16"}
+{"level":"http","message":"POST /api/auth/verify-email 200 - 2253ms","timestamp":"2026-02-05 09:46:11"}
+{"level":"http","message":"POST /api/auth/login 200 - 1676ms","timestamp":"2026-02-05 09:47:05"}
+{"level":"http","message":"GET /api/products/season/winter 304 - 207ms","timestamp":"2026-02-05 09:47:05"}
+{"level":"debug","message":"[Cache MISS] Cart for user ec3ca041-7ad4-4b28-be0b-4fafff422f36","timestamp":"2026-02-05 09:47:05"}
+{"level":"http","message":"GET /api/cart 304 - 1080ms","timestamp":"2026-02-05 09:47:06"}
+{"level":"debug","message":"[Cache SET] Product list: toprated:10","timestamp":"2026-02-05 09:47:06"}
+{"level":"http","message":"GET /api/products/top-rated 200 - 1090ms","timestamp":"2026-02-05 09:47:06"}
+{"level":"http","message":"GET /api/products/top-rated 200 - 106ms","timestamp":"2026-02-05 09:47:06"}
+{"level":"http","message":"GET /api/products/season/winter 304 - 1479ms","timestamp":"2026-02-05 09:47:07"}
+{"level":"debug","message":"[Cache SET] Product list: newarrivals:10","timestamp":"2026-02-05 09:47:07"}
+{"level":"http","message":"GET /api/products/new-arrivals 200 - 1800ms","timestamp":"2026-02-05 09:47:07"}
+{"level":"http","message":"GET /api/products/new-arrivals 200 - 100ms","timestamp":"2026-02-05 09:47:07"}
+{"level":"debug","message":"[Cache SET] Product list: bestsellers:10","timestamp":"2026-02-05 09:47:07"}
+{"level":"http","message":"GET /api/products/bestsellers 200 - 1965ms","timestamp":"2026-02-05 09:47:07"}
+{"level":"http","message":"GET /api/products/bestsellers 200 - 121ms","timestamp":"2026-02-05 09:47:07"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 09:52:00"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 09:52:03"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 09:52:14"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 09:52:15"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 09:53:20"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 09:53:21"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-05 16:51:20"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-05 16:51:22"}

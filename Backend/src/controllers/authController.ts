@@ -9,6 +9,7 @@ import { jwtCookieOptions } from "../utils/cookieParser";
 import { EmailOtpDao } from "../daos/EmailOtpDao";
 import { generateOtp } from "../utils/otpHelpers";
 import { sendOtpEmail } from "../services/EmailService";
+import * as ImageService from "../services/ImageService";
 
 import {
   BadRequestError,
@@ -177,8 +178,11 @@ export const registerSeller = async (req: Request, res: Response) => {
   }
 
   // Create Admin Notifiction after seller registrations
+  console.log(
+    `🏁 Attempting to create admin notification for new seller registration: ${email}`,
+  );
   try {
-    await NotificationDao.createNotification({
+    const notif = await NotificationDao.createNotification({
       type: "SELLER_REGISTRATION",
       message: `New seller registered: ${name} (${email})`,
       metadata: {
@@ -188,9 +192,11 @@ export const registerSeller = async (req: Request, res: Response) => {
         store_name: store_name || name,
       },
     });
-    console.log(`🔔 Admin notification created for new seller: ${email}`);
+    console.log(
+      `🔔 Admin notification created ID: ${notif.id} for new seller: ${email}`,
+    );
   } catch (notifError) {
-    console.error("Failed to create admin notification:", notifError);
+    console.error("❌ Failed to create admin notification:", notifError);
   }
 
   return res.success(
@@ -208,6 +214,10 @@ export const registerSeller = async (req: Request, res: Response) => {
 
 // User to Seller
 export const becomeSeller = async (req: Request, res: Response) => {
+  console.log(
+    "📥 [becomeSeller] Request body:",
+    JSON.stringify(req.body, null, 2),
+  );
   const userId = (req as any).user?.id;
 
   if (!userId) {
@@ -222,14 +232,22 @@ export const becomeSeller = async (req: Request, res: Response) => {
   }
 
   if (user.role === "seller") {
-    throw new BadRequestError("You are already registered as a seller");
+    console.warn(`⚠️ [becomeSeller] User ${userId} is already a seller.`);
+    throw new BadRequestError(
+      "You already have a Seller role. Please contact support if you need to re-verify.",
+    );
   }
 
   // 3. Checking if seller profile already exists
   const existingProfile =
     await SellerProfileDao.findSellerProfileByUserId(userId);
   if (existingProfile) {
-    throw new BadRequestError("Seller profile already exists for this user");
+    console.warn(
+      `⚠️ [becomeSeller] Seller profile already exists for user ${userId}.`,
+    );
+    throw new BadRequestError(
+      "A seller profile application already exists for this account.",
+    );
   }
 
   // 4. Updateing user role to seller for current user
@@ -244,8 +262,11 @@ export const becomeSeller = async (req: Request, res: Response) => {
   });
 
   // 6. Createing  Admin Notification
+  console.log(
+    "🏁 Attempting to create admin notification for seller migration...",
+  );
   try {
-    await NotificationDao.createNotification({
+    const notif = await NotificationDao.createNotification({
       type: "SELLER_MIGRATION",
       message: `User ${user.name} (${user.email}) applied to become a Seller`,
       metadata: {
@@ -256,7 +277,7 @@ export const becomeSeller = async (req: Request, res: Response) => {
       },
     });
     console.log(
-      `🔔 Admin notification created for seller migration: ${user.email}`,
+      `🔔 Admin notification created ID: ${notif.id} for seller migration: ${user.email}`,
     );
   } catch (notifError) {
     console.error("Failed to create admin notification:", notifError);
@@ -310,6 +331,14 @@ export const login = async (req: Request, res: Response) => {
     throw new UnauthorizedError(
       "Invalid email or password",
       "INVALID_CREDENTIALS",
+    );
+  }
+
+  // Check if email is verified
+  if (!user.is_verified_email) {
+    throw new UnauthorizedError(
+      "Please verify your account first. Unverified accounts will be deleted in 7 days.",
+      "EMAIL_NOT_VERIFIED",
     );
   }
 
@@ -376,6 +405,12 @@ export const login = async (req: Request, res: Response) => {
   return res.success(
     {
       user: finalUser,
+      ...(jwtPayload.seller_profile_id && {
+        seller_profile: { id: jwtPayload.seller_profile_id },
+      }),
+      ...(jwtPayload.admin_profile_id && {
+        admin_profile: { id: jwtPayload.admin_profile_id },
+      }),
     },
     "Login successful",
   );
@@ -456,6 +491,56 @@ export const registerAdmin = async (req: Request, res: Response) => {
   );
 };
 
+// Get current user profile (sync)
+export const getMe = async (req: Request, res: Response) => {
+  const userId = (req as any).user?.id;
+
+  if (!userId) {
+    throw new UnauthorizedError("Unauthorized: User not found");
+  }
+
+  const user = await UserDao.findUserById(userId);
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
+
+  // Fetch role-specific details
+  let sellerProfile = null;
+  if (user.role === "seller") {
+    sellerProfile = await SellerProfileDao.findSellerProfileByUserId(user.id!);
+  }
+
+  let adminProfile = null;
+  if (user.role === "admin") {
+    adminProfile = await AdminProfileDao.findAdminProfileByUserId(user.id!);
+  }
+
+  const {
+    password: pw,
+    refresh_token_hash,
+    refresh_token_expires_at,
+    ...finalUser
+  } = user;
+
+  // Re-sign token for synchronization
+  const token = sign(
+    { id: user.id, role: user.role, email: user.email },
+    process.env.JWT_SECRET!,
+    { expiresIn: "7d" },
+  );
+
+  return res.success(
+    {
+      user: {
+        ...finalUser,
+        ...(sellerProfile && { seller_profile: sellerProfile }),
+        ...(adminProfile && { admin_profile: adminProfile }),
+      },
+    },
+    "User profile retrieved successfully",
+  );
+};
+
 // Update user profile (seller, user, admin)
 export const updateUser = async (req: Request, res: Response) => {
   const userId = (req as any).user?.id;
@@ -469,17 +554,30 @@ export const updateUser = async (req: Request, res: Response) => {
     throw new NotFoundError("User not found");
   }
 
-  const {
-    name,
-    image,
-    age,
-    number,
-    location,
-    bio,
-    store_name,
-    gst_number,
-    payout_details,
-  } = req.body;
+  const { name, age, number, bio, store_name, gst_number, payout_details } =
+    req.body;
+
+  let { location, image } = req.body;
+
+  // Handle image upload via req.file (Multer)
+  if (req.file) {
+    try {
+      // Delete old image if it exists and is a Cloudinary URL
+      if (user.image && user.image.includes("cloudinary")) {
+        await ImageService.deleteImage(user.image);
+      }
+
+      // Upload new image
+      const [uploadedUrl] = await ImageService.uploadMultipleImages(
+        [req.file],
+        "profileImages",
+      );
+      image = uploadedUrl;
+    } catch (uploadError) {
+      console.error("Profile image upload failed:", uploadError);
+      // Continue with other updates even if image fails, but log it
+    }
+  }
 
   // user updates
   const userUpdates: any = {};
@@ -777,10 +875,5 @@ export const refreshToken = async (req: Request, res: Response) => {
 
   console.log(`🔄 Access token refreshed for user ${userId}`);
 
-  return res.success(
-    {
-      access_token: newAccessToken,
-    },
-    "Token refreshed successfully",
-  );
+  return res.success(null, "Token refreshed successfully");
 };

@@ -1,0 +1,283 @@
+.main {
+  width: 100%;
+  min-height: 100vh;
+  background: radial-gradient(circle at top right, #e1d9bc 0%, #f0f0db 50%, #ffffff 100%);
+}
+
+.hero {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2rem;
+  position: relative;
+}
+
+.heroContent {
+  max-width: 800px;
+  text-align: center;
+  z-index: 10;
+}
+
+.badge {
+  display: inline-block;
+  padding: 8px 16px;
+  background: rgba(12, 44, 85, 0.1);
+  color: var(--color-primary-dark);
+  border-radius: 100px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.heroTitle {
+  font-size: clamp(3rem, 8vw, 4.5rem);
+  line-height: 1.1;
+  color: var(--color-primary-dark);
+  margin-bottom: 1.5rem;
+}
+
+.gradientText {
+  background: linear-gradient(
+    135deg, 
+    var(--color-primary) 0%, 
+    #6366f1 25%, 
+    #c084fc 50%, 
+    #6366f1 75%, 
+    var(--color-primary) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 4s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+.heroSubtitle {
+  font-size: 1.25rem;
+  color: var(--color-secondary);
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.heroActions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+/* Benefits Section */
+.benefitsSection {
+  padding: 4rem 2rem 10rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.benefitGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2rem;
+}
+
+.benefitCard {
+  padding: 3rem 2rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 40px rgba(12, 44, 85, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+}
+
+.benefitCard:hover {
+  transform: translateY(-12px) scale(1.02);
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(255, 255, 255, 1);
+  box-shadow: 0 30px 60px rgba(12, 44, 85, 0.1);
+}
+
+.iconWrapper {
+  width: 56px;
+  height: 56px;
+  background: rgba(98, 159, 173, 0.1);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: var(--color-primary);
+}
+
+.benefitTitle {
+  color: var(--color-primary-dark);
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  font-size: 1.15rem;
+}
+
+.benefitDesc {
+  color: var(--color-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+/* Philosophy Section */
+.philosophy {
+  padding: 8rem 2rem;
+  background: #fbfbfb;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.philosophyGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+
+.philosophyContent {
+  max-width: 600px;
+}
+
+.philosophyTitle {
+  font-size: 3.5rem;
+  line-height: 1.1;
+  color: var(--color-primary-dark);
+  margin-bottom: 2rem;
+}
+
+.philosophyTitle span {
+  font-weight: 300;
+  font-style: italic;
+  color: var(--color-secondary);
+}
+
+.philosophyContent p {
+  font-size: 1.25rem;
+  line-height: 1.7;
+  color: var(--color-secondary);
+  margin-bottom: 2.5rem;
+}
+
+.philosophyList {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.philosophyList li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  font-size: 1.1rem;
+}
+
+.philosophyImage {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.luxuryCircle {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, #e1d9bc 0%, #f0f0db 100%);
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 20px 40px 80px rgba(12, 44, 85, 0.1);
+}
+
+.luxuryCircle::after {
+  content: "";
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 80%;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+}
+
+@media (max-width: 1024px) {
+  .philosophyGrid {
+    gap: 4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 10rem 1.5rem 6rem;
+  }
+
+  .philosophyGrid {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 5rem;
+  }
+  
+  .philosophyContent {
+    margin: 0 auto;
+  }
+  
+  .philosophyList {
+    justify-content: center;
+    text-align: left;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  .benefitsSection {
+    padding: 6rem 1.5rem;
+  }
+
+  .benefitGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .benefitCard {
+    padding: 2rem 1.5rem;
+  }
+
+  .luxuryCircle {
+    width: 280px;
+    height: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroTitle {
+    font-size: 2.25rem;
+  }
+
+  .badge {
+    letter-spacing: 1px;
+    font-size: 0.7rem;
+  }
+}

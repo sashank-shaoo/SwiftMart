@@ -1,0 +1,148 @@
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 09:54:28"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 09:54:30"}
+{"level":"http","message":"POST /api/auth/register 201 - 2681ms","timestamp":"2026-02-01 09:54:42"}
+{"level":"warn","message":"GET /api/carts 404 - 4ms","timestamp":"2026-02-01 09:54:42"}
+{"error":"obj.hasOwnProperty is not a function","level":"error","message":"500 - Internal Server Error - GET /api/products?limit=4","stack":"TypeError: obj.hasOwnProperty is not a function\n    at sanitizeObject (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:53:15)\n    at sanitizeInput (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:19:28)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)\n    at D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:291:5)\n    at cookieParser (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\cookie-parser\\index.js:57:14)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)","timestamp":"2026-02-01 09:54:43"}
+{"error":"obj.hasOwnProperty is not a function","level":"error","message":"500 - Internal Server Error - GET /api/products?limit=4","stack":"TypeError: obj.hasOwnProperty is not a function\n    at sanitizeObject (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:53:15)\n    at sanitizeInput (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:19:28)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)\n    at D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:291:5)\n    at cookieParser (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\cookie-parser\\index.js:57:14)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)","timestamp":"2026-02-01 09:54:43"}
+{"level":"warn","message":"GET /api/carts 404 - 2ms","timestamp":"2026-02-01 09:55:22"}
+{"error":"obj.hasOwnProperty is not a function","level":"error","message":"500 - Internal Server Error - GET /api/products?limit=4","stack":"TypeError: obj.hasOwnProperty is not a function\n    at sanitizeObject (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:53:15)\n    at sanitizeInput (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:19:28)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)\n    at D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:291:5)\n    at cookieParser (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\cookie-parser\\index.js:57:14)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)","timestamp":"2026-02-01 09:57:00"}
+{"error":"obj.hasOwnProperty is not a function","level":"error","message":"500 - Internal Server Error - GET /api/products?limit=4","stack":"TypeError: obj.hasOwnProperty is not a function\n    at sanitizeObject (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:53:15)\n    at sanitizeInput (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:19:28)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)\n    at D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:291:5)\n    at cookieParser (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\cookie-parser\\index.js:57:14)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)","timestamp":"2026-02-01 09:57:00"}
+{"level":"warn","message":"GET /api/carts 404 - 2ms","timestamp":"2026-02-01 09:57:08"}
+{"error":"obj.hasOwnProperty is not a function","level":"error","message":"500 - Internal Server Error - GET /api/products?limit=4","stack":"TypeError: obj.hasOwnProperty is not a function\n    at sanitizeObject (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:53:15)\n    at sanitizeInput (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:19:28)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)\n    at D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:291:5)\n    at cookieParser (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\cookie-parser\\index.js:57:14)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)","timestamp":"2026-02-01 09:59:57"}
+{"error":"obj.hasOwnProperty is not a function","level":"error","message":"500 - Internal Server Error - GET /api/products?limit=4","stack":"TypeError: obj.hasOwnProperty is not a function\n    at sanitizeObject (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:53:15)\n    at sanitizeInput (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:19:28)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)\n    at D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:291:5)\n    at cookieParser (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\cookie-parser\\index.js:57:14)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)","timestamp":"2026-02-01 09:59:57"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 10:05:13"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 10:05:14"}
+{"error":"obj.hasOwnProperty is not a function","level":"error","message":"500 - Internal Server Error - GET /api/products?limit=4","stack":"TypeError: obj.hasOwnProperty is not a function\n    at sanitizeObject (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:53:15)\n    at sanitizeInput (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:19:28)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)\n    at D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:291:5)\n    at cookieParser (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\cookie-parser\\index.js:57:14)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)","timestamp":"2026-02-01 10:06:24"}
+{"level":"warn","message":"GET /api/carts 404 - 1ms","timestamp":"2026-02-01 10:06:24"}
+{"error":"obj.hasOwnProperty is not a function","level":"error","message":"500 - Internal Server Error - GET /api/products?limit=4","stack":"TypeError: obj.hasOwnProperty is not a function\n    at sanitizeObject (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:53:15)\n    at sanitizeInput (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:19:28)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)\n    at D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:291:5)\n    at cookieParser (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\cookie-parser\\index.js:57:14)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)","timestamp":"2026-02-01 10:06:38"}
+{"level":"warn","message":"GET /api/carts 404 - 2ms","timestamp":"2026-02-01 10:06:38"}
+{"error":"obj.hasOwnProperty is not a function","level":"error","message":"500 - Internal Server Error - GET /api/products?limit=4","stack":"TypeError: obj.hasOwnProperty is not a function\n    at sanitizeObject (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:53:15)\n    at sanitizeInput (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:19:28)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)\n    at D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:291:5)\n    at cookieParser (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\cookie-parser\\index.js:57:14)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)","timestamp":"2026-02-01 10:07:08"}
+{"level":"warn","message":"GET /api/carts 404 - 1ms","timestamp":"2026-02-01 10:07:08"}
+{"error":"obj.hasOwnProperty is not a function","level":"error","message":"500 - Internal Server Error - GET /api/products?limit=4","stack":"TypeError: obj.hasOwnProperty is not a function\n    at sanitizeObject (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:53:15)\n    at sanitizeInput (D:\\D-DRIVE\\ecommerce\\Backend\\src\\middlewares\\sanitizeMiddleware.ts:19:28)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)\n    at D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:297:9\n    at processParams (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:582:12)\n    at next (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:291:5)\n    at cookieParser (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\cookie-parser\\index.js:57:14)\n    at Layer.handleRequest (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\lib\\layer.js:152:17)\n    at trimPrefix (D:\\D-DRIVE\\ecommerce\\Backend\\node_modules\\router\\index.js:342:13)","timestamp":"2026-02-01 10:08:02"}
+{"level":"warn","message":"GET /api/carts 404 - 1ms","timestamp":"2026-02-01 10:08:02"}
+{"level":"warn","message":"GET /api/cart 401 - 20ms","timestamp":"2026-02-01 10:14:05"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 10:14:45"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 10:14:46"}
+{"level":"http","message":"GET /api/products?limit=4 200 - 989ms","timestamp":"2026-02-01 10:16:07"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 400ms","timestamp":"2026-02-01 10:16:07"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 10:22:06"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 10:22:07"}
+{"level":"warn","message":"GET /api/cart 401 - 7ms","timestamp":"2026-02-01 10:23:40"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 1118ms","timestamp":"2026-02-01 10:23:41"}
+{"level":"warn","message":"GET /api/cart 401 - 1ms","timestamp":"2026-02-01 10:25:04"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 1296ms","timestamp":"2026-02-01 10:25:06"}
+{"level":"warn","message":"GET /api/cart 401 - 1ms","timestamp":"2026-02-01 10:29:43"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 3000ms","timestamp":"2026-02-01 10:29:46"}
+{"level":"warn","message":"GET /api/cart 401 - 2ms","timestamp":"2026-02-01 10:30:46"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 1059ms","timestamp":"2026-02-01 10:30:47"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 10:31:00"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 10:31:01"}
+{"level":"warn","message":"GET /api/cart 401 - 6ms","timestamp":"2026-02-01 10:31:07"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 263ms","timestamp":"2026-02-01 10:31:08"}
+{"level":"warn","message":"POST /api/auth/verify-email 400 - 14ms","timestamp":"2026-02-01 10:32:14"}
+{"level":"warn","message":"POST /api/auth/send-verification-otp 400 - 12ms","timestamp":"2026-02-01 10:32:31"}
+{"level":"warn","message":"POST /api/auth/send-verification-otp 400 - 3ms","timestamp":"2026-02-01 10:32:41"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 10:34:04"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 10:34:06"}
+{"level":"http","message":"POST /api/auth/send-verification-otp 201 - 3020ms","timestamp":"2026-02-01 10:35:08"}
+{"level":"http","message":"POST /api/auth/verify-email 200 - 2161ms","timestamp":"2026-02-01 10:35:30"}
+{"level":"warn","message":"GET /api/cart 401 - 4ms","timestamp":"2026-02-01 10:35:30"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 1324ms","timestamp":"2026-02-01 10:36:21"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 211ms","timestamp":"2026-02-01 10:36:21"}
+{"level":"warn","message":"GET /api/cart 401 - 2ms","timestamp":"2026-02-01 10:38:18"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 2045ms","timestamp":"2026-02-01 10:38:20"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 10:38:29"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 10:38:30"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 10:38:41"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 10:38:42"}
+{"level":"warn","message":"GET /api/cart 401 - 2ms","timestamp":"2026-02-01 10:38:46"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 1373ms","timestamp":"2026-02-01 10:38:47"}
+{"level":"warn","message":"GET /api/auth/me 401 - 2ms","timestamp":"2026-02-01 10:39:21"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 1729ms","timestamp":"2026-02-01 10:39:22"}
+{"level":"warn","message":"GET /api/auth/me 401 - 1ms","timestamp":"2026-02-01 10:40:32"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 1475ms","timestamp":"2026-02-01 10:40:33"}
+{"level":"http","message":"POST /api/auth/login 200 - 1625ms","timestamp":"2026-02-01 10:41:03"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 288ms","timestamp":"2026-02-01 10:41:04"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 232ms","timestamp":"2026-02-01 10:41:04"}
+{"level":"debug","message":"[Cache MISS] Cart for user 39ced314-d474-4fa7-8b11-46881b66baf4","timestamp":"2026-02-01 10:41:04"}
+{"level":"http","message":"GET /api/cart 200 - 1005ms","timestamp":"2026-02-01 10:41:04"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 10:46:26"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 10:46:27"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 10:46:38"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 10:46:39"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 10:46:57"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 10:46:57"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 10:47:24"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 10:47:25"}
+{"level":"http","message":"GET /api/auth/me 200 - 3544ms","timestamp":"2026-02-01 10:50:21"}
+{"level":"debug","message":"[Cache MISS] Cart for user 39ced314-d474-4fa7-8b11-46881b66baf4","timestamp":"2026-02-01 10:50:22"}
+{"level":"http","message":"GET /api/cart 304 - 873ms","timestamp":"2026-02-01 10:50:22"}
+{"level":"http","message":"GET /api/auth/me 200 - 266ms","timestamp":"2026-02-01 10:50:29"}
+{"level":"debug","message":"[Cache MISS] Cart for user 39ced314-d474-4fa7-8b11-46881b66baf4","timestamp":"2026-02-01 10:50:33"}
+{"level":"http","message":"GET /api/cart 304 - 5102ms","timestamp":"2026-02-01 10:50:34"}
+{"level":"http","message":"GET /api/auth/me 200 - 1834ms","timestamp":"2026-02-01 10:54:31"}
+{"level":"debug","message":"[Cache MISS] Cart for user 39ced314-d474-4fa7-8b11-46881b66baf4","timestamp":"2026-02-01 10:54:32"}
+{"level":"http","message":"GET /api/cart 304 - 875ms","timestamp":"2026-02-01 10:54:32"}
+{"level":"http","message":"GET /api/auth/me 200 - 4491ms","timestamp":"2026-02-01 10:55:39"}
+{"level":"debug","message":"[Cache MISS] Cart for user 39ced314-d474-4fa7-8b11-46881b66baf4","timestamp":"2026-02-01 10:55:40"}
+{"level":"http","message":"GET /api/cart 304 - 1875ms","timestamp":"2026-02-01 10:55:41"}
+{"level":"http","message":"POST /api/auth/login 200 - 2283ms","timestamp":"2026-02-01 11:03:34"}
+{"level":"debug","message":"[Cache MISS] Cart for user 39ced314-d474-4fa7-8b11-46881b66baf4","timestamp":"2026-02-01 11:03:35"}
+{"level":"http","message":"GET /api/cart 304 - 1157ms","timestamp":"2026-02-01 11:03:36"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 2116ms","timestamp":"2026-02-01 11:03:38"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 397ms","timestamp":"2026-02-01 11:03:38"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 11:23:40"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 11:23:41"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 11:23:53"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 11:23:54"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 299ms","timestamp":"2026-02-01 11:24:05"}
+{"level":"http","message":"GET /api/auth/me 200 - 949ms","timestamp":"2026-02-01 11:24:06"}
+{"level":"debug","message":"[Cache MISS] Cart for user 39ced314-d474-4fa7-8b11-46881b66baf4","timestamp":"2026-02-01 11:24:07"}
+{"level":"http","message":"GET /api/cart 304 - 950ms","timestamp":"2026-02-01 11:24:07"}
+{"level":"http","message":"GET /api/auth/me 304 - 975ms","timestamp":"2026-02-01 11:25:32"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 1035ms","timestamp":"2026-02-01 11:25:32"}
+{"level":"debug","message":"[Cache MISS] Cart for user 39ced314-d474-4fa7-8b11-46881b66baf4","timestamp":"2026-02-01 11:25:33"}
+{"level":"http","message":"GET /api/cart 304 - 798ms","timestamp":"2026-02-01 11:25:33"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 1678ms","timestamp":"2026-02-01 12:06:03"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 419ms","timestamp":"2026-02-01 12:06:03"}
+{"level":"warn","message":"POST /api/cart 400 - 589ms","timestamp":"2026-02-01 12:06:12"}
+{"level":"http","message":"GET /api/auth/me 304 - 3970ms","timestamp":"2026-02-01 12:10:13"}
+{"level":"http","message":"GET /api/products?limit=4 200 - 4415ms","timestamp":"2026-02-01 12:10:14"}
+{"level":"debug","message":"[Cache MISS] Cart for user 39ced314-d474-4fa7-8b11-46881b66baf4","timestamp":"2026-02-01 12:10:14"}
+{"level":"http","message":"GET /api/cart 304 - 938ms","timestamp":"2026-02-01 12:10:14"}
+{"level":"http","message":"POST /api/auth/logout 200 - 1172ms","timestamp":"2026-02-01 12:19:19"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 1200ms","timestamp":"2026-02-01 12:19:41"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 221ms","timestamp":"2026-02-01 12:19:41"}
+{"level":"warn","message":"POST /api/auth/register 400 - 185ms","timestamp":"2026-02-01 12:22:24"}
+{"level":"warn","message":"POST /api/auth/register 400 - 3ms","timestamp":"2026-02-01 12:22:44"}
+{"level":"warn","message":"POST /api/auth/register 400 - 3ms","timestamp":"2026-02-01 12:22:50"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 1041ms","timestamp":"2026-02-01 12:23:03"}
+{"level":"http","message":"GET /api/products?limit=4 304 - 268ms","timestamp":"2026-02-01 12:23:03"}
+{"level":"warn","message":"POST /api/auth/register 429 - 18ms","timestamp":"2026-02-01 12:23:34"}
+{"level":"warn","message":"POST /api/auth/register 429 - 9ms","timestamp":"2026-02-01 12:23:49"}
+{"level":"http","message":"GET /api/products/season/winter 200 - 1837ms","timestamp":"2026-02-01 12:57:51"}
+{"level":"http","message":"GET /api/products/season/winter 304 - 136ms","timestamp":"2026-02-01 12:57:51"}
+{"level":"debug","message":"[Cache SET] Product list: toprated:10","timestamp":"2026-02-01 12:57:51"}
+{"level":"http","message":"GET /api/products/top-rated 200 - 2326ms","timestamp":"2026-02-01 12:57:51"}
+{"level":"debug","message":"[Cache SET] Product list: bestsellers:10","timestamp":"2026-02-01 12:57:51"}
+{"level":"http","message":"GET /api/products/bestsellers 200 - 2443ms","timestamp":"2026-02-01 12:57:51"}
+{"level":"debug","message":"[Cache SET] Product list: newarrivals:10","timestamp":"2026-02-01 12:57:51"}
+{"level":"http","message":"GET /api/products/new-arrivals 200 - 2581ms","timestamp":"2026-02-01 12:57:51"}
+{"level":"http","message":"GET /api/products/new-arrivals 200 - 181ms","timestamp":"2026-02-01 12:57:52"}
+{"level":"http","message":"GET /api/products/bestsellers 200 - 198ms","timestamp":"2026-02-01 12:57:52"}
+{"level":"http","message":"GET /api/products/top-rated 200 - 280ms","timestamp":"2026-02-01 12:57:52"}
+{"level":"warn","message":"GET /api/auth/me 401 - 4ms","timestamp":"2026-02-01 12:58:21"}
+{"level":"warn","message":"GET /api/auth/me 401 - 17ms","timestamp":"2026-02-01 12:58:24"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 628ms","timestamp":"2026-02-01 12:58:25"}
+{"level":"http","message":"GET /api/products/top-rated 304 - 599ms","timestamp":"2026-02-01 12:58:25"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 680ms","timestamp":"2026-02-01 12:58:25"}
+{"level":"http","message":"GET /api/products/season/winter 304 - 1419ms","timestamp":"2026-02-01 12:58:26"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 13:28:19"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 13:28:21"}
+{"level":"warn","message":"GET /api/auth/me 401 - 8ms","timestamp":"2026-02-01 13:31:43"}
+{"level":"warn","message":"GET /api/auth/me 401 - 2ms","timestamp":"2026-02-01 13:31:53"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-01 18:38:49"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-01 18:38:52"}
+{"level":"warn","message":"GET /api/auth/me 401 - 9ms","timestamp":"2026-02-01 18:39:06"}
+{"level":"warn","message":"GET /api/auth/me 401 - 29ms","timestamp":"2026-02-01 18:43:18"}
+{"level":"warn","message":"GET /api/auth/me 401 - 14ms","timestamp":"2026-02-01 18:51:54"}

@@ -3,7 +3,6 @@ import { User, SellerProfile } from "@/types";
 
 export interface LoginResponse {
   user: User;
-  token: string;
 }
 
 export const authService = {
@@ -18,14 +17,23 @@ export const authService = {
     return apiFetch("/auth/logout", { method: "POST" });
   },
 
-  register: async (userData: Partial<User>): Promise<User> => {
+  getMe: async (): Promise<{ user: User }> => {
+    return apiFetch("/auth/me");
+  },
+
+  register: async (
+    userData: Partial<User>,
+  ): Promise<{
+    user: User;
+    verification_sent: boolean;
+  }> => {
     return apiFetch("/auth/register", {
       method: "POST",
       body: JSON.stringify(userData),
     });
   },
 
-  refreshToken: async (): Promise<{ token: string }> => {
+  refreshToken: async (): Promise<void> => {
     return apiFetch("/auth/refresh-token", { method: "POST" });
   },
 
@@ -63,18 +71,26 @@ export const authService = {
     });
   },
 
-  becomeSeller: async (sellerData: Partial<SellerProfile>): Promise<void> => {
+  becomeSeller: async (
+    sellerData: Partial<SellerProfile>,
+  ): Promise<{
+    user: User;
+    seller_profile: SellerProfile;
+  }> => {
     return apiFetch("/auth/become-seller", {
       method: "POST",
       body: JSON.stringify(sellerData),
     });
   },
 
-  updateUser: async (userData: Partial<User>): Promise<User> => {
-    return apiFetch("/auth/update", {
+  updateUser: async (userData: Partial<User> | FormData): Promise<User> => {
+    const isFormData = userData instanceof FormData;
+    const data = await apiFetch("/auth/update", {
       method: "PUT",
-      body: JSON.stringify(userData),
+      body: isFormData ? userData : JSON.stringify(userData),
+      // Headers handles Content-Type automatically for FormData
     });
+    return data.user;
   },
 
   requestEmailUpdate: async (): Promise<{ message: string }> => {
@@ -101,7 +117,13 @@ export const authService = {
     });
   },
 
-  registerSeller: async (sellerData: Partial<SellerProfile>): Promise<void> => {
+  registerSeller: async (
+    sellerData: Partial<SellerProfile>,
+  ): Promise<{
+    user: User;
+    seller_profile: SellerProfile;
+    verification_sent: boolean;
+  }> => {
     return apiFetch("/auth/seller/register", {
       method: "POST",
       body: JSON.stringify(sellerData),

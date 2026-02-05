@@ -26,5 +26,17 @@ export const responseHandler = (
     });
   };
 
+  res.error = function (
+    message: string = "Error",
+    statusCode: number = 500,
+    details: any = null,
+  ) {
+    return this.status(statusCode).json({
+      success: false,
+      message,
+      ...(details !== null && { details }),
+    });
+  };
+
   next();
 };

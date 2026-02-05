@@ -153,4 +153,16 @@ export class UserDao {
     const res = await query(text, values);
     return res.rows[0] || null;
   }
+
+  static async getUserStats() {
+    const text = `
+      SELECT 
+        COUNT(*) as total_users,
+        COUNT(*) FILTER (WHERE is_verified_email = FALSE) as unverified_users
+      FROM users
+      WHERE role = 'user'
+    `;
+    const res = await query(text);
+    return res.rows[0];
+  }
 }

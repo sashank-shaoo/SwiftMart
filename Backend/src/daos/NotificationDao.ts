@@ -3,7 +3,7 @@ import { Notification } from "../models/Notification";
 
 export class NotificationDao {
   static async createNotification(
-    notification: Notification
+    notification: Notification,
   ): Promise<Notification> {
     const text = `
       INSERT INTO admin_notifications (type, message, metadata, is_read)
@@ -16,8 +16,20 @@ export class NotificationDao {
       notification.metadata ? JSON.stringify(notification.metadata) : null,
       notification.is_read || false,
     ];
-    const res = await query(text, values);
-    return res.rows[0];
+
+    console.log("🔔 [DB] Creating admin notification:", {
+      type: notification.type,
+      message: notification.message,
+    });
+
+    try {
+      const res = await query(text, values);
+      console.log("✅ [DB] Notification created ID:", res.rows[0]?.id);
+      return res.rows[0];
+    } catch (err) {
+      console.error("❌ [DB] Notification creation FAILED:", err);
+      throw err;
+    }
   }
 
   static async getUnreadNotifications(): Promise<Notification[]> {

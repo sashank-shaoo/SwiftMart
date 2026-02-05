@@ -5,17 +5,30 @@ export const CreateSellerProfileSchema = z.object({
   gst_number: z
     .string()
     .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/)
-    .optional(),
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
   payout_details: z
     .object({
       account_holder_name: z.string().optional(),
-      bank_name: z.string().optional(),
-      account_number: z.string().optional(),
+      bank_name: z
+        .string()
+        .optional()
+        .or(z.literal("").transform(() => undefined)),
+      account_number: z
+        .string()
+        .optional()
+        .or(z.literal("").transform(() => undefined)),
       ifsc_code: z
         .string()
         .regex(/^[A-Z]{4}0[A-Z0-9]{6}$/)
-        .optional(),
-      upi_id: z.string().email().or(z.string().regex(/@/)).optional(),
+        .optional()
+        .or(z.literal("").transform(() => undefined)),
+      upi_id: z
+        .string()
+        .email()
+        .or(z.string().regex(/@/))
+        .optional()
+        .or(z.literal("").transform(() => undefined)),
     })
     .optional(),
   commission_rate: z.number().min(0).max(100).optional(),
@@ -72,17 +85,30 @@ export const RegisterSellerSchema = z.object({
   gst_number: z
     .string()
     .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/)
-    .optional(),
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
   payout_details: z
     .object({
       account_holder_name: z.string().optional(),
-      bank_name: z.string().optional(),
-      account_number: z.string().optional(),
+      bank_name: z
+        .string()
+        .optional()
+        .or(z.literal("").transform(() => undefined)),
+      account_number: z
+        .string()
+        .optional()
+        .or(z.literal("").transform(() => undefined)),
       ifsc_code: z
         .string()
         .regex(/^[A-Z]{4}0[A-Z0-9]{6}$/)
-        .optional(),
-      upi_id: z.string().email().or(z.string().regex(/@/)).optional(),
+        .optional()
+        .or(z.literal("").transform(() => undefined)),
+      upi_id: z
+        .string()
+        .email()
+        .or(z.string().regex(/@/))
+        .optional()
+        .or(z.literal("").transform(() => undefined)),
     })
     .optional(),
   commission_rate: z.number().min(0).max(100).optional(),

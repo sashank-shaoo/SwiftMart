@@ -6,7 +6,9 @@ import React, {
   useState,
   ReactNode,
   useCallback,
+  useEffect,
 } from "react";
+import styles from "@/styles/Notification.module.css";
 
 export type NotificationType = "success" | "error" | "info" | "warning";
 
@@ -64,7 +66,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   );
 
   // Listen to global events
-  React.useEffect(() => {
+  useEffect(() => {
     const handleGlobalEvent = (event: NotificationEvent) => {
       notify(event.type, event.message);
     };
@@ -86,67 +88,18 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       }}>
       {children}
       {/* Toast Render Area */}
-      <div className="toast-container">
+      <div className={styles.toastContainer}>
         {notifications.map((n) => (
-          <div key={n.id} className={`toast toast-${n.type}`}>
+          <div key={n.id} className={`${styles.toast} ${styles[n.type]}`}>
             {n.message}
-            <button onClick={() => removeNotification(n.id)}>×</button>
+            <button
+              className={styles.closeBtn}
+              onClick={() => removeNotification(n.id)}>
+              ×
+            </button>
           </div>
         ))}
       </div>
-      <style jsx>{`
-        .toast-container {
-          position: fixed;
-          top: 20px;
-          right: 20px;
-          z-index: 9999;
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-        .toast {
-          padding: 12px 20px;
-          border-radius: 8px;
-          color: white;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          min-width: 250px;
-          animation: slideIn 0.3s ease-out;
-        }
-        @keyframes slideIn {
-          from {
-            transform: translateX(100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-        .toast-error {
-          background: #ff4d4f;
-        }
-        .toast-success {
-          background: #52c41a;
-        }
-        .toast-info {
-          background: #1890ff;
-        }
-        .toast-warning {
-          background: #faad14;
-        }
-        button {
-          background: none;
-          border: none;
-          color: white;
-          cursor: pointer;
-          font-size: 18px;
-          line-height: 1;
-          margin-left: auto;
-        }
-      `}</style>
     </NotificationContext.Provider>
   );
 }

@@ -43,6 +43,21 @@ export const errorHandler = (
     message = "Token expired";
   }
 
+  // Multer Errors (File uploads)
+  if (err.name === "MulterError") {
+    statusCode = 400;
+    const multerErr = err as any;
+    if (multerErr.code === "LIMIT_FILE_SIZE") {
+      message = "File too large (Max limit per image is 5MB)";
+    } else if (multerErr.code === "LIMIT_FILE_COUNT") {
+      message = "Too many files (Max 4 images allowed per product)";
+    } else if (multerErr.code === "LIMIT_UNEXPECTED_FILE") {
+      message = "Too many images uploaded (Max 4 allowed)";
+    } else {
+      message = `Upload error: ${multerErr.message}`;
+    }
+  }
+
   // Log error with Winston
   if (!isOperational || statusCode === 500) {
     const logger = require("../config/logger").default;
@@ -56,17 +71,7 @@ export const errorHandler = (
   }
 
   // Send error response
-  res.status(statusCode).json({
-    success: false,
-    message,
-    ...(err instanceof AppError &&
-      err.errorCode && { errorCode: err.errorCode }),
-    ...(err instanceof AppError && err.details && { details: err.details }),
-    ...(process.env.NODE_ENV === "development" && {
-      error: err.message,
-      stack: err.stack,
-    }),
-  });
+  res.error(message, statusCode, err instanceof AppError ? err.details : null);
 };
 
 // No Route found helper

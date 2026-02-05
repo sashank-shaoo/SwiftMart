@@ -127,4 +127,35 @@ export class SellerProfileDao {
     const res = await query(text, [status, userId]);
     return res.rows[0] || null;
   }
+
+  static async getSellerStats() {
+    const text = `
+      SELECT 
+        COUNT(*) as total_sellers,
+        COUNT(*) FILTER (WHERE verification_status = 'pending') as pending_sellers
+      FROM seller_profiles
+    `;
+    const res = await query(text);
+    return res.rows[0];
+  }
+
+  static async getTopSellersByRevenue(limit: number = 5) {
+    const text = `
+      SELECT 
+        u.name,
+        sp.store_name,
+        SUM(oi.quantity * oi.price_at_purchase) as total_sales,
+        COUNT(DISTINCT oi.order_id) as total_orders
+      FROM seller_profiles sp
+      JOIN users u ON sp.user_id = u.id
+      JOIN order_items oi ON sp.user_id = oi.seller_id
+      JOIN orders o ON oi.order_id = o.id
+      WHERE o.payment_status = 'paid'
+      GROUP BY u.name, sp.store_name
+      ORDER BY total_sales DESC
+      LIMIT $1
+    `;
+    const res = await query(text, [limit]);
+    return res.rows;
+  }
 }

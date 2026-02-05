@@ -8,16 +8,18 @@ import { notFoundHandler, errorHandler } from "./middlewares/errorHandler";
 import { responseHandler } from "./middlewares/responseHandler";
 import { requestLogger } from "./middlewares/requestLogger";
 
-// Validate environment variables on startup
-validateEnv();
-
-const app = express();
 import authRoutes from "./routes/auth.Routes";
 import productRoutes from "./routes/product.Routes";
 import inventoryRoutes from "./routes/inventory.Routes";
 import orderRoutes from "./routes/order.Routes";
 import cartRoutes from "./routes/cart.Routes";
 import paymentRoutes from "./routes/payment.Routes";
+import adminRoutes from "./routes/admin.Routes";
+
+// Validate environment variables on startup
+validateEnv();
+
+const app = express();
 
 // Helmet configuration
 app.use(helmet());
@@ -41,12 +43,14 @@ app.use(sanitizeInput);
 app.use(responseHandler);
 
 // Request logging
-
 app.use(requestLogger);
 
 app.get("/", (req, res) => {
-  res.send("Backend is running");
+  res.send("SwiftMart Backend is running");
 });
+
+// Routes
+app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/inventory", inventoryRoutes);
@@ -55,7 +59,6 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/payments", paymentRoutes);
 
 // 404 handler - must be after all routes
-
 app.use(notFoundHandler);
 
 // Global error handler - must be last

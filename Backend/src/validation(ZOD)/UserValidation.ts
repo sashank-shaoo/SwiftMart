@@ -63,27 +63,39 @@ export const UpdateUserSchema = z.object({
     .max(50, "Name must be less than 50 characters")
     .optional(),
 
-  image: z.url({ message: "Image must be a valid URL" }).optional(),
+  // Image is handled by Multer/Cloudinary, removed from here
 
-  age: z.number().min(10).max(120).optional(),
+  age: z.coerce.number().min(10).max(120).optional(),
 
   number: z
     .string()
     .regex(/^[0-9]{10}$/, "Phone number must be exactly 10 digits")
     .optional(),
 
-  location: z
-    .object({
-      type: z.literal("Point"),
-      coordinates: z
-        .array(
-          z.number().refine((val) => val >= -180 && val <= 180, {
-            message: "Coordinates must be valid longitude/latitude values",
-          }),
-        )
-        .length(2, "Coordinates must be [longitude, latitude]"),
-    })
-    .optional(),
+  location: z.preprocess(
+    (val) => {
+      if (typeof val === "string") {
+        try {
+          return JSON.parse(val);
+        } catch (e) {
+          return val;
+        }
+      }
+      return val;
+    },
+    z
+      .object({
+        type: z.literal("Point"),
+        coordinates: z
+          .array(
+            z.number().refine((val) => val >= -180 && val <= 180, {
+              message: "Coordinates must be valid longitude/latitude values",
+            }),
+          )
+          .length(2, "Coordinates must be [longitude, latitude]"),
+      })
+      .optional(),
+  ),
 
   bio: z.string().max(500, "Bio is too long").optional(),
 });

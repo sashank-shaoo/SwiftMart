@@ -151,3 +151,41 @@ export interface Transaction {
   status: "pending" | "completed" | "failed" | "refunded";
   created_at?: string;
 }
+
+export interface AdminStats {
+  total_users: number;
+  unverified_users: number;
+  total_sellers: number;
+  pending_sellers: number;
+  total_revenue: number;
+  active_orders: number;
+}
+
+export interface SellerProfit {
+  name: string;
+  store_name: string;
+  total_sales: number;
+  total_orders: number;
+}
+
+export interface RecentActivity {
+  type: "order" | "user";
+  name: string;
+  value: string | null;
+  created_at: string;
+}
+
+export interface AdminOverview {
+  stats: AdminStats;
+  topSellers: SellerProfit[];
+  recentActivity: RecentActivity[];
+}
+
+export interface AdminAlert {
+  id: string;
+  type: "SELLER_REGISTRATION" | "SELLER_MIGRATION" | "ORDER_PLACED" | "OTHER";
+  message: string;
+  metadata?: any;
+  is_read: boolean;
+  created_at: string;
+}

@@ -1,0 +1,135 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(12, 44, 85, 0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.5rem;
+}
+
+.modalContent {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 32px;
+  width: 100%;
+  max-width: 480px;
+  padding: 3rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.modalContent::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(98, 159, 173, 0.1) 0%,
+    transparent 70%
+  );
+  z-index: -1;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  color: var(--color-primary-dark);
+  margin-bottom: 0.5rem;
+  font-weight: 800;
+}
+
+.subtitle {
+  color: var(--color-secondary);
+  font-size: 1rem;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.subtitle b {
+  color: var(--color-primary-dark);
+}
+
+.otpGrid {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.otpInput {
+  width: 50px;
+  height: 60px;
+  border-radius: 12px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  background: white;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.otpInput:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(41, 99, 116, 0.1);
+  transform: translateY(-2px);
+}
+
+.resendSection {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--color-secondary);
+}
+
+.resendBtn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  margin-left: 5px;
+}
+
+.resendBtn:disabled {
+  color: var(--color-muted);
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.error {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  min-height: 1.25rem;
+}
+
+@media (max-width: 480px) {
+  .modalContent {
+    padding: 2rem 1.5rem;
+  }
+  
+  .otpInput {
+    width: 40px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+}

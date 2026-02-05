@@ -1,13 +1,12 @@
 import multer, { FileFilterCallback } from "multer";
 import { Request } from "express";
 
-
 const storage = multer.memoryStorage();
 
 const fileFilter = (
   req: Request,
   file: Express.Multer.File,
-  cb: FileFilterCallback
+  cb: FileFilterCallback,
 ): void => {
   const allowedMimeTypes = [
     "image/jpeg",
@@ -22,8 +21,8 @@ const fileFilter = (
   } else {
     cb(
       new Error(
-        "Invalid file type. Only JPEG, PNG, WebP, and GIF images are allowed."
-      )
+        "Invalid file type. Only JPEG, PNG, WebP, and GIF images are allowed.",
+      ),
     );
   }
 };
@@ -38,3 +37,4 @@ export const upload = multer({
 });
 
 export const uploadProductImages = upload.array("images", 4);
+export const uploadProfileImage = upload.single("image");

@@ -61,4 +61,35 @@ export class OrderDao {
     const res = await query(text, [sellerId]);
     return res.rows;
   }
+
+  static async getOverallRevenueStats() {
+    const text = `
+      SELECT 
+        COALESCE(SUM(total_amount), 0) as total_revenue,
+        COUNT(*) FILTER (WHERE order_status = 'processing') as active_orders
+      FROM orders
+      WHERE payment_status = 'paid'
+    `;
+    const res = await query(text);
+    return res.rows[0];
+  }
+
+  static async getRecentSystemActivity(limit: number = 10) {
+    const text = `
+      (SELECT 'order' as type, u.name, o.total_amount::text as value, o.created_at
+       FROM orders o
+       JOIN users u ON o.user_id = u.id
+       ORDER BY o.created_at DESC
+       LIMIT $1)
+      UNION ALL
+      (SELECT 'user' as type, name, NULL as value, created_at
+       FROM users
+       ORDER BY created_at DESC
+       LIMIT $1)
+      ORDER BY created_at DESC
+      LIMIT $1
+    `;
+    const res = await query(text, [limit]);
+    return res.rows;
+  }
 }

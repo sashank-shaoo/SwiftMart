@@ -10,6 +10,7 @@ import {
   UpdateUserSchema,
   ChangePasswordSchema,
 } from "../validation(ZOD)/UserValidation";
+import { uploadProfileImage } from "../middlewares/uploadMiddleware";
 import {
   CreateSellerProfileSchema,
   RegisterSellerSchema,
@@ -24,6 +25,7 @@ const router = express.Router();
 
 router.post("/login", loginLimiter, asyncHandler(authController.login));
 router.post("/logout", authMiddleware, asyncHandler(authController.logout));
+router.get("/me", authMiddleware, asyncHandler(authController.getMe));
 
 router.post(
   "/register",
@@ -40,6 +42,7 @@ router.post(
 router.put(
   "/update",
   authMiddleware,
+  uploadProfileImage,
   validate(UpdateUserSchema),
   asyncHandler(authController.updateUser),
 );

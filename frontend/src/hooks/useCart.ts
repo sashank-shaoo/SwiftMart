@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { CartItem } from "@/types";
 import { cartService } from "@/services/cartService";
+import { useAuth } from "@/context/AuthContext";
 
 export function useCart() {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -21,9 +22,15 @@ export function useCart() {
     }
   };
 
+  const { user } = useAuth();
+
   useEffect(() => {
-    fetchCart();
-  }, []);
+    if (user) {
+      fetchCart();
+    } else {
+      setItems([]); // Clear cart if logged out
+    }
+  }, [user]);
 
   const addToCart = async (productId: string, quantity: number) => {
     try {
