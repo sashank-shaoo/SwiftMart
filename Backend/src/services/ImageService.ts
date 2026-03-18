@@ -15,7 +15,7 @@ cloudinary.config({
  */
 export const uploadMultipleImages = async (
   files: Express.Multer.File[],
-  folder: string = "products"
+  folder: string = "products",
 ): Promise<string[]> => {
   if (!files || files.length === 0) {
     throw new Error("No files provided for upload");
@@ -25,6 +25,10 @@ export const uploadMultipleImages = async (
 
   try {
     const results = await Promise.all(uploadPromises);
+    console.log(
+      "DEBUG: ImageService.ts - Uploaded URLs:",
+      results.map((result) => result.secure_url),
+    );
     return results.map((result) => result.secure_url);
   } catch (error) {
     console.error("Error uploading images to Cloudinary:", error);
@@ -40,7 +44,7 @@ export const uploadMultipleImages = async (
  */
 const uploadSingleImage = (
   file: Express.Multer.File,
-  folder: string
+  folder: string,
 ): Promise<UploadApiResponse> => {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
@@ -61,7 +65,7 @@ const uploadSingleImage = (
         } else {
           reject(new Error("Upload failed with no result"));
         }
-      }
+      },
     );
 
     // Pipe the file buffer to Cloudinary
@@ -96,7 +100,7 @@ export const deleteImage = async (imageUrl: string): Promise<void> => {
  * @param imageUrls - Array of Cloudinary image URLs
  */
 export const deleteMultipleImages = async (
-  imageUrls: string[]
+  imageUrls: string[],
 ): Promise<void> => {
   const deletePromises = imageUrls.map((url) => deleteImage(url));
   await Promise.allSettled(deletePromises); // Don't fail if some deletions fail
@@ -124,7 +128,7 @@ const extractPublicId = (url: string): string | null => {
     const publicIdWithExt = afterUpload.slice(startIndex).join("/");
     const publicId = publicIdWithExt.substring(
       0,
-      publicIdWithExt.lastIndexOf(".")
+      publicIdWithExt.lastIndexOf("."),
     );
 
     return publicId;

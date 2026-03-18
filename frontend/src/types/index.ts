@@ -1,21 +1,23 @@
 export type UserRole = "user" | "seller" | "admin";
 
 export interface User {
-  id?: string;
-  name?: string;
+  id: string;
+  role: "user" | "seller" | "admin";
+  name: string;
+  email: string;
   image?: string;
-  age?: number;
   number?: string;
+  age?: number;
+  bio?: string;
   location?: {
     type: "Point";
-    coordinates: [number, number];
+    coordinates: [number, number]; // [longitude, latitude]
   };
-  email: string;
-  bio?: string;
-  role: UserRole;
-  is_verified_email?: boolean;
+  is_verified_email: boolean;
   created_at?: string;
   updated_at?: string;
+  verification_status?: "pending" | "verified" | "rejected";
+  seller_profile?: SellerProfile;
 }
 
 export interface SellerProfile {
@@ -34,6 +36,10 @@ export interface SellerProfile {
   commission_rate?: number;
   total_earnings?: number;
   current_balance?: number;
+  warehouse_location?: {
+    type: "Point";
+    coordinates: [number, number]; // [longitude, latitude]
+  };
 }
 
 export interface Category {
@@ -78,7 +84,10 @@ export interface Product {
   images: string[];
   attributes?: Record<string, any>;
   seller_id: string;
-  season?: "summer" | "winter" | "spring" | "autumn" | "monsoon" | "rainy";
+  is_active?: boolean;
+  tags?: string[];
+  season?: string;
+  stock_quantity?: number;
   rating?: number;
   review_count?: number;
   category?: Category;
@@ -98,17 +107,42 @@ export interface CartItem {
 }
 
 export interface Address {
+  street: string;
   city: string;
   state: string;
+  zipCode: string;
   country: string;
-  street?: string;
-  pincode?: string;
+}
+
+// ==================== Wishlist Types ====================
+
+export interface Wishlist {
+  id: string;
+  user_id: string;
+  product_id: string;
+  created_at: string;
+}
+
+export interface WishlistWithProduct extends Wishlist {
+  // Product details from JOIN
+  name: string;
+  price: number;
+  images: string[];
+}
+
+export interface WishlistResponse {
+  wishlist: WishlistWithProduct[];
+  count: number;
+}
+
+export interface CheckWishlistResponse {
+  inWishlist: boolean;
 }
 
 export interface Order {
   id?: string;
   user_id: string;
-  total_amount: number;
+  total_amount: string | number;
   shipping_fee?: number;
   tax_amount?: number;
   payment_status: "pending" | "paid" | "failed" | "refunded";
@@ -120,13 +154,41 @@ export interface Order {
     | "delivered"
     | "cancelled"
     | "returned";
+  status?:
+    | "pending"
+    | "processing"
+    | "shipped"
+    | "delivered"
+    | "completed"
+    | "cancelled"; // Frontend alias
   shipping_address: Address | any;
   billing_address?: Address | any;
   payment_method?: string;
   transaction_id?: string;
+
+  // Delivery tracking fields
+  shipped_at?: string;
+  estimated_delivery_time?: string;
+  delivery_distance_km?: number;
+
   items?: OrderItem[];
   created_at?: string;
   updated_at?: string;
+}
+
+// Unified checkout response (multiple orders created)
+export interface CheckoutResponse {
+  orders: {
+    orderId: string;
+    sellerId: string;
+    total: number;
+    sellerEarnings: number;
+    platformFee: number;
+    transactionId: string;
+  }[];
+  totalOrders: number;
+  totalAmount: number;
+  totalPlatformRevenue: number;
 }
 
 export interface OrderItem {
@@ -136,6 +198,7 @@ export interface OrderItem {
   seller_id: string;
   quantity: number;
   price_at_purchase: number;
+  price_at_time?: number; // Frontend alias
   product?: Product;
   created_at?: string;
 }
@@ -188,4 +251,21 @@ export interface AdminAlert {
   metadata?: any;
   is_read: boolean;
   created_at: string;
+}
+
+// Review types
+export interface Review {
+  id?: string;
+  product_id: string;
+  user_id: string;
+  rating: number;
+  comment?: string;
+  created_at?: string;
+  name?: string;
+  email?: string;
+}
+
+export interface CreateReviewData {
+  rating: number;
+  comment?: string;
 }

@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import React from "react";
+import { useLogin } from "@/hooks/useAuthForms";
 import { useNotification } from "@/context/NotificationContext";
 import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
@@ -12,53 +11,13 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { login } = useAuth();
   const { notifySuccess } = useNotification();
-
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const validate = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.email) newErrors.email = "Email is required";
-    if (!formData.password) newErrors.password = "Password is required";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const { formData, errors, loading, handleChange, submit } = useLogin();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
-
-    setLoading(true);
-    try {
-      await login(formData.email, formData.password);
-      notifySuccess("Welcome back to SwiftMart!");
-      router.push("/");
-    } catch (err: any) {
-      // Handled by global error interceptor
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => {
-        const updated = { ...prev };
-        delete updated[name];
-        return updated;
-      });
-    }
+    const ok = await submit();
+    if (ok) notifySuccess("Welcome back to SwiftMart!");
   };
 
   return (

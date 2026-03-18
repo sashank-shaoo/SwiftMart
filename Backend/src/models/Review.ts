@@ -5,4 +5,7 @@ export interface Review {
   rating: number;
   comment?: string;
   created_at?: Date;
+  updated_at?: Date;
+  name?: string;
+  email?: string;
 }

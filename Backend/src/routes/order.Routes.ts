@@ -49,8 +49,16 @@ router.get(
   asyncHandler(OrderController.getSellerOrders),
 );
 
+// Get seller's earnings (actual revenue after commission)
+router.get(
+  "/seller/earnings",
+  authMiddleware,
+  requireSeller,
+  asyncHandler(OrderController.getSellerEarnings),
+);
+
 // Update order status (seller updates their items)
-router.patch(
+router.put(
   "/:id/status",
   authMiddleware,
   requireSellerOrAdmin,

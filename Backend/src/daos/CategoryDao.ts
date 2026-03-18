@@ -46,7 +46,7 @@ export class CategoryDao {
 
   static async updateCategory(
     id: string,
-    category: Partial<Category>
+    category: Partial<Category>,
   ): Promise<Category | null> {
     const fields: string[] = [];
     const values: any[] = [];
@@ -84,8 +84,71 @@ export class CategoryDao {
   }
 
   static async deleteCategory(id: string): Promise<boolean> {
-    const text = "DELETE FROM categories WHERE id = $1";
+    const text = "DELETE FROM categories WHERE id = $1 RETURNING *";
     const res = await query(text, [id]);
     return (res.rowCount ?? 0) > 0;
+  }
+
+  /**
+   * Get all categories with product count
+   * Used for displaying categories with their associated product counts
+   */
+  static async getAllCategoriesWithProductCount(): Promise<any[]> {
+    const text = `
+      SELECT 
+        c.*,
+        COUNT(p.id) as product_count
+      FROM categories c
+      LEFT JOIN products p ON c.id = p.category_id
+      GROUP BY c.id
+      ORDER BY c.name ASC
+    `;
+    const res = await query(text);
+    return res.rows;
+  }
+
+  /**
+   * Count products in a specific category
+   * Used for validation before category deletion
+   */
+  static async countProductsByCategory(categoryId: string): Promise<number> {
+    const text =
+      "SELECT COUNT(*) as count FROM products WHERE category_id = $1";
+    const res = await query(text, [categoryId]);
+    return parseInt(res.rows[0].count);
+  }
+
+  /**
+   * Count subcategories of a specific category
+   * Used for validation before category deletion
+   */
+  static async countSubcategories(categoryId: string): Promise<number> {
+    const text =
+      "SELECT COUNT(*) as count FROM categories WHERE parent_id = $1";
+    const res = await query(text, [categoryId]);
+    return parseInt(res.rows[0].count);
+  }
+
+  /**
+   * Check if a slug already exists, optionally excluding a specific category ID
+   * Used for validation during create and update operations
+   */
+  static async checkSlugConflict(
+    slug: string,
+    excludeId?: string,
+  ): Promise<boolean> {
+    let text: string;
+    let values: any[];
+
+    if (excludeId) {
+      text = "SELECT id FROM categories WHERE slug = $1 AND id != $2";
+      values = [slug, excludeId];
+    } else {
+      text = "SELECT id FROM categories WHERE slug = $1";
+      values = [slug];
+    }
+
+    const res = await query(text, values);
+    return res.rows.length > 0;
   }
 }

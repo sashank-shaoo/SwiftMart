@@ -6,7 +6,7 @@ import { validateEnv } from "./config/validateEnv";
 import { sanitizeInput } from "./middlewares/sanitizeMiddleware";
 import { notFoundHandler, errorHandler } from "./middlewares/errorHandler";
 import { responseHandler } from "./middlewares/responseHandler";
-import { requestLogger } from "./middlewares/requestLogger";
+import { requestLogger } from "./middlewares/requestLogger"; // Changed path and name
 
 import authRoutes from "./routes/auth.Routes";
 import productRoutes from "./routes/product.Routes";
@@ -15,6 +15,9 @@ import orderRoutes from "./routes/order.Routes";
 import cartRoutes from "./routes/cart.Routes";
 import paymentRoutes from "./routes/payment.Routes";
 import adminRoutes from "./routes/admin.Routes";
+import categoryRoutes from "./routes/category.Routes";
+import reviewRoutes from "./routes/reviewRoutes";
+import wishlistRoutes from "./routes/wishlist.Routes";
 
 // Validate environment variables on startup
 validateEnv();
@@ -26,7 +29,7 @@ app.use(helmet());
 // CORS configuration
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: process.env.FRONTEND_URL,
     credentials: true, // Allow cookies
   }),
 );
@@ -53,10 +56,13 @@ app.get("/", (req, res) => {
 app.use("/api/admin", adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/categories", categoryRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/wishlist", wishlistRoutes);
+app.use("/api", reviewRoutes); // Review routes
 
 // 404 handler - must be after all routes
 app.use(notFoundHandler);

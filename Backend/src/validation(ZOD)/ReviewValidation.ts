@@ -5,10 +5,11 @@ export const reviewSchema = z.object({
 
   user_id: z.uuid(),
 
-  item_id: z.uuid(),
+  product_id: z.uuid(),
 
   rating: z
     .number()
+    .int()
     .min(1, "Rating must be at least 1")
     .max(5, "Rating must be at most 5"),
 

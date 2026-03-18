@@ -1,0 +1,115 @@
+/* Review SummaryStyles */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: transparent;
+  border-radius: 16px;
+  height: fit-content;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0C2C55;
+  margin: 0;
+}
+
+.ratingOverview {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.bigRating {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #0C2C55;
+  line-height: 1;
+}
+
+.starGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.totalReviews {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.breakdownRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.starLabel {
+  width: 12px;
+  font-weight: 600;
+  color: #0C2C55;
+}
+
+.progressBarTrack {
+  flex: 1;
+  height: 6px;
+  background: rgba(12, 44, 85, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  background: #0C2C55;
+  border-radius: 3px;
+  transition: width 0.5s ease-out;
+}
+
+.percentage {
+  width: 32px;
+  text-align: right;
+  color: #888;
+  font-size: 0.75rem;
+}
+
+.writeButton {
+  width: 100%;
+  padding: 1rem;
+  background: transparent;
+  border: 1px solid #0C2C55;
+  color: #0C2C55;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.875rem;
+}
+
+.writeButton:hover {
+  background: #0C2C55;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .bigRating {
+    font-size: 2.5rem;
+  }
+}

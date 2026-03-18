@@ -27,18 +27,27 @@ const baseProductSchema = z.object({
 
   category_id: z.uuid("Category ID must be a valid UUID"),
 
-  price: z
+  price: z.coerce
     .number()
     .positive("Price must be positive")
     .max(10000000, "Price must not exceed 10,000,000"),
 
-  original_price: z
+  original_price: z.coerce
     .number()
     .positive("Original price must be positive")
     .max(10000000, "Original price must not exceed 10,000,000")
     .optional(),
 
-  attributes: z.record(z.string(), z.any()).optional(),
+  attributes: z.preprocess((val) => {
+    if (typeof val === "string") {
+      try {
+        return JSON.parse(val);
+      } catch {
+        return val;
+      }
+    }
+    return val;
+  }, z.record(z.string(), z.any()).optional()),
 
   seller_id: z.uuid("Seller ID must be a valid UUID"),
 
@@ -76,13 +85,13 @@ export const productSchema = baseProductSchema.extend({
 // Product creation schema without images (images handled by Multer)
 export const createProductSchema = baseProductSchema
   .extend({
-    initial_stock: z
+    initial_stock: z.coerce
       .number()
       .int("Initial stock must be an integer")
       .nonnegative("Initial stock must be non-negative")
       .optional(),
 
-    low_stock_threshold: z
+    low_stock_threshold: z.coerce
       .number()
       .int("Low stock threshold must be an integer")
       .positive("Low stock threshold must be positive")

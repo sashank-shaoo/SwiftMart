@@ -18,7 +18,7 @@ export class ProductDao {
       product.category_id,
       product.price,
       product.original_price || null,
-      JSON.stringify(product.images), // Convert array to JSONB
+      product.images, // Pass array directly - pg library handles conversion
       product.attributes ? JSON.stringify(product.attributes) : null,
       product.seller_id,
       product.season || null,
@@ -126,9 +126,50 @@ export class ProductDao {
     return res.rows[0] || null;
   }
 
-  static async findProductsBySellerId(sellerId: string): Promise<Product[]> {
-    const text =
-      "SELECT * FROM products WHERE seller_id = $1 ORDER BY created_at DESC";
+  /**
+   * Get products by seller ID
+   * @param sellerId - Seller's user ID
+   * @param includeMetrics - If true, includes sales metrics (units sold, revenue, orders)
+   * @param sortBy - How to sort when metrics included (revenue or units)
+   */
+  static async findProductsBySellerId(
+    sellerId: string,
+    includeMetrics: boolean = false,
+    sortBy: "revenue" | "units" = "revenue",
+  ): Promise<any[]> {
+    if (!includeMetrics) {
+      // Simple query without metrics
+      const text = `
+        SELECT p.*, c.name as category_name
+        FROM products p
+        LEFT JOIN categories c ON p.category_id = c.id
+        WHERE p.seller_id = $1
+        ORDER BY p.created_at DESC
+      `;
+      const res = await query(text, [sellerId]);
+      return res.rows;
+    }
+
+    // Enhanced query with sales metrics
+    const orderByClause =
+      sortBy === "units"
+        ? "ORDER BY total_units_sold DESC NULLS LAST"
+        : "ORDER BY total_revenue DESC NULLS LAST";
+
+    const text = `
+      SELECT 
+        p.*,
+        c.name as category_name,
+        COALESCE(SUM(oi.quantity), 0) as total_units_sold,
+        COALESCE(SUM(oi.quantity * oi.price_at_purchase), 0) as total_revenue,
+        COUNT(DISTINCT oi.order_id) as total_orders
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      LEFT JOIN order_items oi ON p.id = oi.product_id
+      WHERE p.seller_id = $1
+      GROUP BY p.id, c.name
+      ${orderByClause}
+    `;
     const res = await query(text, [sellerId]);
     return res.rows;
   }
@@ -181,7 +222,7 @@ export class ProductDao {
     }
     if (product.images !== undefined) {
       fields.push(`images = $${paramIndex++}`);
-      values.push(JSON.stringify(product.images));
+      values.push(product.images); // Pass array directly
     }
     if (product.attributes !== undefined) {
       fields.push(`attributes = $${paramIndex++}`);
@@ -230,13 +271,23 @@ export class ProductDao {
 
   /**
    * Get best selling products (sorted by review_count)
+   * @param limit - Number of products to return
+   * @param randomize - If true, randomly select from best sellers
    */
-  static async getBestSellers(limit: number = 10): Promise<Product[]> {
+  static async getBestSellers(
+    limit: number = 10,
+    randomize: boolean = false,
+  ): Promise<Product[]> {
+    const orderBy = randomize
+      ? "ORDER BY RANDOM()"
+      : "ORDER BY p.review_count DESC, p.rating DESC";
+
     const text = `
       SELECT p.*, c.name as category_name
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.id
-      ORDER BY p.review_count DESC, p.rating DESC
+      WHERE p.review_count > 0
+      ${orderBy}
       LIMIT $1
     `;
     const res = await query(text, [limit]);
@@ -244,19 +295,224 @@ export class ProductDao {
   }
 
   /**
-   * Get top rated products (sorted by rating)
+   * Get best selling products with pagination
    */
-  static async getTopRated(limit: number = 10): Promise<Product[]> {
+  static async getBestSellersWithPagination(params: {
+    page?: number;
+    limit?: number;
+  }): Promise<{ products: Product[]; total: number }> {
+    const { page = 1, limit = 20 } = params;
+    const offset = (page - 1) * limit;
+
+    // Count total best sellers (products with reviews)
+    const countQuery = `SELECT COUNT(*) FROM products WHERE review_count > 0`;
+    const countRes = await query(countQuery);
+    const total = parseInt(countRes.rows[0].count, 10);
+
+    // Get paginated results
+    const productsQuery = `
+      SELECT p.*, c.name as category_name
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      WHERE p.review_count > 0
+      ORDER BY p.review_count DESC, p.rating DESC
+      LIMIT $1 OFFSET $2
+    `;
+    const res = await query(productsQuery, [limit, offset]);
+
+    return { products: res.rows, total };
+  }
+
+  /**
+   * Get top rated products (sorted by rating)
+   * @param limit - Number of products to return
+   * @param randomize - If true, randomly select from top rated products
+   */
+  static async getTopRated(
+    limit: number = 10,
+    randomize: boolean = false,
+  ): Promise<Product[]> {
+    const orderBy = randomize
+      ? "ORDER BY RANDOM()"
+      : "ORDER BY p.rating DESC, p.review_count DESC";
+
     const text = `
       SELECT p.*, c.name as category_name
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.id
-      WHERE p.rating IS NOT NULL AND p.rating > 0
-      ORDER BY p.rating DESC, p.review_count DESC
+      WHERE p.rating IS NOT NULL AND p.rating >= 4
+      ${orderBy}
       LIMIT $1
     `;
     const res = await query(text, [limit]);
     return res.rows;
+  }
+
+  /**
+   * Get top rated products with pagination
+   */
+  static async getTopRatedWithPagination(params: {
+    page?: number;
+    limit?: number;
+  }): Promise<{ products: Product[]; total: number }> {
+    const { page = 1, limit = 20 } = params;
+    const offset = (page - 1) * limit;
+
+    // Count total top rated products
+    const countQuery = `
+      SELECT COUNT(*) FROM products 
+      WHERE rating IS NOT NULL AND rating >= 4
+    `;
+    const countRes = await query(countQuery);
+    const total = parseInt(countRes.rows[0].count, 10);
+
+    // Get paginated results
+    const productsQuery = `
+      SELECT p.*, c.name as category_name
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      WHERE p.rating IS NOT NULL AND p.rating >= 4
+      ORDER BY p.rating DESC, p.review_count DESC
+      LIMIT $1 OFFSET $2
+    `;
+    const res = await query(productsQuery, [limit, offset]);
+
+    return { products: res.rows, total };
+  }
+
+  /**
+   * Get premium products (high-priced products)
+   * @param limit - Number of products to return
+   * @param randomize - If true, randomly select from premium products
+   */
+  static async getPremiumProducts(
+    limit: number = 10,
+    randomize: boolean = false,
+  ): Promise<Product[]> {
+    const orderBy = randomize ? "ORDER BY RANDOM()" : "ORDER BY p.price DESC";
+
+    const text = `
+      SELECT p.*, c.name as category_name
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      WHERE p.price IS NOT NULL AND p.price >= 1500
+      ${orderBy}
+      LIMIT $1
+    `;
+    const res = await query(text, [limit]);
+    return res.rows;
+  }
+
+  /**
+   * Get premium products with pagination
+   */
+  static async getPremiumProductsWithPagination(params: {
+    page?: number;
+    limit?: number;
+  }): Promise<{ products: Product[]; total: number }> {
+    const { page = 1, limit = 20 } = params;
+    const offset = (page - 1) * limit;
+
+    // Count total premium products
+    const countQuery = `
+      SELECT COUNT(*) FROM products 
+      WHERE price IS NOT NULL AND price >= 1500
+    `;
+    const countRes = await query(countQuery);
+    const total = parseInt(countRes.rows[0].count, 10);
+
+    // Get paginated results
+    const productsQuery = `
+      SELECT p.*, c.name as category_name
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      WHERE p.price IS NOT NULL AND p.price >= 1500
+      ORDER BY p.price DESC
+      LIMIT $1 OFFSET $2
+    `;
+    const res = await query(productsQuery, [limit, offset]);
+
+    return { products: res.rows, total };
+  }
+
+  /**
+   * Get best-selling products by actual sales (for Admin Dashboard)
+   * Based on units sold and revenue from order_items table, not reviews
+   * @param limit - Number of products to return
+   * @param sortBy - Sort by 'units' (quantity sold) or 'revenue' (total revenue)
+   */
+  static async getBestSellersBySales(
+    limit: number = 10,
+    sortBy: "units" | "revenue" = "revenue",
+  ): Promise<any[]> {
+    const orderByClause =
+      sortBy === "units"
+        ? "ORDER BY total_units_sold DESC"
+        : "ORDER BY total_revenue DESC";
+
+    const text = `
+      SELECT 
+        p.*,
+        c.name as category_name,
+        COALESCE(SUM(oi.quantity), 0) as total_units_sold,
+        COALESCE(SUM(oi.quantity * oi.price_at_purchase), 0) as total_revenue,
+        COUNT(DISTINCT oi.order_id) as total_orders
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      LEFT JOIN order_items oi ON p.id = oi.product_id
+      GROUP BY p.id, c.name
+      HAVING SUM(oi.quantity) > 0
+      ${orderByClause}
+      LIMIT $1
+    `;
+    const res = await query(text, [limit]);
+    return res.rows;
+  }
+
+  /**
+   * Get best-selling products by actual sales with pagination (for Admin Dashboard)
+   */
+  static async getBestSellersBySalesWithPagination(params: {
+    page?: number;
+    limit?: number;
+    sortBy?: "units" | "revenue";
+  }): Promise<{ products: any[]; total: number }> {
+    const { page = 1, limit = 20, sortBy = "revenue" } = params;
+    const offset = (page - 1) * limit;
+
+    const orderByClause =
+      sortBy === "units"
+        ? "ORDER BY total_units_sold DESC"
+        : "ORDER BY total_revenue DESC";
+
+    // Count total products with sales
+    const countQuery = `
+      SELECT COUNT(DISTINCT p.id) as count
+      FROM products p
+      INNER JOIN order_items oi ON p.id = oi.product_id
+    `;
+    const countRes = await query(countQuery);
+    const total = parseInt(countRes.rows[0].count, 10);
+
+    // Get paginated results
+    const productsQuery = `
+      SELECT 
+        p.*,
+        c.name as category_name,
+        COALESCE(SUM(oi.quantity), 0) as total_units_sold,
+        COALESCE(SUM(oi.quantity * oi.price_at_purchase), 0) as total_revenue,
+        COUNT(DISTINCT oi.order_id) as total_orders
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      LEFT JOIN order_items oi ON p.id = oi.product_id
+      GROUP BY p.id, c.name
+      HAVING SUM(oi.quantity) > 0
+      ${orderByClause}
+      LIMIT $1 OFFSET $2
+    `;
+    const res = await query(productsQuery, [limit, offset]);
+
+    return { products: res.rows, total };
   }
 
   /**
@@ -272,5 +528,52 @@ export class ProductDao {
     `;
     const res = await query(text, [limit]);
     return res.rows;
+  }
+  /**
+   * Search products by name, description, season, category, or attributes
+   */
+  static async searchProducts(
+    queryStr: string,
+    page: number = 1,
+    limit: number = 20,
+  ): Promise<{ products: Product[]; total: number }> {
+    const offset = (page - 1) * limit;
+    const searchTerm = `%${queryStr}%`;
+
+    const whereClause = `
+      WHERE 
+        p.name ILIKE $1 
+        OR p.description ILIKE $1
+        OR p.season ILIKE $1
+        OR c.name ILIKE $1
+        OR u.name ILIKE $1
+        OR p.attributes::text ILIKE $1
+    `;
+
+    // Count query
+    const countQuery = `
+      SELECT COUNT(*) 
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      LEFT JOIN users u ON p.seller_id = u.id
+      ${whereClause}
+    `;
+    const countRes = await query(countQuery, [searchTerm]);
+    const total = parseInt(countRes.rows[0].count, 10);
+
+    // Results query
+    const productsQuery = `
+      SELECT p.*, c.name as category_name, u.name as seller_name
+      FROM products p
+      LEFT JOIN categories c ON p.category_id = c.id
+      LEFT JOIN users u ON p.seller_id = u.id
+      ${whereClause}
+      ORDER BY p.created_at DESC
+      LIMIT $2 OFFSET $3
+    `;
+
+    const res = await query(productsQuery, [searchTerm, limit, offset]);
+
+    return { products: res.rows, total };
   }
 }

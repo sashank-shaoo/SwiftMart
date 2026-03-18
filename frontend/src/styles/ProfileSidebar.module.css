@@ -1,0 +1,207 @@
+.sidebarContainer {
+  width: 280px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.userProfile {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  background: linear-gradient(to bottom, #f8f9fa, #fff);
+}
+
+.avatarWrapper {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid white;
+}
+
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #64748b;
+  border: 3px solid white;
+}
+
+.cameraIcon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #0C2C55;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  transition: transform 0.2s;
+}
+
+.avatarWrapper:hover .cameraIcon {
+  transform: scale(1.1);
+}
+
+.userName {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 0.25rem;
+}
+
+.userEmail {
+  font-size: 0.875rem;
+  color: #64748B;
+  margin-bottom: 1rem;
+}
+
+.roleBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.userRole {
+  background: #EFF6FF;
+  color: #3B82F6;
+}
+
+.sellerRole {
+  background: #FFF7ED;
+  color: #F97316;
+}
+
+.navMenu {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: #64748B;
+  font-weight: 500;
+  transition: all 0.2s;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.navItem:hover {
+  background: #F8FAFC;
+  color: #0F172A;
+}
+
+.activeItem {
+  background: #EFF6FF;
+  color: #0C2C55;
+  font-weight: 600;
+}
+
+/* Mobile Toggle Button */
+.mobileToggle {
+  display: none;
+  position: fixed;
+  bottom: 90px; /* Moved up above footer */
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #3B82F6; /* Bright Blue */
+  color: white;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+  z-index: 90;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobileToggle:active {
+  transform: scale(0.95);
+}
+
+/* Mobile Sidebar Drawer */
+.mobileOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  backdrop-filter: blur(4px);
+}
+
+.mobileDrawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100vh;
+  background: white;
+  z-index: 9999; /* Ensure it's on top of everything */
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  padding-top: 2rem; /* Add spacing for safe area */
+}
+
+@media (max-width: 1024px) {
+  .sidebarContainer {
+    display: none; /* Hide standard sidebar on mobile/tablet */
+  }
+
+  .mobileToggle {
+    display: flex;
+  }
+
+  .mobileOverlay {
+    display: block;
+  }
+}

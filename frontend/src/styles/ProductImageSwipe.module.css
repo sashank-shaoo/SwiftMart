@@ -1,0 +1,257 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+}
+
+.card {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* Square aspect ratio by default */
+  background: #f4f6f8; /* Very light off-white/cream */
+  border-radius: 40px; /* Large rounded corners */
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.02); /* Subtle inner border only */
+}
+
+.imageViewport {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+}
+
+.imageWrapper {
+  width: 70%;
+  height: 80%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #ffffff 0%, #f4f4f0 100%); /* Subtle depth */
+  border-radius: 32px;
+  
+  /* Popup Shadow Effect on Inner Card */
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 1px rgba(0, 0, 0, 0.05); /* Crisp border feel without border */
+  
+  transform: scale(1); /* Default state */
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.imageWrapper:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.imageWrapper:hover .productImage {
+  transform: scale(1.02); /* Internal zoom on hover */
+}
+
+.productImage {
+  background-size: cover; 
+  background-position: center; /* Centers the image */
+  padding: 24px; /* Increased padding */
+  pointer-events: none; /* Prevent browser image drag */
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));
+}
+
+/* Navigation Buttons */
+.navigation {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  pointer-events: none; /* Let clicks pass through to drag area */
+  z-index: 20;
+}
+
+.navBtn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0C2C55;
+  cursor: pointer;
+  pointer-events: auto; /* Re-enable pointer events for buttons */
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  opacity: 0; /* Hidden by default, shown on hover */
+  transform: scale(0.9);
+}
+
+.card:hover .navBtn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.navBtn:hover {
+  background: #ffffff;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Pagination Dots */
+.pagination {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(12, 44, 85, 0.2); /* Navy with opacity */
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.activeDot {
+  background: #0C2C55; /* Solid Navy */
+  width: 24px; /* Elongated pill for active state */
+  border-radius: 4px;
+}
+
+/* Thumbnails */
+.thumbnails {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  padding: 4px;
+}
+
+.thumbnail {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: #f0f0f0;
+  overflow: hidden;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.thumbnailActive {
+  border-color: #0C2C55;
+  transform: translateY(-2px);
+}
+
+.thumbImage {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+/* Responsive Behavior */
+@media (max-width: 768px) {
+  .card {
+    border-radius: 32px;
+    width: 100%;
+    aspect-ratio: 4/5;
+    min-height: 520px;
+  }
+  
+  .imageWrapper {
+    width: 80%;
+    height: 80%;
+    background: transparent; /* Remove container background on mobile if needed, or keep */
+    box-shadow: none; /* Simplify shadow on mobile */
+  }
+  
+  .productImage {
+    object-fit: contain; /* Ensure image is never stretched */
+    padding: 0;
+  }
+  
+  .thumbnails {
+    display: none; /* Hide thumbnails on mobile for cleaner look */
+  }
+  
+  .navBtn {
+    opacity: 1; /* Always show nav buttons on mobile if needed, or rely on swipe */
+    background: rgba(255, 255, 255, 0.6);
+  }
+}
+
+/* Overlays */
+.overlayTopLeft {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.overlayTopRight {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.overlayBottomLeft {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.overlayName {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0C2C55;
+  background: transparent;
+  padding: 8px 16px;
+  border-radius: 12px;
+  letter-spacing: 0.02em;
+}
+
+.overlayPrice {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0C2C55;
+  background: transparent;
+  padding: 8px 16px;
+  border-radius: 12px;
+}
+
+.overlaySku {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: 8px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}

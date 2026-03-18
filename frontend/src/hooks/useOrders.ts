@@ -29,7 +29,7 @@ export function useOrders() {
     setLoading(true);
     try {
       const order = await orderService.checkout(paymentMethod, shippingAddress);
-      setOrders((prev) => [order, ...prev]);
+      setOrders((prev) => [order as unknown as Order, ...prev]);
       return order;
     } catch (err: any) {
       setError(err.message);
@@ -53,10 +53,22 @@ export function useOrders() {
     }
   };
 
+  const [activeTab, setActiveTab] = useState<"active" | "history">("active");
+
+  const HISTORY_STATUSES = ["delivered", "cancelled", "returned", "completed"];
+
+  const filteredOrders = orders.filter((order) => {
+    const isHistory = HISTORY_STATUSES.includes(order.order_status || "");
+    return activeTab === "history" ? isHistory : !isHistory;
+  });
+
   return {
     orders,
     loading,
     error,
+    activeTab,
+    setActiveTab,
+    filteredOrders,
     checkout,
     cancelOrder,
     refreshOrders: fetchMyOrders,

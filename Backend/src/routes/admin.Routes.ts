@@ -2,6 +2,7 @@ import { Router } from "express";
 import { AdminController } from "../controllers/adminController";
 import { authMiddleware, requireAdmin } from "../middlewares/authMiddleware";
 import { asyncHandler } from "../middlewares/errorHandler";
+import { getBestSellersBySales } from "../controllers/productFilterController";
 
 const router = Router();
 
@@ -28,6 +29,12 @@ router.get("/alerts", asyncHandler(AdminController.getAdminAlerts));
 router.patch("/alerts/:id/read", asyncHandler(AdminController.markAlertAsRead));
 
 /**
+ * @route GET /api/admin/pending-sellers
+ * @desc Get all pending seller applications
+ */
+router.get("/pending-sellers", asyncHandler(AdminController.getPendingSellers));
+
+/**
  * @route PATCH /api/admin/sellers/:userId/approve
  * @desc Approve a pending seller application
  */
@@ -35,5 +42,12 @@ router.patch(
   "/sellers/:userId/approve",
   asyncHandler(AdminController.approveSeller),
 );
+
+/**
+ * @route GET /api/admin/products/sales
+ * @desc Get best-selling products by actual sales (revenue/units)
+ * @query ?sortBy=revenue|units&limit=20&page=1
+ */
+router.get("/products/sales", asyncHandler(getBestSellersBySales));
 
 export default router;

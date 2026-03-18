@@ -14,6 +14,10 @@ export interface SellerProfile {
   commission_rate?: number;
   total_earnings?: number;
   current_balance?: number;
+  warehouse_location?: {
+    type: "Point";
+    coordinates: [number, number];
+  };
   created_at?: Date;
   updated_at?: Date;
 }

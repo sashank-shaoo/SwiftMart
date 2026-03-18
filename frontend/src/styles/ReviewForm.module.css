@@ -1,0 +1,135 @@
+.container {
+  background: #F8F8F4;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #0C2C55;
+}
+
+.error {
+  background: #FEF2F2;
+  border: 1px solid #FCA5A5;
+  color: #B91C1C;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0C2C55;
+}
+
+.textarea {
+  background: white;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 1rem;
+  color: #0C2C55;
+  font-size: 1rem;
+  font-family: var(--font-main);
+  resize: vertical;
+  transition: all 0.2s ease;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #0C2C55;
+  box-shadow: 0 0 0 3px rgba(12, 44, 85, 0.1);
+}
+
+.textarea::placeholder {
+  color: #94A3B8;
+}
+
+.charCount {
+  align-self: flex-end;
+  font-size: 0.85rem;
+  color: #64748B;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.submitButton,
+.cancelButton {
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  font-family: var(--font-main);
+}
+
+.submitButton {
+  background: #0C2C55;
+  color: white;
+}
+
+.submitButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #0A2342;
+  box-shadow: 0 8px 20px rgba(12, 44, 85, 0.2);
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cancelButton {
+  background: white;
+  color: #64748B;
+  border: 1px solid #E2E8F0;
+}
+
+.cancelButton:hover {
+  background: #F1F5F9;
+  color: #0C2C55;
+  border-color: #CBD5E1;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .submitButton,
+  .cancelButton {
+    width: 100%;
+  }
+}

@@ -4,7 +4,9 @@ import { UserDao } from "../daos/UserDao";
 import { CategoryDao } from "../daos/CategoryDao";
 import { InventoryDao } from "../daos/InventoryDao";
 import { UpdateProductInput } from "../validation(ZOD)/ProductValidation";
-import ElasticsearchService from "../services/ElasticsearchService";
+
+import ProductCacheService from "../services/ProductCacheService";
+import RedisService from "../services/RedisService";
 import {
   uploadMultipleImages,
   deleteMultipleImages,
@@ -50,6 +52,26 @@ export const createProductWithImages = async (req: Request, res: Response) => {
   if (!name || !category_id || !seller_id) {
     throw new BadRequestError(
       "Missing required fields: name, category_id, and seller_id are required",
+    );
+  }
+
+  // Validate stock quantity (accept both stock_quantity and initial_stock for compatibility)
+  const stockQuantity =
+    initial_stock || req.body.stock_quantity
+      ? parseInt(initial_stock || req.body.stock_quantity)
+      : 0;
+  if (isNaN(stockQuantity) || stockQuantity < 0) {
+    throw new BadRequestError(
+      "stock_quantity must be a non-negative number (0 or greater)",
+    );
+  }
+
+  const lowStockThreshold = low_stock_threshold
+    ? parseInt(low_stock_threshold)
+    : 5;
+  if (isNaN(lowStockThreshold) || lowStockThreshold < 0) {
+    throw new BadRequestError(
+      "low_stock_threshold must be a non-negative number",
     );
   }
 
@@ -110,7 +132,7 @@ export const createProductWithImages = async (req: Request, res: Response) => {
     );
   }
 
-  // Inventory creation (partial failure handled)
+  // Inventory creation (MANDATORY for data consistency)
   try {
     let warehouseLocation: string | undefined;
     if (seller.location?.coordinates) {
@@ -118,16 +140,49 @@ export const createProductWithImages = async (req: Request, res: Response) => {
       warehouseLocation = `${lng},${lat}`;
     }
 
+    console.log(
+      `Creating inventory for product ${product.id} with stock: ${stockQuantity}`,
+    );
+
     await InventoryDao.createInventory(
       product.id!,
-      initial_stock ? parseInt(initial_stock) : 0,
-      low_stock_threshold ? parseInt(low_stock_threshold) : 5,
+      stockQuantity,
+      lowStockThreshold,
       warehouseLocation,
     );
+
+    console.log(`Inventory created successfully for product ${product.id}`);
   } catch (inventoryError) {
-    console.error("Inventory creation error:", inventoryError);
-    // We don't throw here as the product is already created
+    console.error("Inventory creation failed:", inventoryError);
+    console.error("Product ID:", product.id);
+    console.error("Stock Quantity:", stockQuantity);
+    console.error("Low Stock Threshold:", lowStockThreshold);
+
+    // CRITICAL: Rollback product creation if inventory fails
+    // This ensures products always have inventory records
+    try {
+      await ProductDao.deleteProduct(product.id!);
+      await deleteMultipleImages(uploadedImageUrls);
+      console.log(`Rolled back product ${product.id} and deleted images`);
+    } catch (rollbackError) {
+      console.error("Rollback failed:", rollbackError);
+    }
+
+    // Check if it's a unique constraint error
+    const error = inventoryError as any;
+    if (error.code === "23505") {
+      throw new ConflictError(
+        `Inventory already exists for this product. This should not happen - please contact support.`,
+      );
+    }
+
+    throw new InternalServerError(
+      `Failed to create inventory for product "${name}". Error: ${error.message || "Unknown error"}`,
+    );
   }
+
+  // Invalidate product caches
+  await ProductCacheService.invalidateAllProducts();
 
   return res.success(
     {
@@ -159,6 +214,15 @@ export const updateProduct = async (req: Request, res: Response) => {
     throw new ForbiddenError("You can only update your own products");
   }
 
+  // Parse attributes if it's a JSON string (from FormData)
+  if (req.body.attributes && typeof req.body.attributes === "string") {
+    try {
+      req.body.attributes = JSON.parse(req.body.attributes);
+    } catch (e) {
+      throw new BadRequestError("Invalid JSON format for attributes");
+    }
+  }
+
   const {
     name,
     description,
@@ -168,7 +232,29 @@ export const updateProduct = async (req: Request, res: Response) => {
     category_id,
     season,
     attributes,
+    stock_quantity,
+    low_stock_threshold,
   } = req.body;
+
+  // Validate stock values if provided
+  let validatedStockQuantity: number | undefined;
+  let validatedLowStockThreshold: number | undefined;
+
+  if (stock_quantity !== undefined) {
+    validatedStockQuantity = parseInt(stock_quantity);
+    if (isNaN(validatedStockQuantity) || validatedStockQuantity < 0) {
+      throw new BadRequestError("stock_quantity must be a non-negative number");
+    }
+  }
+
+  if (low_stock_threshold !== undefined) {
+    validatedLowStockThreshold = parseInt(low_stock_threshold);
+    if (isNaN(validatedLowStockThreshold) || validatedLowStockThreshold < 0) {
+      throw new BadRequestError(
+        "low_stock_threshold must be a non-negative number",
+      );
+    }
+  }
 
   if (sku && sku !== existingProduct.sku) {
     const existingProductWithSku = await ProductDao.findProductBySku(sku);
@@ -237,6 +323,46 @@ export const updateProduct = async (req: Request, res: Response) => {
     throw new InternalServerError("Failed to update product");
   }
 
+  // Update inventory if stock values provided
+  if (
+    validatedStockQuantity !== undefined ||
+    validatedLowStockThreshold !== undefined
+  ) {
+    try {
+      const inventory = await InventoryDao.getByProductId(product_id);
+
+      if (!inventory) {
+        // If inventory doesn't exist, create it (for legacy products)
+        console.warn(`Creating missing inventory for product ${product_id}`);
+        await InventoryDao.createInventory(
+          product_id,
+          validatedStockQuantity ?? 0,
+          validatedLowStockThreshold ?? 5,
+        );
+      } else {
+        // Update existing inventory
+        if (validatedStockQuantity !== undefined) {
+          await InventoryDao.setStock(product_id, validatedStockQuantity);
+        }
+        if (validatedLowStockThreshold !== undefined) {
+          await InventoryDao.updateLowStockThreshold(
+            product_id,
+            validatedLowStockThreshold,
+          );
+        }
+      }
+    } catch (inventoryError) {
+      console.error("Inventory update error:", inventoryError);
+      throw new InternalServerError(
+        "Product updated but failed to update inventory. Please try updating stock separately.",
+      );
+    }
+  }
+
+  // Invalidate caches
+  await ProductCacheService.invalidateProduct(product_id);
+  await ProductCacheService.invalidateAllProducts();
+
   return res.success(updatedProduct, "Product updated successfully");
 };
 
@@ -288,6 +414,10 @@ export const deleteProduct = async (req: Request, res: Response) => {
     }
   }
 
+  // Invalidate caches
+  await ProductCacheService.invalidateProduct(product_id);
+  await ProductCacheService.invalidateAllProducts();
+
   return res.success(deletedProduct, "Product deleted successfully");
 };
 
@@ -304,6 +434,17 @@ export const getAllProducts = async (req: Request, res: Response) => {
     sort = "newest",
   } = req.query;
 
+  // Create cache key from query params
+  const cacheKey = `products:all:${JSON.stringify({ page, limit, category_id, min_price, max_price, sort })}`;
+
+  // Try cache first (5 minutes TTL)
+  if (RedisService.isAvailable()) {
+    const cached = await RedisService.get(cacheKey);
+    if (cached) {
+      return res.success(cached, "Products fetched successfully (cached)");
+    }
+  }
+
   const pageNum = Math.max(1, parseInt(page as string, 10));
   const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10)));
 
@@ -316,18 +457,22 @@ export const getAllProducts = async (req: Request, res: Response) => {
     sort: sort as string,
   });
 
-  return res.success(
-    {
-      products,
-      pagination: {
-        page: pageNum,
-        limit: limitNum,
-        total,
-        totalPages: Math.ceil(total / limitNum),
-      },
+  const responseData = {
+    products,
+    pagination: {
+      page: pageNum,
+      limit: limitNum,
+      total,
+      totalPages: Math.ceil(total / limitNum),
     },
-    "Products retrieved successfully",
-  );
+  };
+
+  // Cache for 5 minutes
+  if (RedisService.isAvailable()) {
+    await RedisService.set(cacheKey, responseData, 300);
+  }
+
+  return res.success(responseData, "Products retrieved successfully");
 };
 
 /**
@@ -336,11 +481,20 @@ export const getAllProducts = async (req: Request, res: Response) => {
 export const getProductById = async (req: Request, res: Response) => {
   const { product_id } = req.params;
 
+  // Try cache first
+  const cached = await ProductCacheService.getProduct(product_id);
+  if (cached) {
+    return res.success({ product: cached }, "Product found (cached)");
+  }
+
   const product = await ProductDao.findProductWithDetails(product_id);
 
   if (!product) {
     throw new NotFoundError("Product not found");
   }
+
+  // Cache for next time (30min TTL by default)
+  await ProductCacheService.cacheProduct(product_id, product);
 
   return res.success({ product }, "Product found");
 };
@@ -349,81 +503,46 @@ export const getProductById = async (req: Request, res: Response) => {
  * GET /products/search - Search products using Elasticsearch
  */
 export const searchProducts = async (req: Request, res: Response) => {
-  const {
-    q,
-    category,
-    min_price,
-    max_price,
-    in_stock,
-    page = "1",
-    limit = "20",
-    sort = "relevance",
-  } = req.query;
+  const { q, page = "1", limit = "20" } = req.query;
 
   if (!q) {
     throw new BadRequestError("Search query 'q' is required");
   }
 
-  const result = await ElasticsearchService.searchProducts({
-    query: q as string,
-    category: category as string,
-    min_price: min_price ? parseFloat(min_price as string) : undefined,
-    max_price: max_price ? parseFloat(max_price as string) : undefined,
-    in_stock:
-      in_stock === "true" ? true : in_stock === "false" ? false : undefined,
-    page: parseInt(page as string, 10),
-    limit: parseInt(limit as string, 10),
-    sort: sort as "relevance" | "price_asc" | "price_desc" | "newest",
-  });
+  const pageNum = Math.max(1, parseInt(page as string, 10));
+  const limitNum = Math.min(100, Math.max(1, parseInt(limit as string, 10)));
+
+  const { products, total } = await ProductDao.searchProducts(
+    q as string,
+    pageNum,
+    limitNum,
+  );
 
   return res.success(
     {
-      products: result.products,
-      total: result.total,
-      page: parseInt(page as string, 10),
-      limit: parseInt(limit as string, 10),
+      products,
+      total,
+      page: pageNum,
+      limit: limitNum,
     },
-    `Found ${result.total} products`,
+    `Found ${total} products`,
   );
 };
 
 /**
  * GET /products/seller/:seller_id - Get all products from a seller
+ * Query params: ?metrics=true&sortBy=revenue|units
  */
 export const getSellerProducts = async (req: Request, res: Response) => {
   const { seller_id } = req.params;
+  const includeMetrics = req.query.metrics === "true";
+  const sortBy = (req.query.sortBy as "revenue" | "units") || "revenue";
 
-  const products = await ProductDao.findProductsBySellerId(seller_id);
+  const products = await ProductDao.findProductsBySellerId(
+    seller_id,
+    includeMetrics,
+    sortBy,
+  );
 
   return res.success({ products }, `Found ${products.length} products`);
-};
-
-// ===== ELASTICSEARCH SYNC HELPER =====
-/**
- * Index a product to Elasticsearch (call after create/update)
- */
-export const indexProductToElasticsearch = async (productId: string) => {
-  try {
-    const product = await ProductDao.findProductWithDetails(productId);
-    if (product) {
-      await ElasticsearchService.indexProduct({
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        category: product.category_name,
-        category_id: product.category_id,
-        seller_id: product.seller_id,
-        seller_name: product.seller_name,
-        store_name: product.store_name,
-        in_stock: product.in_stock,
-        stock_quantity: product.stock_quantity || 0,
-        images: product.images,
-        created_at: product.created_at,
-        updated_at: product.updated_at,
-      });
-    }
-  } catch (error) {
-    console.error(`Failed to index product ${productId}:`, error);
-  }
 };

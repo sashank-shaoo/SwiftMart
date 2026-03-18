@@ -1,7 +1,9 @@
 .main {
   width: 100%;
   min-height: 100vh;
-  background: radial-gradient(circle at top right, #e1d9bc 0%, #f0f0db 50%, #ffffff 100%);
+  /* Deep Luxury Theme: Midnight Blue to Deep Slate */
+  background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e1b4b 100%);
+  color: #f8fafc;
 }
 
 .hero {
@@ -14,39 +16,44 @@
 }
 
 .heroContent {
-  max-width: 800px;
+  max-width: 1200px;
+  width: 100%;
   text-align: center;
   z-index: 10;
+  padding: 0 1rem;
 }
 
 .badge {
   display: inline-block;
   padding: 8px 16px;
-  background: rgba(12, 44, 85, 0.1);
-  color: var(--color-primary-dark);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fbbf24; /* Amber/Gold */
   border-radius: 100px;
   font-size: 0.85rem;
   font-weight: 700;
   margin-bottom: 2rem;
   text-transform: uppercase;
+  border: 1px solid rgba(251, 191, 36, 0.2);
   letter-spacing: 2px;
+  backdrop-filter: blur(10px);
 }
 
 .heroTitle {
-  font-size: clamp(3rem, 8vw, 4.5rem);
+  font-size: clamp(3rem, 8vw, 5rem);
   line-height: 1.1;
-  color: var(--color-primary-dark);
+  color: #ffffff;
   margin-bottom: 1.5rem;
+  font-weight: 800;
 }
 
 .gradientText {
   background: linear-gradient(
     135deg, 
-    var(--color-primary) 0%, 
-    #6366f1 25%, 
-    #c084fc 50%, 
-    #6366f1 75%, 
-    var(--color-primary) 100%
+    #fbbf24 0%,  /* Amber 400 */
+    #f59e0b 25%, /* Amber 500 */
+    #fffbeb 50%, /* Amber 50 */
+    #f59e0b 75%, /* Amber 500 */
+    #fbbf24 100% /* Amber 400 */
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -63,7 +70,7 @@
 
 .heroSubtitle {
   font-size: 1.25rem;
-  color: var(--color-secondary);
+  color: #cbd5e1; /* Slate 300 */
   margin-bottom: 2.5rem;
   line-height: 1.6;
   max-width: 700px;
@@ -75,6 +82,26 @@
   display: flex;
   justify-content: center;
   gap: 1.5rem;
+}
+
+/* Override default button styles for dark theme context */
+.heroActions button[class*="outline"] {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #f8fafc;
+}
+
+.heroActions button[class*="outline"]:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #f8fafc;
+}
+
+.heroActions button[class*="primary"] {
+  background: #fbbf24; /* Gold primary button */
+  color: #0f172a; /* Dark text for contrast */
+}
+
+.heroActions button[class*="primary"]:hover {
+  background: #f59e0b;
 }
 
 /* Benefits Section */
@@ -94,12 +121,12 @@
 .benefitCard {
   padding: 3rem 2rem;
   text-align: center;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
   backdrop-filter: blur(20px);
-  box-shadow: 0 20px 40px rgba(12, 44, 85, 0.05);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -109,32 +136,32 @@
 
 .benefitCard:hover {
   transform: translateY(-12px) scale(1.02);
-  background: rgba(255, 255, 255, 0.7);
-  border-color: rgba(255, 255, 255, 1);
-  box-shadow: 0 30px 60px rgba(12, 44, 85, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(251, 191, 36, 0.3); /* Gold border on hover */
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
 }
 
 .iconWrapper {
   width: 56px;
   height: 56px;
-  background: rgba(98, 159, 173, 0.1);
+  background: rgba(251, 191, 36, 0.1); /* Gold tint */
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1.5rem;
-  color: var(--color-primary);
+  color: #fbbf24; /* Gold icon */
 }
 
 .benefitTitle {
-  color: var(--color-primary-dark);
+  color: #ffffff;
   font-weight: 700;
   margin-bottom: 0.75rem;
   font-size: 1.15rem;
 }
 
 .benefitDesc {
-  color: var(--color-secondary);
+  color: #94a3b8; /* Slate 400 */
   font-size: 0.95rem;
   line-height: 1.5;
   overflow-wrap: break-word;
@@ -143,7 +170,7 @@
 /* Philosophy Section */
 .philosophy {
   padding: 8rem 2rem;
-  background: #fbfbfb;
+  background: transparent;
 }
 
 .container {
@@ -165,20 +192,20 @@
 .philosophyTitle {
   font-size: 3.5rem;
   line-height: 1.1;
-  color: var(--color-primary-dark);
+  color: #ffffff;
   margin-bottom: 2rem;
 }
 
 .philosophyTitle span {
   font-weight: 300;
   font-style: italic;
-  color: var(--color-secondary);
+  color: #fbbf24; /* Gold accent */
 }
 
 .philosophyContent p {
   font-size: 1.25rem;
   line-height: 1.7;
-  color: var(--color-secondary);
+  color: #cbd5e1;
   margin-bottom: 2.5rem;
 }
 
@@ -194,7 +221,7 @@
   align-items: center;
   gap: 16px;
   font-weight: 600;
-  color: var(--color-primary-dark);
+  color: #f8fafc;
   font-size: 1.1rem;
 }
 
@@ -280,4 +307,16 @@
     letter-spacing: 1px;
     font-size: 0.7rem;
   }
+}
+
+/* Product Card Link */
+.productCardLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: transform 0.2s;
+}
+
+.productCardLink:hover {
+  transform: translateY(-4px);
 }

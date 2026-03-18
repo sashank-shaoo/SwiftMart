@@ -1,0 +1,32 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  display: inline-flex;
+  position: relative;
+  transition: transform 0.2s;
+}
+
+.star.interactive:hover {
+  transform: scale(1.1);
+}
+
+.partialStar {
+  position: relative;
+  display: inline-flex;
+}
+
+.value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #666;
+  margin-left: 0.25rem;
+}

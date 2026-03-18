@@ -28,7 +28,8 @@ export class SellerProfileDao {
   static async findSellerProfileByUserId(
     userId: string,
   ): Promise<SellerProfile | null> {
-    const text = "SELECT * FROM seller_profiles WHERE user_id = $1";
+    const text =
+      "SELECT *, ST_AsGeoJSON(warehouse_location)::json as warehouse_location FROM seller_profiles WHERE user_id = $1";
     const res = await query(text, [userId]);
     return res.rows[0] || null;
   }
@@ -69,6 +70,12 @@ export class SellerProfileDao {
       fields.push(`commission_rate = $${paramIndex++}`);
       values.push(updates.commission_rate);
     }
+    if (updates.warehouse_location !== undefined) {
+      fields.push(
+        `warehouse_location = ST_SetSRID(ST_GeomFromGeoJSON($${paramIndex++}::text), 4326)`,
+      );
+      values.push(JSON.stringify(updates.warehouse_location));
+    }
 
     if (fields.length === 0) {
       return this.findSellerProfileByUserId(userId);
@@ -81,7 +88,7 @@ export class SellerProfileDao {
       UPDATE seller_profiles 
       SET ${fields.join(", ")}
       WHERE user_id = $${paramIndex}
-      RETURNING *
+      RETURNING *, ST_AsGeoJSON(warehouse_location)::json as warehouse_location
     `;
 
     const res = await query(text, values);
@@ -139,7 +146,7 @@ export class SellerProfileDao {
     return res.rows[0];
   }
 
-  static async getTopSellersByRevenue(limit: number = 5) {
+  static async getTopSellersByRevenue(limit: number = 10) {
     const text = `
       SELECT 
         u.name,
@@ -156,6 +163,29 @@ export class SellerProfileDao {
       LIMIT $1
     `;
     const res = await query(text, [limit]);
+    return res.rows;
+  }
+
+  /**
+   * Get all pending sellers with user details
+   * Used by admin to view pending seller applications
+   */
+  static async getPendingSellersWithUserDetails() {
+    const text = `
+      SELECT 
+        u.id,
+        u.name,
+        u.email,
+        u.created_at,
+        sp.store_name,
+        sp.gst_number,
+        sp.verification_status
+      FROM users u
+      INNER JOIN seller_profiles sp ON u.id = sp.user_id
+      WHERE u.role = 'seller' AND sp.verification_status = 'pending'
+      ORDER BY u.created_at DESC
+    `;
+    const res = await query(text);
     return res.rows;
   }
 }

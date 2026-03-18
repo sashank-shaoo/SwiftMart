@@ -24,7 +24,7 @@ interface AuthContextType {
     longitude?: number;
   }) => Promise<void>;
   changePassword: (passwordData: {
-    old_password: string;
+    current_password: string;
     new_password: string;
   }) => Promise<void>;
   becomeSeller: (sellerData: Partial<SellerProfile>) => Promise<void>;
@@ -33,10 +33,15 @@ interface AuthContextType {
   verificationEmail: string | null;
   showOtpModal: boolean;
   setShowOtpModal: (show: boolean) => void;
-  requestPasswordReset: (email: string) => Promise<{ message: string }>;
+  requestPasswordReset: (
+    email: string,
+    account_type?: "user" | "seller" | "admin",
+  ) => Promise<{ message: string }>;
   resetPassword: (
-    token: string,
-    newPassword: string,
+    email: string,
+    otp: string,
+    new_password: string,
+    account_type?: "user" | "seller" | "admin",
   ) => Promise<{ message: string }>;
 }
 
@@ -169,7 +174,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const changePassword = async (passwordData: {
-    old_password: string;
+    current_password: string;
     new_password: string;
   }) => {
     await authService.changePassword(passwordData);

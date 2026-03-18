@@ -54,20 +54,25 @@ export const authService = {
     });
   },
 
-  requestPasswordReset: async (email: string): Promise<{ message: string }> => {
+  requestPasswordReset: async (
+    email: string,
+    account_type: "user" | "seller" | "admin" = "user",
+  ): Promise<{ message: string }> => {
     return apiFetch("/auth/request-password-reset", {
       method: "POST",
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, account_type }),
     });
   },
 
   resetPassword: async (
-    token: string,
-    password: string,
+    email: string,
+    otp: string,
+    new_password: string,
+    account_type: "user" | "seller" | "admin" = "user",
   ): Promise<{ message: string }> => {
     return apiFetch("/auth/reset-password", {
       method: "POST",
-      body: JSON.stringify({ token, password }),
+      body: JSON.stringify({ email, otp, new_password, account_type }),
     });
   },
 
@@ -90,6 +95,12 @@ export const authService = {
       body: isFormData ? userData : JSON.stringify(userData),
       // Headers handles Content-Type automatically for FormData
     });
+
+    // Merge seller_profile if it exists in the response
+    if (data.seller_profile) {
+      return { ...data.user, seller_profile: data.seller_profile };
+    }
+
     return data.user;
   },
 
@@ -108,7 +119,7 @@ export const authService = {
   },
 
   changePassword: async (passwordData: {
-    old_password: string;
+    current_password: string;
     new_password: string;
   }): Promise<{ message: string }> => {
     return apiFetch("/auth/change-password", {

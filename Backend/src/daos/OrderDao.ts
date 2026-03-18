@@ -29,8 +29,15 @@ export class OrderDao {
   }
 
   static async getOrdersByUserId(userId: string): Promise<Order[]> {
-    const text =
-      "SELECT * FROM orders WHERE user_id = $1 ORDER BY created_at DESC";
+    const text = `
+      SELECT o.*, 
+             COALESCE(json_agg(oi.*) FILTER (WHERE oi.id IS NOT NULL), '[]') as items
+      FROM orders o
+      LEFT JOIN order_items oi ON o.id = oi.order_id
+      WHERE o.user_id = $1
+      GROUP BY o.id
+      ORDER BY o.created_at DESC
+    `;
     const res = await query(text, [userId]);
     return res.rows;
   }
@@ -39,6 +46,11 @@ export class OrderDao {
     const text = "SELECT * FROM orders WHERE id = $1";
     const res = await query(text, [orderId]);
     return res.rows[0] || null;
+  }
+
+  // Alias for consistency with other DAOs
+  static async findOrderById(orderId: string): Promise<Order | null> {
+    return this.getOrderById(orderId);
   }
 
   static async updateOrderStatus(
@@ -52,14 +64,45 @@ export class OrderDao {
 
   static async getOrdersBySellerId(sellerId: string): Promise<Order[]> {
     const text = `
-      SELECT DISTINCT o.*
+      SELECT o.*, 
+             COALESCE(json_agg(oi.*) FILTER (WHERE oi.id IS NOT NULL), '[]') as items
       FROM orders o
       INNER JOIN order_items oi ON o.id = oi.order_id
       WHERE oi.seller_id = $1
+      GROUP BY o.id
       ORDER BY o.created_at DESC
     `;
     const res = await query(text, [sellerId]);
     return res.rows;
+  }
+
+  static async updateOrderWithShipping(
+    orderId: string,
+    data: {
+      order_status: string;
+      shipped_at: Date;
+      delivery_distance_km: number;
+      estimated_delivery_time: Date;
+    },
+  ): Promise<Order | null> {
+    const text = `
+      UPDATE orders
+      SET order_status = $2,
+          shipped_at = $3,
+          delivery_distance_km = $4,
+          estimated_delivery_time = $5,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE id = $1
+      RETURNING *
+    `;
+    const res = await query(text, [
+      orderId,
+      data.order_status,
+      data.shipped_at,
+      data.delivery_distance_km,
+      data.estimated_delivery_time,
+    ]);
+    return res.rows[0] || null;
   }
 
   static async getOverallRevenueStats() {

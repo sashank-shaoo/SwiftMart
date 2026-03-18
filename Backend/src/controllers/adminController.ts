@@ -114,4 +114,26 @@ export class AdminController {
       throw new InternalServerError("Failed to approve seller application");
     }
   }
+
+  /**
+   * GET /api/admin/pending-sellers
+   * Get all pending seller applications with user details
+   */
+  static async getPendingSellers(req: Request, res: Response) {
+    try {
+      const pendingSellers =
+        await SellerProfileDao.getPendingSellersWithUserDetails();
+
+      return res.success(
+        {
+          pendingSellers,
+          count: pendingSellers.length,
+        },
+        "Pending sellers retrieved successfully",
+      );
+    } catch (error) {
+      console.error("[ADMIN] Error fetching pending sellers:", error);
+      throw new InternalServerError("Failed to fetch pending sellers");
+    }
+  }
 }

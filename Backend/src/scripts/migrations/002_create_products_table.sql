@@ -18,7 +18,7 @@ CREATE TABLE products (
   category_id UUID NOT NULL,
   price DECIMAL(10, 2) NOT NULL,
   original_price DECIMAL(10, 2),
-  images JSONB[] NOT NULL,
+  images text[] NOT NULL,
   attributes JSONB,
   seller_id UUID,
   season VARCHAR(20) CHECK (season IN ('summer', 'winter', 'spring', 'autumn', 'monsoon', 'rainy')),

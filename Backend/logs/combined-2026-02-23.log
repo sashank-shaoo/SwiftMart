@@ -1,0 +1,230 @@
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-23 17:09:28"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-23 17:09:29"}
+{"level":"warn","message":"GET /api/auth/me 401 - 17ms","timestamp":"2026-02-23 17:22:55"}
+{"level":"debug","message":"[Cache HIT] Product b8742900-c1d0-44e0-9e2c-69186b65c045","timestamp":"2026-02-23 17:23:01"}
+{"level":"http","message":"GET /api/products/b8742900-c1d0-44e0-9e2c-69186b65c045 304 - 5975ms","timestamp":"2026-02-23 17:23:01"}
+{"level":"debug","message":"[Cache SET] Product list: category:86d4f7a2-4f9a-4afe-88ea-bb2c62204a96","timestamp":"2026-02-23 17:23:04"}
+{"level":"http","message":"GET /api/products/category/86d4f7a2-4f9a-4afe-88ea-bb2c62204a96 200 - 3857ms","timestamp":"2026-02-23 17:23:04"}
+{"level":"http","message":"GET /api/products/b8742900-c1d0-44e0-9e2c-69186b65c045/reviews?page=1&limit=10 304 - 179ms","timestamp":"2026-02-23 17:23:05"}
+{"level":"debug","message":"[Cache SET] Product list: bestsellers:10","timestamp":"2026-02-23 17:38:17"}
+{"level":"http","message":"GET /api/products/bestsellers 200 - 4494ms","timestamp":"2026-02-23 17:38:17"}
+{"level":"http","message":"GET /api/products/bestsellers 200 - 138ms","timestamp":"2026-02-23 17:38:18"}
+{"level":"http","message":"GET /api/products? 200 - 4692ms","timestamp":"2026-02-23 17:38:18"}
+{"level":"debug","message":"[Cache SET] Product list: newarrivals:10","timestamp":"2026-02-23 17:38:18"}
+{"level":"http","message":"GET /api/products/new-arrivals 200 - 4914ms","timestamp":"2026-02-23 17:38:18"}
+{"level":"http","message":"GET /api/products? 200 - 111ms","timestamp":"2026-02-23 17:38:18"}
+{"level":"http","message":"GET /api/products/new-arrivals 200 - 113ms","timestamp":"2026-02-23 17:38:18"}
+{"level":"debug","message":"[Cache SET] Product 8ebc1f48-b111-4854-a470-274644cc60d5","timestamp":"2026-02-23 17:38:45"}
+{"level":"http","message":"GET /api/products/8ebc1f48-b111-4854-a470-274644cc60d5 200 - 1757ms","timestamp":"2026-02-23 17:38:45"}
+{"level":"debug","message":"[Cache HIT] Product 8ebc1f48-b111-4854-a470-274644cc60d5","timestamp":"2026-02-23 17:38:45"}
+{"level":"http","message":"GET /api/products/8ebc1f48-b111-4854-a470-274644cc60d5 200 - 91ms","timestamp":"2026-02-23 17:38:45"}
+{"level":"http","message":"GET /api/products/category/86d4f7a2-4f9a-4afe-88ea-bb2c62204a96 200 - 325ms","timestamp":"2026-02-23 17:38:46"}
+{"level":"http","message":"GET /api/products/category/86d4f7a2-4f9a-4afe-88ea-bb2c62204a96 304 - 120ms","timestamp":"2026-02-23 17:38:46"}
+{"level":"http","message":"GET /api/products/8ebc1f48-b111-4854-a470-274644cc60d5/reviews?page=1&limit=10 304 - 142ms","timestamp":"2026-02-23 17:38:46"}
+{"level":"http","message":"GET /api/products/8ebc1f48-b111-4854-a470-274644cc60d5/reviews?page=1&limit=10 304 - 164ms","timestamp":"2026-02-23 17:38:46"}
+{"level":"http","message":"POST /api/auth/login 200 - 2608ms","timestamp":"2026-02-23 17:40:03"}
+{"level":"debug","message":"[Cache MISS] Cart for user 4b3ac1a8-3a35-4506-bda2-03a1e79d802c","timestamp":"2026-02-23 17:40:04"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 741ms","timestamp":"2026-02-23 17:40:04"}
+{"level":"http","message":"GET /api/products? 304 - 743ms","timestamp":"2026-02-23 17:40:04"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 803ms","timestamp":"2026-02-23 17:40:04"}
+{"level":"http","message":"GET /api/cart 304 - 1198ms","timestamp":"2026-02-23 17:40:04"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 194ms","timestamp":"2026-02-23 17:40:04"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 161ms","timestamp":"2026-02-23 17:40:04"}
+{"level":"http","message":"GET /api/products? 304 - 214ms","timestamp":"2026-02-23 17:40:04"}
+{"level":"http","message":"GET /api/products? 304 - 636ms","timestamp":"2026-02-23 17:40:10"}
+{"level":"http","message":"GET /api/auth/me 304 - 638ms","timestamp":"2026-02-23 17:40:10"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 687ms","timestamp":"2026-02-23 17:40:10"}
+{"level":"debug","message":"[Cache MISS] Cart for user 4b3ac1a8-3a35-4506-bda2-03a1e79d802c","timestamp":"2026-02-23 17:40:10"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 771ms","timestamp":"2026-02-23 17:40:10"}
+{"level":"http","message":"GET /api/cart 304 - 837ms","timestamp":"2026-02-23 17:40:10"}
+{"level":"debug","message":"[Cache MISS] Cart for user 4b3ac1a8-3a35-4506-bda2-03a1e79d802c","timestamp":"2026-02-23 17:40:10"}
+{"level":"http","message":"GET /api/cart 304 - 501ms","timestamp":"2026-02-23 17:40:10"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c 304 - 262ms","timestamp":"2026-02-23 17:40:16"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c 304 - 180ms","timestamp":"2026-02-23 17:40:16"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=revenue 200 - 1376ms","timestamp":"2026-02-23 17:40:17"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=revenue 304 - 252ms","timestamp":"2026-02-23 17:40:17"}
+{"level":"http","message":"GET /api/orders/seller/earnings 304 - 1775ms","timestamp":"2026-02-23 17:40:17"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=revenue 304 - 145ms","timestamp":"2026-02-23 17:40:17"}
+{"level":"http","message":"GET /api/orders/seller/orders 304 - 1832ms","timestamp":"2026-02-23 17:40:17"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=revenue 304 - 218ms","timestamp":"2026-02-23 17:40:17"}
+{"level":"http","message":"GET /api/orders/seller/earnings 304 - 415ms","timestamp":"2026-02-23 17:40:18"}
+{"level":"http","message":"GET /api/orders/seller/orders 304 - 419ms","timestamp":"2026-02-23 17:40:18"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c 304 - 288ms","timestamp":"2026-02-23 17:40:27"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c 304 - 198ms","timestamp":"2026-02-23 17:40:27"}
+{"level":"http","message":"GET /api/categories 200 - 1271ms","timestamp":"2026-02-23 17:40:28"}
+{"level":"http","message":"GET /api/categories 200 - 125ms","timestamp":"2026-02-23 17:40:28"}
+{"level":"debug","message":"[Cache MISS] Cart for user 4b3ac1a8-3a35-4506-bda2-03a1e79d802c","timestamp":"2026-02-23 17:48:07"}
+{"level":"http","message":"GET /api/cart 304 - 2303ms","timestamp":"2026-02-23 17:48:08"}
+{"level":"http","message":"GET /api/auth/me 304 - 2401ms","timestamp":"2026-02-23 17:48:09"}
+{"level":"debug","message":"[Cache MISS] Cart for user 4b3ac1a8-3a35-4506-bda2-03a1e79d802c","timestamp":"2026-02-23 17:48:09"}
+{"level":"http","message":"GET /api/cart 304 - 281ms","timestamp":"2026-02-23 17:48:09"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 138ms","timestamp":"2026-02-23 17:48:09"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 139ms","timestamp":"2026-02-23 17:48:09"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 384ms","timestamp":"2026-02-23 17:48:09"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 121ms","timestamp":"2026-02-23 17:48:09"}
+{"level":"http","message":"GET /api/products? 200 - 862ms","timestamp":"2026-02-23 17:48:10"}
+{"level":"http","message":"GET /api/products? 200 - 117ms","timestamp":"2026-02-23 17:48:10"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c 304 - 228ms","timestamp":"2026-02-23 17:48:16"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c 304 - 167ms","timestamp":"2026-02-23 17:48:16"}
+{"level":"http","message":"GET /api/orders/seller/orders 304 - 391ms","timestamp":"2026-02-23 17:48:16"}
+{"level":"http","message":"GET /api/orders/seller/orders 304 - 485ms","timestamp":"2026-02-23 17:48:16"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=revenue 304 - 1362ms","timestamp":"2026-02-23 17:48:17"}
+{"level":"http","message":"GET /api/orders/seller/earnings 304 - 1387ms","timestamp":"2026-02-23 17:48:17"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=revenue 304 - 272ms","timestamp":"2026-02-23 17:48:17"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=revenue 304 - 193ms","timestamp":"2026-02-23 17:48:17"}
+{"level":"http","message":"GET /api/orders/seller/earnings 304 - 437ms","timestamp":"2026-02-23 17:48:17"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=revenue 304 - 159ms","timestamp":"2026-02-23 17:48:17"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c 304 - 215ms","timestamp":"2026-02-23 17:48:20"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c 304 - 132ms","timestamp":"2026-02-23 17:48:21"}
+{"level":"http","message":"GET /api/categories 304 - 1383ms","timestamp":"2026-02-23 17:48:22"}
+{"level":"http","message":"GET /api/categories 304 - 126ms","timestamp":"2026-02-23 17:48:22"}
+{"level":"info","message":"[Cache CLEAR] All product caches invalidated","timestamp":"2026-02-23 17:52:57"}
+{"level":"http","message":"POST /api/products 201 - 46886ms","timestamp":"2026-02-23 17:52:57"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c 200 - 220ms","timestamp":"2026-02-23 17:52:57"}
+{"level":"http","message":"GET /api/categories 304 - 201ms","timestamp":"2026-02-23 17:52:57"}
+{"level":"http","message":"GET /api/categories 304 - 162ms","timestamp":"2026-02-23 17:52:58"}
+{"level":"http","message":"GET /api/products? 304 - 457ms","timestamp":"2026-02-23 17:53:02"}
+{"level":"http","message":"GET /api/products? 304 - 87ms","timestamp":"2026-02-23 17:53:02"}
+{"level":"debug","message":"[Cache SET] Product list: bestsellers:10","timestamp":"2026-02-23 17:53:02"}
+{"level":"http","message":"GET /api/products/bestsellers 200 - 721ms","timestamp":"2026-02-23 17:53:02"}
+{"level":"http","message":"GET /api/products/bestsellers 200 - 105ms","timestamp":"2026-02-23 17:53:03"}
+{"level":"debug","message":"[Cache SET] Product list: newarrivals:10","timestamp":"2026-02-23 17:53:04"}
+{"level":"http","message":"GET /api/products/new-arrivals 200 - 1928ms","timestamp":"2026-02-23 17:53:04"}
+{"level":"http","message":"GET /api/products/new-arrivals 200 - 323ms","timestamp":"2026-02-23 17:53:04"}
+{"level":"debug","message":"[Cache SET] Product 7adfd200-34dd-45a7-afea-fb627a93b763","timestamp":"2026-02-23 17:53:10"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763 200 - 781ms","timestamp":"2026-02-23 17:53:10"}
+{"level":"debug","message":"[Cache HIT] Product 7adfd200-34dd-45a7-afea-fb627a93b763","timestamp":"2026-02-23 17:53:10"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763 200 - 148ms","timestamp":"2026-02-23 17:53:10"}
+{"level":"debug","message":"[Cache SET] Product list: category:6541831e-cc7c-44d6-88a4-312e2febbfd5","timestamp":"2026-02-23 17:53:11"}
+{"level":"http","message":"GET /api/products/category/6541831e-cc7c-44d6-88a4-312e2febbfd5 200 - 738ms","timestamp":"2026-02-23 17:53:11"}
+{"level":"http","message":"GET /api/products/category/6541831e-cc7c-44d6-88a4-312e2febbfd5 200 - 114ms","timestamp":"2026-02-23 17:53:11"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763/reviews?page=1&limit=10 200 - 138ms","timestamp":"2026-02-23 17:53:11"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763/reviews?page=1&limit=10 304 - 154ms","timestamp":"2026-02-23 17:53:11"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 2533ms","timestamp":"2026-02-23 18:00:26"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 337ms","timestamp":"2026-02-23 18:00:27"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 2933ms","timestamp":"2026-02-23 18:00:27"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 1973ms","timestamp":"2026-02-23 18:00:29"}
+{"level":"http","message":"GET /api/products? 200 - 8365ms","timestamp":"2026-02-23 18:00:32"}
+{"level":"http","message":"GET /api/products? 200 - 211ms","timestamp":"2026-02-23 18:00:32"}
+{"level":"debug","message":"[Cache HIT] Product 7adfd200-34dd-45a7-afea-fb627a93b763","timestamp":"2026-02-23 18:00:35"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763 304 - 168ms","timestamp":"2026-02-23 18:00:35"}
+{"level":"debug","message":"[Cache HIT] Product 7adfd200-34dd-45a7-afea-fb627a93b763","timestamp":"2026-02-23 18:00:36"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763 304 - 361ms","timestamp":"2026-02-23 18:00:36"}
+{"level":"http","message":"GET /api/products/category/6541831e-cc7c-44d6-88a4-312e2febbfd5 304 - 528ms","timestamp":"2026-02-23 18:00:36"}
+{"level":"http","message":"GET /api/products/category/6541831e-cc7c-44d6-88a4-312e2febbfd5 304 - 130ms","timestamp":"2026-02-23 18:00:36"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763/reviews?page=1&limit=10 304 - 143ms","timestamp":"2026-02-23 18:00:36"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763/reviews?page=1&limit=10 304 - 145ms","timestamp":"2026-02-23 18:00:36"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 499ms","timestamp":"2026-02-23 18:00:40"}
+{"level":"http","message":"GET /api/products? 304 - 530ms","timestamp":"2026-02-23 18:00:40"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 645ms","timestamp":"2026-02-23 18:00:41"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 120ms","timestamp":"2026-02-23 18:00:41"}
+{"level":"http","message":"GET /api/products? 304 - 139ms","timestamp":"2026-02-23 18:00:41"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 136ms","timestamp":"2026-02-23 18:00:41"}
+{"level":"debug","message":"[Cache SET] Product b8742900-c1d0-44e0-9e2c-69186b65c045","timestamp":"2026-02-23 18:00:43"}
+{"level":"http","message":"GET /api/products/b8742900-c1d0-44e0-9e2c-69186b65c045 200 - 655ms","timestamp":"2026-02-23 18:00:43"}
+{"level":"debug","message":"[Cache HIT] Product b8742900-c1d0-44e0-9e2c-69186b65c045","timestamp":"2026-02-23 18:00:43"}
+{"level":"http","message":"GET /api/products/b8742900-c1d0-44e0-9e2c-69186b65c045 200 - 224ms","timestamp":"2026-02-23 18:00:43"}
+{"level":"debug","message":"[Cache SET] Product list: category:86d4f7a2-4f9a-4afe-88ea-bb2c62204a96","timestamp":"2026-02-23 18:00:43"}
+{"level":"http","message":"GET /api/products/category/86d4f7a2-4f9a-4afe-88ea-bb2c62204a96 200 - 596ms","timestamp":"2026-02-23 18:00:44"}
+{"level":"http","message":"GET /api/products/category/86d4f7a2-4f9a-4afe-88ea-bb2c62204a96 200 - 177ms","timestamp":"2026-02-23 18:00:44"}
+{"level":"http","message":"GET /api/products/b8742900-c1d0-44e0-9e2c-69186b65c045/reviews?page=1&limit=10 304 - 230ms","timestamp":"2026-02-23 18:00:44"}
+{"level":"http","message":"GET /api/products/b8742900-c1d0-44e0-9e2c-69186b65c045/reviews?page=1&limit=10 304 - 165ms","timestamp":"2026-02-23 18:00:44"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 514ms","timestamp":"2026-02-23 18:00:56"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 632ms","timestamp":"2026-02-23 18:00:56"}
+{"level":"http","message":"GET /api/products? 304 - 631ms","timestamp":"2026-02-23 18:00:56"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 135ms","timestamp":"2026-02-23 18:00:56"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 159ms","timestamp":"2026-02-23 18:00:56"}
+{"level":"http","message":"GET /api/products? 304 - 159ms","timestamp":"2026-02-23 18:00:56"}
+{"level":"debug","message":"[Cache HIT] Product 7adfd200-34dd-45a7-afea-fb627a93b763","timestamp":"2026-02-23 18:02:03"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763 304 - 1526ms","timestamp":"2026-02-23 18:02:03"}
+{"level":"debug","message":"[Cache HIT] Product 7adfd200-34dd-45a7-afea-fb627a93b763","timestamp":"2026-02-23 18:02:03"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763 304 - 99ms","timestamp":"2026-02-23 18:02:03"}
+{"level":"http","message":"GET /api/products/category/6541831e-cc7c-44d6-88a4-312e2febbfd5 304 - 343ms","timestamp":"2026-02-23 18:02:03"}
+{"level":"http","message":"GET /api/products/category/6541831e-cc7c-44d6-88a4-312e2febbfd5 304 - 106ms","timestamp":"2026-02-23 18:02:03"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763/reviews?page=1&limit=10 304 - 1026ms","timestamp":"2026-02-23 18:02:04"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763/reviews?page=1&limit=10 304 - 168ms","timestamp":"2026-02-23 18:02:04"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 8428ms","timestamp":"2026-02-23 18:05:39"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 8458ms","timestamp":"2026-02-23 18:05:39"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 1193ms","timestamp":"2026-02-23 18:05:41"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 1194ms","timestamp":"2026-02-23 18:05:41"}
+{"level":"http","message":"GET /api/products? 200 - 11742ms","timestamp":"2026-02-23 18:05:43"}
+{"level":"http","message":"GET /api/products? 200 - 162ms","timestamp":"2026-02-23 18:05:43"}
+{"level":"debug","message":"[Cache HIT] Product b8742900-c1d0-44e0-9e2c-69186b65c045","timestamp":"2026-02-23 18:05:46"}
+{"level":"http","message":"GET /api/products/b8742900-c1d0-44e0-9e2c-69186b65c045 304 - 295ms","timestamp":"2026-02-23 18:05:46"}
+{"level":"debug","message":"[Cache HIT] Product b8742900-c1d0-44e0-9e2c-69186b65c045","timestamp":"2026-02-23 18:05:47"}
+{"level":"http","message":"GET /api/products/b8742900-c1d0-44e0-9e2c-69186b65c045 304 - 417ms","timestamp":"2026-02-23 18:05:47"}
+{"level":"http","message":"GET /api/products/category/86d4f7a2-4f9a-4afe-88ea-bb2c62204a96 304 - 633ms","timestamp":"2026-02-23 18:05:47"}
+{"level":"http","message":"GET /api/products/category/86d4f7a2-4f9a-4afe-88ea-bb2c62204a96 304 - 145ms","timestamp":"2026-02-23 18:05:47"}
+{"level":"http","message":"GET /api/products/b8742900-c1d0-44e0-9e2c-69186b65c045/reviews?page=1&limit=10 304 - 165ms","timestamp":"2026-02-23 18:05:47"}
+{"level":"http","message":"GET /api/products/b8742900-c1d0-44e0-9e2c-69186b65c045/reviews?page=1&limit=10 304 - 160ms","timestamp":"2026-02-23 18:05:47"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 620ms","timestamp":"2026-02-23 18:05:57"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 727ms","timestamp":"2026-02-23 18:05:57"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 147ms","timestamp":"2026-02-23 18:05:57"}
+{"level":"http","message":"GET /api/products? 304 - 769ms","timestamp":"2026-02-23 18:05:57"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 130ms","timestamp":"2026-02-23 18:05:57"}
+{"level":"http","message":"GET /api/products? 304 - 273ms","timestamp":"2026-02-23 18:05:57"}
+{"level":"debug","message":"[Cache HIT] Product 7adfd200-34dd-45a7-afea-fb627a93b763","timestamp":"2026-02-23 18:05:59"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763 304 - 182ms","timestamp":"2026-02-23 18:05:59"}
+{"level":"debug","message":"[Cache HIT] Product 7adfd200-34dd-45a7-afea-fb627a93b763","timestamp":"2026-02-23 18:05:59"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763 304 - 145ms","timestamp":"2026-02-23 18:05:59"}
+{"level":"http","message":"GET /api/products/category/6541831e-cc7c-44d6-88a4-312e2febbfd5 304 - 150ms","timestamp":"2026-02-23 18:05:59"}
+{"level":"http","message":"GET /api/products/category/6541831e-cc7c-44d6-88a4-312e2febbfd5 304 - 135ms","timestamp":"2026-02-23 18:05:59"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763/reviews?page=1&limit=10 304 - 1071ms","timestamp":"2026-02-23 18:06:00"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763/reviews?page=1&limit=10 304 - 199ms","timestamp":"2026-02-23 18:06:00"}
+{"level":"debug","message":"[Cache MISS] Cart for user 4b3ac1a8-3a35-4506-bda2-03a1e79d802c","timestamp":"2026-02-23 18:09:02"}
+{"level":"debug","message":"[Cache HIT] Product 7adfd200-34dd-45a7-afea-fb627a93b763","timestamp":"2026-02-23 18:09:02"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763 304 - 767ms","timestamp":"2026-02-23 18:09:02"}
+{"level":"http","message":"GET /api/products/category/6541831e-cc7c-44d6-88a4-312e2febbfd5 304 - 116ms","timestamp":"2026-02-23 18:09:02"}
+{"level":"http","message":"GET /api/auth/me 304 - 1562ms","timestamp":"2026-02-23 18:09:03"}
+{"level":"http","message":"GET /api/cart 304 - 3047ms","timestamp":"2026-02-23 18:09:04"}
+{"level":"debug","message":"[Cache MISS] Cart for user 4b3ac1a8-3a35-4506-bda2-03a1e79d802c","timestamp":"2026-02-23 18:09:04"}
+{"level":"http","message":"GET /api/products/7adfd200-34dd-45a7-afea-fb627a93b763/reviews?page=1&limit=10 304 - 2332ms","timestamp":"2026-02-23 18:09:04"}
+{"level":"http","message":"GET /api/cart 304 - 242ms","timestamp":"2026-02-23 18:09:04"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=revenue 200 - 1523ms","timestamp":"2026-02-23 18:27:25"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c 304 - 1576ms","timestamp":"2026-02-23 18:27:25"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c 304 - 101ms","timestamp":"2026-02-23 18:27:25"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=revenue 304 - 116ms","timestamp":"2026-02-23 18:27:25"}
+{"level":"http","message":"GET /api/orders/seller/orders 304 - 1706ms","timestamp":"2026-02-23 18:27:25"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=revenue 304 - 186ms","timestamp":"2026-02-23 18:27:25"}
+{"level":"http","message":"GET /api/orders/seller/earnings 304 - 1883ms","timestamp":"2026-02-23 18:27:25"}
+{"level":"http","message":"GET /api/orders/seller/orders 304 - 309ms","timestamp":"2026-02-23 18:27:26"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=revenue 304 - 158ms","timestamp":"2026-02-23 18:27:26"}
+{"level":"http","message":"GET /api/orders/seller/earnings 304 - 268ms","timestamp":"2026-02-23 18:27:26"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=units 200 - 142ms","timestamp":"2026-02-23 18:27:29"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=revenue 304 - 266ms","timestamp":"2026-02-23 18:27:32"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=units 304 - 288ms","timestamp":"2026-02-23 18:27:34"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c?metrics=true&sortBy=revenue 304 - 171ms","timestamp":"2026-02-23 18:27:38"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c 304 - 212ms","timestamp":"2026-02-23 18:27:43"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c 304 - 311ms","timestamp":"2026-02-23 18:27:43"}
+{"level":"http","message":"GET /api/categories 304 - 640ms","timestamp":"2026-02-23 18:27:44"}
+{"level":"http","message":"GET /api/categories 304 - 122ms","timestamp":"2026-02-23 18:27:44"}
+{"level":"info","message":"[Cache CLEAR] All product caches invalidated","timestamp":"2026-02-23 18:35:05"}
+{"level":"http","message":"POST /api/products 201 - 17617ms","timestamp":"2026-02-23 18:35:05"}
+{"level":"http","message":"GET /api/products/seller/4b3ac1a8-3a35-4506-bda2-03a1e79d802c 200 - 133ms","timestamp":"2026-02-23 18:35:05"}
+{"level":"http","message":"GET /api/categories 304 - 230ms","timestamp":"2026-02-23 18:35:05"}
+{"level":"http","message":"GET /api/categories 304 - 657ms","timestamp":"2026-02-23 18:35:06"}
+{"level":"debug","message":"[Cache SET] Product list: bestsellers:10","timestamp":"2026-02-23 18:35:15"}
+{"level":"http","message":"GET /api/products/bestsellers 200 - 503ms","timestamp":"2026-02-23 18:35:15"}
+{"level":"http","message":"GET /api/products/bestsellers 200 - 151ms","timestamp":"2026-02-23 18:35:15"}
+{"level":"debug","message":"[Cache SET] Product list: newarrivals:10","timestamp":"2026-02-23 18:35:16"}
+{"level":"http","message":"GET /api/products/new-arrivals 200 - 1676ms","timestamp":"2026-02-23 18:35:16"}
+{"level":"http","message":"GET /api/products? 200 - 1662ms","timestamp":"2026-02-23 18:35:16"}
+{"level":"http","message":"GET /api/products? 200 - 134ms","timestamp":"2026-02-23 18:35:17"}
+{"level":"http","message":"GET /api/products/new-arrivals 200 - 152ms","timestamp":"2026-02-23 18:35:17"}
+{"level":"debug","message":"[Cache SET] Product 3c1a845e-9eed-4872-a0bd-812c01f1f984","timestamp":"2026-02-23 18:35:22"}
+{"level":"http","message":"GET /api/products/3c1a845e-9eed-4872-a0bd-812c01f1f984 200 - 682ms","timestamp":"2026-02-23 18:35:22"}
+{"level":"debug","message":"[Cache HIT] Product 3c1a845e-9eed-4872-a0bd-812c01f1f984","timestamp":"2026-02-23 18:35:22"}
+{"level":"http","message":"GET /api/products/3c1a845e-9eed-4872-a0bd-812c01f1f984 200 - 80ms","timestamp":"2026-02-23 18:35:22"}
+{"level":"debug","message":"[Cache SET] Product list: category:6541831e-cc7c-44d6-88a4-312e2febbfd5","timestamp":"2026-02-23 18:35:23"}
+{"level":"http","message":"GET /api/products/category/6541831e-cc7c-44d6-88a4-312e2febbfd5 200 - 479ms","timestamp":"2026-02-23 18:35:23"}
+{"level":"http","message":"GET /api/products/category/6541831e-cc7c-44d6-88a4-312e2febbfd5 200 - 103ms","timestamp":"2026-02-23 18:35:23"}
+{"level":"http","message":"GET /api/products/3c1a845e-9eed-4872-a0bd-812c01f1f984/reviews?page=1&limit=10 200 - 122ms","timestamp":"2026-02-23 18:35:23"}
+{"level":"http","message":"GET /api/products/3c1a845e-9eed-4872-a0bd-812c01f1f984/reviews?page=1&limit=10 304 - 172ms","timestamp":"2026-02-23 18:35:23"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 670ms","timestamp":"2026-02-23 18:57:24"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 812ms","timestamp":"2026-02-23 18:57:24"}
+{"level":"http","message":"GET /api/products/bestsellers 304 - 555ms","timestamp":"2026-02-23 18:57:25"}
+{"level":"http","message":"GET /api/products/new-arrivals 304 - 697ms","timestamp":"2026-02-23 18:57:25"}
+{"level":"http","message":"GET /api/products? 200 - 2567ms","timestamp":"2026-02-23 18:57:26"}
+{"level":"http","message":"GET /api/products? 200 - 75ms","timestamp":"2026-02-23 18:57:26"}
+{"level":"info","message":"✅ Mapbox configured","timestamp":"2026-02-23 18:58:39"}
+{"level":"info","message":"✅ Upstash Redis configured (REST API)","timestamp":"2026-02-23 18:58:40"}

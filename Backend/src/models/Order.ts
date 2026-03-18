@@ -5,11 +5,22 @@ export interface Order {
   shipping_fee?: number;
   tax_amount?: number;
   payment_status: "pending" | "paid" | "failed" | "refunded";
-  order_status: "processing" | "shipped" | "delivered" | "cancelled" | "returned";
+  order_status:
+    | "processing"
+    | "shipped"
+    | "delivered"
+    | "cancelled"
+    | "returned";
   shipping_address: any; // JSONB
   billing_address?: any; // JSONB
   payment_method?: string;
   transaction_id?: string;
+
+  // Delivery tracking fields
+  shipped_at?: Date;
+  estimated_delivery_time?: Date;
+  delivery_distance_km?: number;
+
   created_at?: Date;
   updated_at?: Date;
 }

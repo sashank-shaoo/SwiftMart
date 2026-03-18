@@ -49,4 +49,29 @@ export class TransactionDao {
     const res = await query(text);
     return parseFloat(res.rows[0].total || "0");
   }
+
+  /**
+   * Get seller's total earnings (after commission)
+   * Returns the sum of seller_amount from all completed transactions
+   */
+  static async getSellerEarnings(sellerId: string): Promise<{
+    total_earnings: number;
+    total_sales: number;
+    platform_commission: number;
+  }> {
+    const text = `
+      SELECT 
+        COALESCE(SUM(seller_amount), 0) as total_earnings,
+        COALESCE(SUM(total_amount), 0) as total_sales,
+        COALESCE(SUM(platform_amount), 0) as platform_commission
+      FROM transactions 
+      WHERE seller_id = $1 AND status = 'completed'
+    `;
+    const res = await query(text, [sellerId]);
+    return {
+      total_earnings: parseFloat(res.rows[0].total_earnings || "0"),
+      total_sales: parseFloat(res.rows[0].total_sales || "0"),
+      platform_commission: parseFloat(res.rows[0].platform_commission || "0"),
+    };
+  }
 }

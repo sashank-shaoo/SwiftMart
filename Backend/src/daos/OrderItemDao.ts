@@ -23,12 +23,23 @@ export class OrderItemDao {
 
   static async getItemsByOrderId(orderId: string): Promise<OrderItem[]> {
     const text = `
-      SELECT oi.*, p.name as product_name, p.images as product_images
+      SELECT oi.*, p.name as product_name, p.images as product_images, p.description as product_description, p.price as product_price
       FROM order_items oi
       JOIN products p ON oi.product_id = p.id
       WHERE oi.order_id = $1
     `;
     const res = await query(text, [orderId]);
-    return res.rows;
+
+    // Map to frontend expected structure
+    return res.rows.map((row) => ({
+      ...row,
+      product: {
+        id: row.product_id,
+        name: row.product_name,
+        images: row.product_images,
+        description: row.product_description,
+        price: row.product_price,
+      },
+    }));
   }
 }

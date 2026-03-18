@@ -348,6 +348,7 @@
 @media (max-width: 480px) {
   .profileWrapper {
     padding: 1.2rem;
+    padding-top: 6rem; /* Extra top spacing to prevent header overlap */
   }
 
   .profileCard {

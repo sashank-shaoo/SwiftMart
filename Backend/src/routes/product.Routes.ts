@@ -22,6 +22,7 @@ import {
   getBestSellers,
   getTopRated,
   getNewArrivals,
+  getPremiumProducts,
 } from "../controllers/productFilterController";
 
 const router = express.Router();
@@ -38,6 +39,7 @@ router.get("/search", asyncHandler(searchProducts));
 router.get("/bestsellers", asyncHandler(getBestSellers));
 router.get("/top-rated", asyncHandler(getTopRated));
 router.get("/new-arrivals", asyncHandler(getNewArrivals));
+router.get("/premium", asyncHandler(getPremiumProducts));
 router.get("/season/:season", asyncHandler(getProductsBySeason));
 router.get("/category/:category_id", asyncHandler(getProductsByCategory));
 

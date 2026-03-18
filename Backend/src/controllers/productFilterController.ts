@@ -78,34 +78,66 @@ export const getProductsByCategory = async (req: Request, res: Response) => {
 
 /**
  * GET /products/bestsellers - Get best selling products
+ * Query params: ?limit=10&randomize=true (for random selection)
+ *               ?page=1&limit=20 (for pagination)
  */
 export const getBestSellers = async (req: Request, res: Response) => {
   const limit = parseInt(req.query.limit as string) || 10;
+  const randomize = req.query.randomize === "true";
+  const page = req.query.page ? parseInt(req.query.page as string) : undefined;
 
-  // Try cache first
-  const cacheKey = `bestsellers:${limit}`;
-  const cached = await ProductCacheService.getProductList(cacheKey);
+  // If page is specified, use pagination
+  if (page) {
+    const { products, total } = await ProductDao.getBestSellersWithPagination({
+      page,
+      limit,
+    });
 
-  if (cached) {
     return res.success(
       {
-        from_cache: true,
-        count: cached.length,
-        products: cached,
+        products,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
       },
       "Best sellers fetched",
     );
   }
 
-  const products = await ProductDao.getBestSellers(limit);
+  // Otherwise use simple limit with optional randomization
+  // Try cache only if not randomizing
+  if (!randomize) {
+    const cacheKey = `bestsellers:${limit}`;
+    const cached = await ProductCacheService.getProductList(cacheKey);
 
-  // Cache for 1 hour
-  await ProductCacheService.cacheProductList(cacheKey, products);
+    if (cached) {
+      return res.success(
+        {
+          from_cache: true,
+          count: cached.length,
+          products: cached,
+        },
+        "Best sellers fetched",
+      );
+    }
+  }
+
+  const products = await ProductDao.getBestSellers(limit, randomize);
+
+  // Cache only non-randomized results
+  if (!randomize) {
+    const cacheKey = `bestsellers:${limit}`;
+    await ProductCacheService.cacheProductList(cacheKey, products);
+  }
 
   return res.success(
     {
       count: products.length,
       products,
+      randomized: randomize,
     },
     "Best sellers fetched",
   );
@@ -113,34 +145,66 @@ export const getBestSellers = async (req: Request, res: Response) => {
 
 /**
  * GET /products/top-rated - Get highest rated products
+ * Query params: ?limit=10&randomize=true (for random selection)
+ *               ?page=1&limit=20 (for pagination)
  */
 export const getTopRated = async (req: Request, res: Response) => {
   const limit = parseInt(req.query.limit as string) || 10;
+  const randomize = req.query.randomize === "true";
+  const page = req.query.page ? parseInt(req.query.page as string) : undefined;
 
-  // Try cache first
-  const cacheKey = `toprated:${limit}`;
-  const cached = await ProductCacheService.getProductList(cacheKey);
+  // If page is specified, use pagination
+  if (page) {
+    const { products, total } = await ProductDao.getTopRatedWithPagination({
+      page,
+      limit,
+    });
 
-  if (cached) {
     return res.success(
       {
-        from_cache: true,
-        count: cached.length,
-        products: cached,
+        products,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
       },
       "Top rated products fetched",
     );
   }
 
-  const products = await ProductDao.getTopRated(limit);
+  // Otherwise use simple limit with optional randomization
+  // Try cache only if not randomizing
+  if (!randomize) {
+    const cacheKey = `toprated:${limit}`;
+    const cached = await ProductCacheService.getProductList(cacheKey);
 
-  // Cache for 1 hour
-  await ProductCacheService.cacheProductList(cacheKey, products);
+    if (cached) {
+      return res.success(
+        {
+          from_cache: true,
+          count: cached.length,
+          products: cached,
+        },
+        "Top rated products fetched",
+      );
+    }
+  }
+
+  const products = await ProductDao.getTopRated(limit, randomize);
+
+  // Cache only non-randomized results
+  if (!randomize) {
+    const cacheKey = `toprated:${limit}`;
+    await ProductCacheService.cacheProductList(cacheKey, products);
+  }
 
   return res.success(
     {
       count: products.length,
       products,
+      randomized: randomize,
     },
     "Top rated products fetched",
   );
@@ -178,5 +242,120 @@ export const getNewArrivals = async (req: Request, res: Response) => {
       products,
     },
     "New arrivals fetched",
+  );
+};
+
+/**
+ * GET /products/premium - Get premium (high-priced) products
+ * Query params: ?limit=10&randomize=true (for random selection)
+ *               ?page=1&limit=20 (for pagination)
+ */
+export const getPremiumProducts = async (req: Request, res: Response) => {
+  const limit = parseInt(req.query.limit as string) || 10;
+  const randomize = req.query.randomize === "true";
+  const page = req.query.page ? parseInt(req.query.page as string) : undefined;
+
+  // If page is specified, use pagination
+  if (page) {
+    const { products, total } =
+      await ProductDao.getPremiumProductsWithPagination({
+        page,
+        limit,
+      });
+
+    return res.success(
+      {
+        products,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+      "Premium products fetched",
+    );
+  }
+
+  // Otherwise use simple limit with optional randomization
+  // Try cache only if not randomizing
+  if (!randomize) {
+    const cacheKey = `premium:${limit}`;
+    const cached = await ProductCacheService.getProductList(cacheKey);
+
+    if (cached) {
+      return res.success(
+        {
+          from_cache: true,
+          count: cached.length,
+          products: cached,
+        },
+        "Premium products fetched",
+      );
+    }
+  }
+
+  const products = await ProductDao.getPremiumProducts(limit, randomize);
+
+  // Cache only non-randomized results
+  if (!randomize) {
+    const cacheKey = `premium:${limit}`;
+    await ProductCacheService.cacheProductList(cacheKey, products);
+  }
+
+  return res.success(
+    {
+      count: products.length,
+      products,
+      randomized: randomize,
+    },
+    "Premium products fetched",
+  );
+};
+
+/**
+ * GET /admin/products/sales - Get best-selling products by actual sales (Admin only)
+ * Query params: ?limit=20&sortBy=revenue (or sortBy=units)
+ *               ?page=1&limit=20&sortBy=revenue (for pagination)
+ */
+export const getBestSellersBySales = async (req: Request, res: Response) => {
+  const limit = parseInt(req.query.limit as string) || 20;
+  const sortBy = (req.query.sortBy as "units" | "revenue") || "revenue";
+  const page = req.query.page ? parseInt(req.query.page as string) : undefined;
+
+  // If page is specified, use pagination
+  if (page) {
+    const { products, total } =
+      await ProductDao.getBestSellersBySalesWithPagination({
+        page,
+        limit,
+        sortBy,
+      });
+
+    return res.success(
+      {
+        products,
+        sortBy,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+      "Sales analytics fetched",
+    );
+  }
+
+  // Otherwise return top selling products
+  const products = await ProductDao.getBestSellersBySales(limit, sortBy);
+
+  return res.success(
+    {
+      count: products.length,
+      products,
+      sortBy,
+    },
+    "Sales analytics fetched",
   );
 };

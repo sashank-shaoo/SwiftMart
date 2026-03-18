@@ -533,7 +533,11 @@ export const getMe = async (req: Request, res: Response) => {
     {
       user: {
         ...finalUser,
-        ...(sellerProfile && { seller_profile: sellerProfile }),
+        // Merge verification_status from seller/admin profile to user level for easier frontend access
+        ...(sellerProfile && {
+          seller_profile: sellerProfile,
+          verification_status: sellerProfile.verification_status,
+        }),
         ...(adminProfile && { admin_profile: adminProfile }),
       },
     },
@@ -598,7 +602,7 @@ export const updateUser = async (req: Request, res: Response) => {
     updatedUser = result;
   }
 
-  // Update seller profile if user is a seller and seller fields are provid
+  // Update seller profile if user is a seller and seller fields are provided
   let updatedSellerProfile = null;
   if (user.role === "seller") {
     const sellerUpdates: any = {};
@@ -606,6 +610,11 @@ export const updateUser = async (req: Request, res: Response) => {
     if (gst_number !== undefined) sellerUpdates.gst_number = gst_number;
     if (payout_details !== undefined)
       sellerUpdates.payout_details = payout_details;
+
+    // Add warehouse_location support
+    const { warehouse_location } = req.body;
+    if (warehouse_location !== undefined)
+      sellerUpdates.warehouse_location = warehouse_location;
 
     if (Object.keys(sellerUpdates).length > 0) {
       updatedSellerProfile = await SellerProfileDao.updateSellerProfile(

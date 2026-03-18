@@ -65,6 +65,16 @@ export const productService = {
     return data.products;
   },
 
+  getSellerProductsWithMetrics: async (
+    sellerId: string,
+    sortBy: "revenue" | "units" = "revenue",
+  ): Promise<any[]> => {
+    const data = await apiFetch(
+      `/products/seller/${sellerId}?metrics=true&sortBy=${sortBy}`,
+    );
+    return data.products;
+  },
+
   createProduct: async (formData: FormData): Promise<Product> => {
     return apiFetch("/products", {
       method: "POST",

@@ -16,9 +16,27 @@ export const adminService = {
     });
   },
 
+  getPendingSellers: async (): Promise<{
+    pendingSellers: any[];
+    count: number;
+  }> => {
+    return apiFetch("/admin/pending-sellers");
+  },
+
   approveSeller: async (userId: string): Promise<any> => {
     return apiFetch(`/admin/sellers/${userId}/approve`, {
       method: "PATCH",
     });
+  },
+
+  getProductSales: async (
+    params: {
+      limit?: number;
+      sortBy?: "revenue" | "units";
+      page?: number;
+    } = {},
+  ): Promise<any> => {
+    const query = new URLSearchParams(params as any).toString();
+    return apiFetch(`/admin/products/sales?${query}`);
   },
 };

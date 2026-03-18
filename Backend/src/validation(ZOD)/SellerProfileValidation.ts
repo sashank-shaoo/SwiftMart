@@ -24,7 +24,6 @@ export const CreateSellerProfileSchema = z.object({
         .optional()
         .or(z.literal("").transform(() => undefined)),
       upi_id: z
-        .string()
         .email()
         .or(z.string().regex(/@/))
         .optional()
@@ -50,7 +49,7 @@ export const UpdateSellerProfileSchema = z.object({
         .string()
         .regex(/^[A-Z]{4}0[A-Z0-9]{6}$/)
         .optional(),
-      upi_id: z.string().email().or(z.string().regex(/@/)).optional(),
+      upi_id: z.email().or(z.string().regex(/@/)).optional(),
     })
     .optional(),
   commission_rate: z.number().min(0).max(100).optional(),
@@ -104,7 +103,6 @@ export const RegisterSellerSchema = z.object({
         .optional()
         .or(z.literal("").transform(() => undefined)),
       upi_id: z
-        .string()
         .email()
         .or(z.string().regex(/@/))
         .optional()

@@ -1,0 +1,393 @@
+/* Product Detail Page */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 24px;
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #888;
+  margin-bottom: 2rem;
+  font-family: var(--font-main);
+}
+
+.breadcrumbs a {
+  color: #666;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumbs a:hover {
+  color: #0C2C55;
+}
+
+.breadcrumbs span {
+  color: #1a1a1a;
+  font-weight: 500;
+}
+
+.productContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: clamp(1.5rem, 4vw, 4rem);
+  margin-bottom: clamp(3rem, 6vw, 6rem);
+  align-items: start; 
+}
+
+@media (max-width: 1024px) {
+  .productContainer {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+}
+
+/* Tablet only: push image above info without affecting mobile */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .gallerySection {
+    order: -1;
+  }
+}
+@media (min-width: 1200px) {
+  .productContainer {
+    grid-template-columns: 1fr 550px;
+  }
+}
+
+@media (max-width: 768px) {
+  .productContainer {
+    display: flex;
+    flex-direction: column-reverse; 
+    gap: 2rem;
+  }
+   .productTitle {
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
+  }
+}
+
+/* Info Section Styling */
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Gallery/Image Section */
+.gallerySection {
+  width: 100%;
+}
+
+.infoSection,
+.gallerySection {
+  min-width: 0;
+}
+/* Product Info Section Content */
+.productInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.categoryBadge {
+  display: inline-block;
+  color: #629FAD;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.productTitle {
+  font-family: var(--font-heading); /* Use serif/heading font */
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #0C2C55;
+  line-height: 1.1;
+  margin: 0;
+  letter-spacing: -1px;
+}
+
+
+
+/* Rating */
+.ratingContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.reviewCount {
+  font-size: 0.875rem;
+  color: #888;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Price */
+.priceSection {
+  padding: 2rem 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  margin: 1rem 0;
+}
+
+.priceContainer {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.currentPrice {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #0C2C55;
+}
+
+.originalPrice {
+  font-size: 1.25rem;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.discount {
+  background: #E1D9BC;
+  color: #0C2C55;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.lowStock {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: #d32f2f;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Description */
+.description h3 {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  color: #888;
+}
+
+.description p {
+  color: #444;
+  line-height: 1.8;
+  font-size: 1.05rem;
+  font-weight: 400;
+}
+
+/* Attributes */
+.attributes {
+  margin-top: 1rem;
+}
+
+.attributes h3 {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  color: #888;
+}
+
+/* Attributes List Style */
+.attributeGrid {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.attributeItem {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  align-items: center;
+  padding: 1rem 0;
+  background: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.attributeKey {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #666;
+  text-transform: capitalize;
+  letter-spacing: 0;
+}
+
+.attributeValue {
+  color: #0C2C55;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+/* Additional Info */
+.additionalInfo {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #629FAD;
+}
+
+/* Cart & Actions */
+.cartSection {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.quantitySelector {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.quantityLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.quantityControls {
+  display: flex;
+  align-items: center;
+  background: #F8F8F4;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.quantityBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0C2C55;
+  transition: all 0.2s;
+  border-radius: 6px;
+}
+
+.quantityBtn:hover:not(:disabled) {
+  background: rgba(12, 44, 85, 0.1);
+}
+
+.quantityBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.quantityValue {
+  width: 40px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #0C2C55;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+.actionButtons button {
+  flex: 1;
+}
+
+/* SKU */
+.sku {
+  font-size: 0.75rem;
+  color: #aaa;
+  font-family: monospace;
+  margin-top: 1.5rem;
+}
+
+/* Related Section */
+/* Related Section */
+.relatedSection {
+  margin-top: clamp(2rem, 6vw, 4rem);
+}
+
+.relatedTitle {
+  font-size: 1.75rem; /* Slightly smaller for better hierarchy */
+  font-weight: 700;
+  color: #0C2C55;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .relatedGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .relatedGrid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 768px) {
+  .productTitle {
+    font-size: 2.5rem;
+  }
+  .currentPrice{
+    font-size: 1.8rem;
+  }
+  .originalPrice{
+    font-size: 1rem;
+  }
+}
+
+/* Reviews Section */
+.reviewsSection {
+  margin-top: 6rem;
+  padding-top: 4rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.errorContainer {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.errorContainer h2 {
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  color: #0C2C55;
+}
+
+.errorContainer a {
+  color: #629FAD;
+  text-decoration: none;
+  font-weight: 600;
+}

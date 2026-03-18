@@ -1,74 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import React from "react";
+import { useRegister } from "@/hooks/useAuthForms";
 import { useNotification } from "@/context/NotificationContext";
 import Button from "@/components/common/Button";
 import Input from "@/components/common/Input";
-import { User, Mail, Lock, Gift, UserCircle } from "lucide-react";
+import { User, Mail, Lock, Gift } from "lucide-react";
 import styles from "@/styles/register.module.css";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const { register } = useAuth();
-  const { notifySuccess, notifyError } = useNotification();
-
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    role: "user" as "user" | "seller",
-    referral_code: "",
-  });
-
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const validate = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.name) newErrors.name = "Name is required";
-    if (!formData.email) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = "Email is invalid";
-    if (!formData.password) newErrors.password = "Password is required";
-    else if (formData.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const { notifySuccess } = useNotification();
+  const { formData, errors, loading, handleChange, setRole, submit } =
+    useRegister();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
-
-    setLoading(true);
-    try {
-      await register(formData);
+    const ok = await submit();
+    if (ok)
       notifySuccess("Account created successfully! Welcome to SwiftMart.");
-      router.push("/");
-    } catch (err: any) {
-      // Notification is already handled by Global Error Handler in apiClient
-      // But we can add specific logic here if needed
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error when typing
-    if (errors[name]) {
-      setErrors((prev) => {
-        const updated = { ...prev };
-        delete updated[name];
-        return updated;
-      });
-    }
   };
 
   return (
@@ -86,15 +37,13 @@ export default function RegisterPage() {
           <button
             type="button"
             className={`${styles.roleBtn} ${formData.role === "user" ? styles.roleBtnActive : ""}`}
-            onClick={() => setFormData((prev) => ({ ...prev, role: "user" }))}>
+            onClick={() => setRole("user")}>
             Shopper
           </button>
           <button
             type="button"
             className={`${styles.roleBtn} ${formData.role === "seller" ? styles.roleBtnActive : ""}`}
-            onClick={() =>
-              setFormData((prev) => ({ ...prev, role: "seller" }))
-            }>
+            onClick={() => setRole("seller")}>
             Seller
           </button>
         </div>

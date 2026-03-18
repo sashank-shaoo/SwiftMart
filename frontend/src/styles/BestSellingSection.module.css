@@ -1,0 +1,191 @@
+.section {
+  width: 100%;
+  padding: 48px 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 0 24px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.seeAll {
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.seeAll::after {
+  content: '→';
+  margin-left: 8px;
+  transition: margin-left 0.3s ease;
+}
+
+.seeAll:hover {
+  color: #1a1a1a;
+}
+
+.seeAll:hover::after {
+  margin-left: 12px;
+}
+
+/* Desktop View - Horizontal Scroll */
+.desktopView {
+  display: block;
+}
+
+.mobileView {
+  display: none;
+}
+
+.scrollContainer {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  padding: 20px 0; /* Add padding top/bottom for hover effects */
+}
+
+.scrollContainer::-webkit-scrollbar {
+  height: 8px;
+}
+
+.scrollContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollContainer::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.cardsWrapper {
+  display: flex;
+  gap: 24px;
+  padding: 0 24px;
+  min-width: min-content;
+}
+
+.cardWrapper {
+  width: 280px; /* Fixed width for horizontal scroll items */
+  flex-shrink: 0;
+}
+
+/* Mobile View - Vertical List */
+@media (max-width: 768px) {
+  .section {
+    padding: 32px 0;
+  }
+
+  .header {
+    margin-bottom: 24px;
+    padding: 0 16px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .seeAll {
+    font-size: 14px;
+  }
+
+  .desktopView {
+    display: none;
+  }
+
+  .mobileView {
+    display: block;
+  }
+
+  .listWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 16px;
+  }
+
+  /* Horizontal Card for Mobile - New Cream/Navy Theme */
+  .horizontalCard {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 16px;
+    background: #e4e4e4; /* Light Cream Background */
+    border-radius: 16px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+    transition: all 0.3s ease;
+    padding: 12px;
+    align-items: center;
+  }
+
+  .horizontalCard:active {
+    transform: scale(0.98);
+    background: #e0dccc;
+  }
+
+  .mobileImageWrapper {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #ffffff;
+  }
+
+  .mobileCardInfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .mobileProductName {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .mobilePriceRating {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .mobilePrice {
+    font-size: 18px;
+    font-weight: 800;
+    color: #2B7A8B; /* Teal Price */
+  }
+
+  .mobileRating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+  }
+}

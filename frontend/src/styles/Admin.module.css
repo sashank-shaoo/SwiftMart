@@ -41,6 +41,15 @@
   overflow: hidden;
 }
 
+.clickableStatCard {
+  cursor: pointer;
+}
+
+.clickableStatCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 48px rgba(12, 44, 85, 0.12);
+}
+
 .statCard:hover {
   transform: translateY(-5px);
 }

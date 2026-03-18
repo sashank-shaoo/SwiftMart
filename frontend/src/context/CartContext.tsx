@@ -18,6 +18,7 @@ interface CartContextType {
   error: string | null;
   addToCart: (productId: string, quantity: number) => Promise<void>;
   updateQuantity: (itemId: string, quantity: number) => Promise<void>;
+  updateCartItem: (itemId: string, quantity: number) => Promise<void>;
   removeFromCart: (itemId: string) => Promise<void>;
   clearCart: () => Promise<void>;
   totalItems: number;
@@ -120,6 +121,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         error,
         addToCart,
         updateQuantity,
+        updateCartItem: updateQuantity, // Alias for consistency
         removeFromCart,
         clearCart,
         totalItems,

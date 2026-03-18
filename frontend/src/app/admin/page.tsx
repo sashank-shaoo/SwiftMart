@@ -6,6 +6,7 @@ import { useNotification } from "@/context/NotificationContext";
 import { adminService } from "@/services/adminService";
 import { AdminOverview, AdminAlert } from "@/types";
 import styles from "@/styles/Admin.module.css";
+import ProductSalesTable from "@/components/dashboard/ProductSalesTable";
 import {
   Users,
   Store,
@@ -34,6 +35,10 @@ export default function AdminDashboard() {
   const [data, setData] = useState<AdminOverview | null>(null);
   const [alerts, setAlerts] = useState<AdminAlert[]>([]);
   const [fetching, setFetching] = useState(true);
+  const [productSales, setProductSales] = useState<any[]>([]);
+  const [salesSortBy, setSalesSortBy] = useState<"revenue" | "units">(
+    "revenue",
+  );
 
   useEffect(() => {
     if (!loading && (!user || user.role !== "admin")) {
@@ -49,18 +54,38 @@ export default function AdminDashboard() {
   const loadDashboardData = async () => {
     try {
       setFetching(true);
-      const [dashData, alertData] = await Promise.all([
+      const [dashData, alertData, salesData] = await Promise.all([
         adminService.getOverview(),
         adminService.getAlerts(),
+        adminService.getProductSales({ limit: 10, sortBy: salesSortBy }),
       ]);
       setData(dashData);
       setAlerts(alertData);
+      setProductSales(salesData.products || []);
     } catch (err) {
       console.error("Dashboard data load failure:", err);
     } finally {
       setFetching(false);
     }
   };
+
+  // Reload product sales when sort changes
+  useEffect(() => {
+    if (user && user.role === "admin") {
+      const fetchSales = async () => {
+        try {
+          const salesData = await adminService.getProductSales({
+            limit: 10,
+            sortBy: salesSortBy,
+          });
+          setProductSales(salesData.products || []);
+        } catch (err) {
+          console.error("Product sales fetch failed:", err);
+        }
+      };
+      fetchSales();
+    }
+  }, [salesSortBy, user]);
 
   const markAsRead = async (id: string) => {
     try {
@@ -146,6 +171,10 @@ export default function AdminDashboard() {
               ? `${stats.pending_sellers} Pending`
               : undefined
           }
+          clickable={stats.pending_sellers > 0}
+          onClick={() =>
+            stats.pending_sellers > 0 && router.push("/admin/sellers")
+          }
           delay={0.2}
         />
         <StatCard
@@ -209,6 +238,25 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </div>
+        </motion.div>
+
+        {/* Product Sales Analytics Panel */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.55 }}
+          className={styles.panelCard}>
+          <h3 className={styles.panelTitle}>
+            <Package size={24} color="var(--color-primary)" />
+            Top Selling Products
+          </h3>
+
+          <ProductSalesTable
+            products={productSales}
+            sortBy={salesSortBy}
+            onSortChange={setSalesSortBy}
+            limit={10}
+          />
         </motion.div>
 
         {/* Alerts & Recent Activity */}
@@ -380,19 +428,25 @@ function StatCard({
   value,
   delay,
   alert,
+  clickable,
+  onClick,
 }: {
   icon: any;
   label: string;
   value: string;
   delay: number;
   alert?: string;
+  clickable?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay }}
-      className={styles.statCard}>
+      className={`${styles.statCard} ${clickable ? styles.clickableStatCard : ""}`}
+      onClick={onClick}
+      style={{ cursor: clickable ? "pointer" : "default" }}>
       <div className={styles.statIcon}>{icon}</div>
       <div className={styles.statValue}>{value}</div>
       <div className={styles.statLabel}>{label}</div>

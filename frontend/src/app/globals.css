@@ -34,28 +34,34 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: #020617;
+    --color-background: #DEDECE;
     --color-foreground: #f8fafc;
     --color-secondary: #94a3b8;
     --color-muted: #1e293b;
     --color-border: #334155;
   }
 }
+/* ============================
+   GLOBAL RESET & BASE STYLES
+   ============================ */
 
 * {
-  box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-html,
+html {
+  scroll-behavior: smooth;
+  /* DO NOT set overflow or height on html - breaks sticky! */
+}
+
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
+  /* DO NOT set overflow or height on body - breaks sticky! */
 }
 
 h1, h2, h3, h4, h5, h6 {
